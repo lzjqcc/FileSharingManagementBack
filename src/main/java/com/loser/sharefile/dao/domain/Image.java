@@ -16,7 +16,7 @@ public class Image extends BaseEntity{
      *
      */
     @Column(name = "file_template_num")
-    private Integer fileTemplateNum;
+    private String fileTemplateNum;
 
     public String getUrl() {
         return url;
@@ -26,11 +26,11 @@ public class Image extends BaseEntity{
         this.url = url;
     }
 
-    public Integer getFileTemplateNum() {
+    public String getFileTemplateNum() {
         return fileTemplateNum;
     }
 
-    public void setFileTemplateNum(Integer fileTemplateNum) {
+    public void setFileTemplateNum(String fileTemplateNum) {
         this.fileTemplateNum = fileTemplateNum;
     }
 }
