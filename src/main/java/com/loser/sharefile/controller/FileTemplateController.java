@@ -71,7 +71,13 @@ public class FileTemplateController {
         PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdOrderByInsertTime(groupId, pageable);
         return toFileTemplateResult(page);
     }
-
+    /**
+     * ?page=&size=&sort=firstname&sort=lastname,asc.
+     * @param pageable
+     * @param groupId
+     * @param tagId
+     * @return
+     */
     @GetMapping("/fileTemplatesByPage/{groupId}/{tagId}")
     public Page<FileTemplateResult> getFileTemplateResults(Pageable pageable, @PathVariable("groupId") Integer groupId, @PathVariable("tagId") Integer tagId) {
         PageImpl<FileTemplate> fileTemplates = fileTemplateRepository.findByGroupIdAndTagIdOrderByInsertTime(groupId, tagId, pageable);
