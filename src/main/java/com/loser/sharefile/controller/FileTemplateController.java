@@ -52,6 +52,8 @@ public class FileTemplateController {
     @GetMapping("/fileTemplateDetails/{templateNum}")
     public FileTemplateResult getFileDetails(@PathVariable("templateNum") String templateNum) {
         FileTemplate fileTemplate = fileTemplateRepository.findByFileNum(templateNum);
+        fileTemplate.setViewNums(fileTemplate.getViewNums()== null ? 1 : fileTemplate.getViewNums() + 1);
+        fileTemplateRepository.save(fileTemplate);
         FileTemplateResult fileTemplateResult = ModelUtils.toTarget(fileTemplate, FileTemplateResult.class);
         List<Image> images = imageRepository.findByFileTemplateNum(templateNum);
         fileTemplateResult.setImages(ModelUtils.toTargets(images, ImageResult.class));
