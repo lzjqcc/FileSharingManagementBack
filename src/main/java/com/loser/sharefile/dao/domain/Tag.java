@@ -6,13 +6,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 @Entity
-@Table(name = "tb_tag", indexes = {@Index(name = "group_id_index", columnList ="group_id")})
+@Table(name = "tb_tag", indexes = {@Index(name = "file_template_num_index", columnList ="file_template_num")})
 public class Tag extends BaseEntity{
     @Column(name = "name")
     private String name;
-    @Column(name = "group_id")
-    private Integer groupId;
-
+    @Column(name = "file_template_num")
+    private String fileTemplateNum;
 
     public String getName() {
         return name;
@@ -22,15 +21,12 @@ public class Tag extends BaseEntity{
         this.name = name;
     }
 
-
-    public Integer getGroupId() {
-        return groupId;
+    public String getFileTemplateNum() {
+        return fileTemplateNum;
     }
 
-    public void setGroupId(Integer groupId) {
-
-        this.groupId = groupId;
+    public void setFileTemplateNum(String fileTemplateNum) {
+        this.fileTemplateNum = fileTemplateNum;
     }
-
 }
 
