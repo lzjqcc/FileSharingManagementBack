@@ -13,7 +13,6 @@ import com.loser.sharefile.dao.repository.FileTemplateRepository;
 import com.loser.sharefile.dao.repository.GroupRepository;
 import com.loser.sharefile.dao.repository.ImageRepository;
 import com.loser.sharefile.dao.repository.TagRepository;
-import com.loser.sharefile.error.SystemError;
 import com.loser.sharefile.utils.GenerateNum;
 import com.loser.sharefile.utils.ModelUtils;
 import org.springframework.beans.BeanUtils;
@@ -27,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/template")
@@ -65,9 +64,22 @@ public class FileTemplateController {
         return fileTemplateResult;
     }
 
+    /**
+     * ?page=&size=&sort=firstname&sort=lastname,asc
+     * @param pageable
+     * @param groupId
+     * @return
+     */
     @GetMapping("/fileTemplatesByPage/{groupId}")
     public Page<FileTemplateResult> getFileTemplateResults(Pageable pageable, @PathVariable("groupId") Integer groupId) {
-        PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdOrderByInsertTime(groupId, pageable);
+        PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdOrderByInsertTimeDesc(groupId, pageable);
+        return toFileTemplateResult(page);
+    }
+    @GetMapping("/findAllByPage/{parentId}")
+    public Page<FileTemplateResult> findALl(Pageable pageable, @PathVariable("parentId") Integer parentId) {
+        List<Group> groups = groupRepository.findByParentId(parentId);
+        List<Integer> groupIds = groups.stream().map(Group::getId).collect(Collectors.toList());
+        PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdInOrderByInsertTimeDesc(groupIds, pageable);
         return toFileTemplateResult(page);
     }
     @PostMapping("/fileTemplate/upload")
@@ -95,26 +107,14 @@ public class FileTemplateController {
         }
         imageRepository.saveAll(images);
     }
-    /**
-     * ?page=&size=&sort=firstname&sort=lastname,asc.
-     * @param pageable
-     * @param groupId
-     * @param tagId
-     * @return
-     */
-    @GetMapping("/fileTemplatesByPage/{groupId}/{tagId}")
-    public Page<FileTemplateResult> getFileTemplateResults(Pageable pageable, @PathVariable("groupId") Integer groupId, @PathVariable("tagId") Integer tagId) {
-        PageImpl<FileTemplate> fileTemplates = fileTemplateRepository.findByGroupIdAndTagIdOrderByInsertTime(groupId, tagId, pageable);
-        return toFileTemplateResult(fileTemplates);
-    }
-    @GetMapping(name = "createGroup/{parentId}/{groupName}}")
-    public void createGroup(@PathVariable("parentId")Integer parentId,@PathVariable(name = "groupName") String groupName) {
+    @GetMapping("createGroup/{parentId}/{groupName}}")
+    public void newGroup(@PathVariable("parentId")Integer parentId,@PathVariable(name = "groupName") String groupName) {
         Group group = new Group();
         group.setName(groupName);
         group.setParentId(parentId);
         groupRepository.save(group);
     }
-    @GetMapping(name = "createTag/{groupId}/{tagName}")
+    @GetMapping("createTag/{groupId}/{tagName}")
     public void createTag(@PathVariable("groupId") Integer groupId, @PathVariable("tagName") String tagName) {
         Tag tag = new Tag();
         tag.setGroupId(groupId);

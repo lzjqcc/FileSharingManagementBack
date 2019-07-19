@@ -11,7 +11,7 @@ import java.util.Date;
 @Table(name = "tb_image", indexes = {@Index(name = "file_template_num_index", columnList = "file_template_num")})
 public class Image extends BaseEntity{
     private String url;
-
+    private String url2;
     /**
      *
      */
@@ -20,6 +20,14 @@ public class Image extends BaseEntity{
 
     public String getUrl() {
         return url;
+    }
+
+    public String getUrl2() {
+        return url2;
+    }
+
+    public void setUrl2(String url2) {
+        this.url2 = url2;
     }
 
     public void setUrl(String url) {

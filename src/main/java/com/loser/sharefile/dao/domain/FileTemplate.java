@@ -7,17 +7,18 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "tb_file_template", indexes = {@Index(name = "group_tag_id_index", columnList = "group_id,tag_id")})
+@Table(name = "tb_file_template", indexes = {@Index(name = "group_id_index", columnList = "group_id")
+                                            ,@Index(name = "file_num_index", columnList = "file_num")})
 public class FileTemplate extends BaseEntity{
 
     /**
      * 文件编号
      */
-    @Column(name = "file_num")
+    @Column(name = "file_num", unique = true)
     private String fileNum;
     private String name;
     private String url;
-
+    private String url2;
     /**
      * 下载次数
      */
@@ -52,8 +53,14 @@ public class FileTemplate extends BaseEntity{
     private Integer viewNums;
     @Column(name = "group_id")
     private Integer groupId;
-    @Column(name = "tag_id")
-    private Integer tagId;
+
+    public String getUrl2() {
+        return url2;
+    }
+
+    public void setUrl2(String url2) {
+        this.url2 = url2;
+    }
 
     public String getFileNum() {
         return fileNum;
@@ -143,11 +150,5 @@ public class FileTemplate extends BaseEntity{
         this.groupId = groupId;
     }
 
-    public Integer getTagId() {
-        return tagId;
-    }
 
-    public void setTagId(Integer tagId) {
-        this.tagId = tagId;
-    }
 }
