@@ -17,7 +17,16 @@ public class FileTemplateParam {
     private Integer tagId;
     private Integer fileSize;
     private String fileFormat;
+    private List<String> tagNames;
     private List<String> imageUrls;
+
+    public List<String> getTagNames() {
+        return tagNames;
+    }
+
+    public void setTagNames(List<String> tagNames) {
+        this.tagNames = tagNames;
+    }
 
     public List<String> getImageUrls() {
         return imageUrls;

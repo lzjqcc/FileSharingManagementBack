@@ -15,6 +15,15 @@ public class FileTemplateResult {
     private String fileTemplateNum;
     private Integer fileSize;
     private Integer viewNums;
+    private List<TagResult> tagResults;
+
+    public List<TagResult> getTagResults() {
+        return tagResults;
+    }
+
+    public void setTagResults(List<TagResult> tagResults) {
+        this.tagResults = tagResults;
+    }
 
     public String getFileTemplateNum() {
         return fileTemplateNum;
