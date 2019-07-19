@@ -8,6 +8,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.util.List;
 public interface ImageRepository extends JpaRepository<Image, Integer> {
     List<Image> findByFileTemplateNum(String fileTemplateNum);
-    @Query(value = "select * from tb_image where file_template_num = 1? limit 1", nativeQuery = true)
-    Image findImagesByFileTemplateNumLimit(String fileTemplateNum);
+    Image findTop1ByFileTemplateNum(String fileTemplateNum);
+
 }

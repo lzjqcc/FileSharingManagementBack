@@ -70,14 +70,14 @@ public class FileTemplateController {
      */
     @GetMapping("/fileTemplatesByPage/{groupId}")
     public Page<FileTemplateResult> getFileTemplateResults(Pageable pageable, @PathVariable("groupId") Integer groupId) {
-        PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdOrderByInsertTimeDesc(groupId, pageable);
+        PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupId(groupId, pageable);
         return toFileTemplateResult(page);
     }
     @GetMapping("/findAllByPage/{parentId}")
     public Page<FileTemplateResult> findALl(Pageable pageable, @PathVariable("parentId") Integer parentId) {
         List<Group> groups = groupRepository.findByParentId(parentId);
         List<Integer> groupIds = groups.stream().map(Group::getId).collect(Collectors.toList());
-        PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdInOrderByInsertTimeDesc(groupIds, pageable);
+        PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdIn(groupIds, pageable);
         return toFileTemplateResult(page);
     }
     @PostMapping("/fileTemplate/upload")
@@ -131,10 +131,12 @@ public class FileTemplateController {
     private PageImpl<FileTemplateResult> toFileTemplateResult(PageImpl<FileTemplate> fileTemplates) {
         List<FileTemplateResult> templateResults = ModelUtils.toTargets(fileTemplates.getContent(), FileTemplateResult.class);
         for (FileTemplateResult fileTemplateResult : templateResults) {
-            if (!StringUtils.isEmpty(fileTemplateResult.getFileTemplateNum())) {
-                Image image = imageRepository.findImagesByFileTemplateNumLimit(fileTemplateResult.getFileTemplateNum());
+            if (!StringUtils.isEmpty(fileTemplateResult.getFileNum())) {
+                Image image = imageRepository.findTop1ByFileTemplateNum(fileTemplateResult.getFileNum());
                 ImageResult imageResult = ModelUtils.toTarget(image, ImageResult.class);
-                fileTemplateResult.setImages(CollectionUtils.arrayToList(imageResult));
+                List<ImageResult> imageResults = new ArrayList<>();
+                imageResults.add(imageResult);
+                fileTemplateResult.setImages(imageResults);
             }
 
         }

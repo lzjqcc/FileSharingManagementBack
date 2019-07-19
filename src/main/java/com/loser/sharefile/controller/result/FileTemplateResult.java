@@ -1,7 +1,5 @@
 package com.loser.sharefile.controller.result;
 
-import com.loser.sharefile.dao.domain.Image;
-
 import java.util.List;
 
 public class FileTemplateResult {
@@ -12,7 +10,7 @@ public class FileTemplateResult {
     private Integer thumbsUp;
     private Integer description;
     private Integer fileFormat;
-    private String fileTemplateNum;
+    private String fileNum;
     private Integer fileSize;
     private Integer viewNums;
     private List<TagResult> tagResults;
@@ -25,12 +23,12 @@ public class FileTemplateResult {
         this.tagResults = tagResults;
     }
 
-    public String getFileTemplateNum() {
-        return fileTemplateNum;
+    public String getFileNum() {
+        return fileNum;
     }
 
-    public void setFileTemplateNum(String fileTemplateNum) {
-        this.fileTemplateNum = fileTemplateNum;
+    public void setFileNum(String fileNum) {
+        this.fileNum = fileNum;
     }
 
     public List<ImageResult> getImages() {

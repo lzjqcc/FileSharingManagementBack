@@ -11,8 +11,8 @@ import java.util.List;
 public interface FileTemplateRepository extends JpaRepository<FileTemplate, Integer> {
     FileTemplate findByFileNum(String fileNum);
 
-    PageImpl<FileTemplate> findByGroupIdOrderByInsertTimeDesc(Integer groupId, Pageable pageable);
+    PageImpl<FileTemplate> findByGroupId(Integer groupId, Pageable pageable);
 
-    PageImpl<FileTemplate> findByGroupIdInOrderByInsertTimeDesc(List<Integer> groupIds, Pageable pageable);
+    PageImpl<FileTemplate> findByGroupIdIn(List<Integer> groupIds, Pageable pageable);
 
 }
