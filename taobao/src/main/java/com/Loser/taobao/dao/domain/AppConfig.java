@@ -13,9 +13,18 @@ public class AppConfig extends BaseEntity {
     private String appKey;
     @Column(name = "app_secret")
     private String appSecret;
-
+    @Column(name = "redirect_url")
+    private String redirectUrl;
     public String getAppKey() {
         return appKey;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 
     public void setAppKey(String appKey) {
