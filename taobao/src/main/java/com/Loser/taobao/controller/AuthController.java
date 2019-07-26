@@ -34,15 +34,9 @@ public class AuthController extends BaseController{
     }
     @GetMapping("/accessToken/{appIdString}")
     public void getToken(@RequestParam("code") String code, @PathVariable("appIdString") String appIdString) {
-        String dncode = SecurityUtils.AESDncode(appIdString);
         Integer appId =  Integer.parseInt(SecurityUtils.AESDncode(appIdString));
         AccessToken accessToken = UrlUtils.getAccessToken(appConfigRepository.findById(appId).get(), code);
         accessTokenRepository.save(accessToken);
     }
 
-    public static void main(String[] args) {
-        String encode = SecurityUtils.AESEncode("1");
-        System.out.println(encode);
-        System.out.println(SecurityUtils.AESDncode(encode));
-    }
 }
