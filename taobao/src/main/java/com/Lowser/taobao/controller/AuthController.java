@@ -7,13 +7,12 @@ import com.Lowser.taobao.dao.domain.AppConfig;
 import com.Lowser.taobao.dao.repository.AccessTokenRepository;
 import com.Lowser.taobao.dao.repository.AppConfigRepository;
 import com.Lowser.taobao.utils.UrlUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Controller
@@ -36,11 +35,25 @@ public class AuthController extends BaseController{
         AppConfig appConfig = appConfigRepository.findByAppKey(appkey);
         return "redirect:" + UrlUtils.getAuthUrl(appConfig);
     }
-    @GetMapping("/accessToken/{appIdString}")
+    @RequestMapping("/accessToken/{appIdString}")
+    @ResponseBody
     public void getToken(@RequestParam("code") String code, @PathVariable("appIdString") String appIdString) {
         Integer appId =  Integer.parseInt(SecurityUtils.AESDncode(appIdString));
         AccessToken accessToken = UrlUtils.getAccessToken(appConfigRepository.findById(appId).get(), code);
-        accessTokenRepository.save(accessToken);
+        accessToken.setUpdateTime(new Date());
+        AccessToken in = accessTokenRepository.findByUserNick(accessToken.getUserNick());
+        if (in == null) {
+            accessTokenRepository.save(accessToken);
+        }
+        BeanUtils.copyProperties(accessToken, in, "id","insertTime","delete");
+        accessTokenRepository.save(in);
+    }
+    @RequestMapping("/index")
+    public String index() {
+        return "index.html";
+    }
+    public static void main(String[] args) {
+        System.out.println(SecurityUtils.AESDncode("BZrW7DqWpH2lLRbjbYGIzA=="));
     }
 
 }
