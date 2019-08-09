@@ -51,6 +51,32 @@ public class FileTemplate extends BaseEntity {
     private Integer viewNums;
     @Column(name = "group_id")
     private Integer groupId;
+    /**
+     * 验证码
+     */
+    @Column(name = "code")
+    private String code;
+    /**
+     * 资源来源
+     */
+    @Column(name = "from_source")
+    private Integer fromSource;
+
+    public Integer getFromSource() {
+        return fromSource;
+    }
+
+    public void setFromSource(Integer fromSource) {
+        this.fromSource = fromSource;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getUrl2() {
         return url2;

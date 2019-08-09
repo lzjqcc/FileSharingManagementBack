@@ -11,12 +11,48 @@ public class FileTemplateParam {
     private String description;
     @NotNull
     private Integer groupId;
-    @NotNull
     private Integer tagId;
+    /**资源来源
+     * @see com.Lowser.sharefile.enums.FromSourceEnum
+     */
+    private Integer fromSource;
+    /**
+     * 验证码（百度云资源等等）
+     */
+    private String code;
+    /**
+     * 第三方网站的cookie(百度网盘等)
+     */
+    private String cookie;
+
+    public String getCookie() {
+        return cookie;
+    }
+
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
+    }
+
     private Integer fileSize;
     private String fileFormat;
     private List<String> tagNames;
     private List<String> imageUrls;
+
+    public Integer getFromSource() {
+        return fromSource;
+    }
+
+    public void setFromSource(Integer fromSource) {
+        this.fromSource = fromSource;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public List<String> getTagNames() {
         return tagNames;

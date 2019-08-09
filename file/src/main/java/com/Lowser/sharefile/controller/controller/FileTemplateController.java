@@ -14,6 +14,7 @@ import com.Lowser.sharefile.dao.repository.FileTemplateRepository;
 import com.Lowser.sharefile.dao.repository.GroupRepository;
 import com.Lowser.sharefile.dao.repository.ImageRepository;
 import com.Lowser.sharefile.dao.repository.TagRepository;
+import com.Lowser.sharefile.helper.ImageHelper;
 import com.Lowser.sharefile.utils.GenerateNum;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class FileTemplateController {
     private FileTemplateRepository fileTemplateRepository;
     @Autowired
     private ImageRepository imageRepository;
+    @Autowired
+    private ImageHelper imageHelper;
+
     @PostConstruct
     public void intit(){
         int i = 0;
@@ -91,7 +95,11 @@ public class FileTemplateController {
             FileTemplate fileTemplate = new FileTemplate();
             BeanUtils.copyProperties(fileTemplateParam, fileTemplate);
             fileTemplate.setFileNum(GenerateNum.getNum());
-            saveImages(fileTemplateParam.getImageUrls(), fileTemplate.getFileNum());
+            if (StringUtils.isEmpty(fileTemplateParam.getImageUrls())) {
+                saveImages(imageHelper.getImages(fileTemplateParam), fileTemplate.getFileNum());
+            }else {
+                saveImages(fileTemplateParam.getImageUrls(), fileTemplate.getFileNum());
+            }
             saveTags(fileTemplateParam.getTagNames(), fileTemplate.getFileNum());
             fileTemplates.add(fileTemplate);
         }

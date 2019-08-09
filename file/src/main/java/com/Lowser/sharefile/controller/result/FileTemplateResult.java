@@ -13,7 +13,16 @@ public class FileTemplateResult {
     private String fileNum;
     private Integer fileSize;
     private Integer viewNums;
+    private String code;
     private List<TagResult> tagResults;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public List<TagResult> getTagResults() {
         return tagResults;
