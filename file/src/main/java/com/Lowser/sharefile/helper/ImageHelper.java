@@ -90,10 +90,17 @@ public class ImageHelper {
             while (zipFile.getEntries().hasMoreElements()) {
                 ZipArchiveEntry zipArchiveEntry = zipFile.getEntries().nextElement();
                 if (inFileTypeEnum(zipArchiveEntry.getName())) {
-                    InputStream zipFileInputStream = zipFile.getInputStream(zipArchiveEntry);
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                    IOUtils.copy(zipFileInputStream, outputStream);
-                    return PPTUtils.ppt2Png(outputStream.toByteArray());
+                    ByteArrayOutputStream outputStream = null;
+                    InputStream zipFileInputStream = null;
+                    try {
+                        zipFileInputStream = zipFile.getInputStream(zipArchiveEntry);
+                        outputStream = new ByteArrayOutputStream();
+                        IOUtils.copy(zipFileInputStream, outputStream);
+                        return PPTUtils.ppt2Png(outputStream.toByteArray());
+                    }finally {
+                        IOUtils.closeQuietly(outputStream);
+                        IOUtils.closeQuietly(zipFileInputStream);
+                    }
                 }
             }
             throw new BizException("压缩文件中不存在文件");
