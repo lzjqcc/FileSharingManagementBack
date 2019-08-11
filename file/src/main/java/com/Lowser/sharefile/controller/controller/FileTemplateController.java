@@ -89,7 +89,7 @@ public class FileTemplateController {
         return toFileTemplateResult(page);
     }
     @PostMapping("/fileTemplate/upload")
-    public void uploadFile(List<FileTemplateParam> fileTemplateParams) {
+    public Object uploadFile(List<FileTemplateParam> fileTemplateParams) {
         List<FileTemplate> fileTemplates = new ArrayList<>();
         for (FileTemplateParam fileTemplateParam : fileTemplateParams) {
             FileTemplate fileTemplate = new FileTemplate();
@@ -103,7 +103,8 @@ public class FileTemplateController {
             saveTags(fileTemplateParam.getTagNames(), fileTemplate.getFileNum());
             fileTemplates.add(fileTemplate);
         }
-        fileTemplateRepository.saveAll(fileTemplates);
+        return fileTemplates;
+        //fileTemplateRepository.saveAll(fileTemplates);
     }
 
     private void saveTags(List<String> tagNames, String fileNum) {

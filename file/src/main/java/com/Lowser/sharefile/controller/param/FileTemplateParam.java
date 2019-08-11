@@ -34,6 +34,7 @@ public class FileTemplateParam {
     }
 
     private Integer fileSize;
+    @NotNull
     private String fileFormat;
     private List<String> tagNames;
     private List<String> imageUrls;

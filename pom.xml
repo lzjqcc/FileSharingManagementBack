@@ -41,9 +41,22 @@
 				<artifactId>poi-ooxml</artifactId>
 				<version>4.1.0</version>
 			</dependency>
+			<!--解压rar-->
+			<!-- https://mvnrepository.com/artifact/com.github.junrar/junrar -->
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.18</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+		<dependency>
+			<groupId>com.github.junrar</groupId>
+			<artifactId>junrar</artifactId>
+			<version>4.0.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
