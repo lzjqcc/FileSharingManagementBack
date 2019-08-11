@@ -8,23 +8,17 @@ import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
-import org.apache.commons.io.FileUtils;
-import org.apache.tomcat.util.buf.ByteChunk;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import sun.nio.ch.FileChannelImpl;
 
 import java.io.*;
-import java.nio.channels.ByteChannel;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,19 +46,21 @@ public class ImageHelper {
                 throw new BizException("转换图片失败，文件类型" + fileTemplateParam.getFileFormat(), entity.toString());
             }
         }
-        throw new BizException(entity.toString());
+        throw new BizException("请求失败：status = "+ entity.getStatusCode() + "\n" +entity.toString());
     }
 
     /**
      * 获取文件头类型
+     *
      * @param bytes
      * @return
      */
     private static String getFileType(byte[] bytes) {
-        byte[] fileType = Arrays.copyOf(bytes,4);
+        byte[] fileType = Arrays.copyOf(bytes, 4);
         return byteToHexString(fileType);
 
     }
+
     private static String byteToHexString(byte[] b) {
         StringBuilder stringBuilder = new StringBuilder();
         if (b == null || b.length <= 0) {
@@ -92,8 +88,8 @@ public class ImageHelper {
             SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(bytes);
             ZipFile zipFile = new ZipFile(inMemoryByteChannel);
             while (zipFile.getEntries().hasMoreElements()) {
-                ZipArchiveEntry zipArchiveEntry  = zipFile.getEntries().nextElement();
-                if (isPPTOrPPTX(zipArchiveEntry.getName())) {
+                ZipArchiveEntry zipArchiveEntry = zipFile.getEntries().nextElement();
+                if (inFileTypeEnum(zipArchiveEntry.getName())) {
                     InputStream zipFileInputStream = zipFile.getInputStream(zipArchiveEntry);
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     IOUtils.copy(zipFileInputStream, outputStream);
@@ -103,40 +99,44 @@ public class ImageHelper {
             throw new BizException("压缩文件中不存在文件");
         }
     }
-    private static boolean isPPTOrPPTX(String name) {
-        if (name.endsWith("pptx") || name.endsWith("ppt")) {
-            return true;
+
+    private static boolean inFileTypeEnum(String name) {
+        FileTypeEnum[] fileTypeEnums = FileTypeEnum.values();
+        for (FileTypeEnum fileTypeEnum : fileTypeEnums) {
+            if (fileTypeEnum.singleFile && name.endsWith(fileTypeEnum.description)) {
+                return true;
+            }
         }
         return false;
     }
+
     private static class RaRFile2Image implements File2Image {
 
         @Override
         public List<String> toImageUrl(byte[] bytes) throws IOException, RarException {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-            Archive archive = new Archive(inputStream);
-            List<FileHeader> fileHeaders = archive.getFileHeaders();
-            if (fileHeaders == null) {
-                throw new BizException("压缩文件中不存在文件");
-            }
-            if (CollectionUtils.isEmpty(fileHeaders)) {
-                throw new BizException("解压rar文件失败: 请确认压缩文件中只存在一个文件");
-            }
-            FileHeader fileHeader = fileHeaders.get(0);
             ByteOutputStream outputStream = null;
             try {
-                outputStream = new ByteOutputStream();
-                archive.extractFile(fileHeader, outputStream);
-                return PPTUtils.ppt2Png(outputStream.getBytes());
-            }catch (Exception e) {
-                throw e;
-            }finally {
-                if (outputStream != null) {
-                    outputStream.close();
+                Archive archive = new Archive(inputStream);
+                List<FileHeader> fileHeaders = archive.getFileHeaders();
+                if (fileHeaders == null) {
+                    throw new BizException("压缩文件中不存在文件");
                 }
-
+                if (CollectionUtils.isEmpty(fileHeaders)) {
+                    throw new BizException("解压rar文件失败: 请确认压缩文件中只存在一个文件");
+                }
+                for (FileHeader fileHeader : fileHeaders) {
+                    if (inFileTypeEnum(fileHeader.getFileNameString())) {
+                        outputStream = new ByteOutputStream();
+                        archive.extractFile(fileHeader, outputStream);
+                        return PPTUtils.ppt2Png(outputStream.getBytes());
+                    }
+                }
+            } finally {
+                IOUtils.closeQuietly(outputStream);
+                IOUtils.closeQuietly(inputStream);
             }
-
+            return null;
         }
     }
 
@@ -149,18 +149,23 @@ public class ImageHelper {
     }
 
     private static enum FileTypeEnum {
-        RAR("52617221", "rar", new RaRFile2Image()),
-        ZIP("504B0304", "zip", new ZipFile2Image()),
-        PPT("255044462D312E", "ppt", new PPTFile2Image()),
-        PPTX("504B0304", "pptx", new PPTFile2Image());
+        RAR("52617221", "rar", false, new RaRFile2Image()),
+        ZIP("504B0304", "zip", false, new ZipFile2Image()),
+        PPT("255044462D312E", "ppt", true, new PPTFile2Image()),
+        PPTX("504B0304", "pptx",true, new PPTFile2Image());
         private String type;
         private String description;
         private File2Image file2Image;
-
-        FileTypeEnum(String type, String description, File2Image file2Image) {
+        private boolean singleFile;
+        FileTypeEnum(String type, String description,boolean singleFile, File2Image file2Image) {
             this.type = type;
             this.description = description;
             this.file2Image = file2Image;
+            this.singleFile = singleFile;
+        }
+
+        public boolean isSingleFile() {
+            return singleFile;
         }
 
         public static File2Image getFile2Image(String type) {
