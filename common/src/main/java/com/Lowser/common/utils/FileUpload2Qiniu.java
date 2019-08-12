@@ -1,7 +1,6 @@
-package com.Lowser.sharefile.helper;
+package com.Lowser.common.utils;
 
 import com.Lowser.common.error.BizException;
-import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
@@ -11,9 +10,7 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringUtils;
-import org.apache.commons.compress.utils.IOUtils;
 
-import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

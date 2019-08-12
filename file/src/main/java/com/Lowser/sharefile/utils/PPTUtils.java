@@ -1,7 +1,7 @@
 package com.Lowser.sharefile.utils;
 
 import com.Lowser.common.error.BizException;
-import com.Lowser.sharefile.helper.FileUpload2Qiniu;
+import com.Lowser.common.utils.FileUpload2Qiniu;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;

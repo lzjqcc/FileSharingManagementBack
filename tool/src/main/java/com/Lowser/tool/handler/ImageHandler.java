@@ -1,5 +1,6 @@
 package com.Lowser.tool.handler;
 
+import com.Lowser.common.utils.FileUpload2Qiniu;
 import com.alibaba.fastjson.JSONObject;
 
 import javax.imageio.ImageIO;
@@ -27,6 +28,6 @@ public class ImageHandler extends AbstractHandler {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         BufferedImage bufferedImage = ImageIO.read(inputStream);
         ImageIO.write(bufferedImage, jsonObject.getString("toType"), outputStream);
-        return null;
+        return FileUpload2Qiniu.uploadToFile(outputStream.toByteArray());
     }
 }
