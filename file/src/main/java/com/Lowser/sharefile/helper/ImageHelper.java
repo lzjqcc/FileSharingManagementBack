@@ -198,11 +198,7 @@ public class ImageHelper {
     }
 
     public static void main(String[] args) throws IOException, RarException {
-        File file = new File("/home/li/Downloads/zip.zip");
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] bytes = IOUtils.toByteArray(fileInputStream);
-        FileTypeEnum.getFile2Image("zip").toImageUrl(bytes);
-
+        System.out.println(System.currentTimeMillis() + 1565583576);
     }
 
 
