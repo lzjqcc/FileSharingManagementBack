@@ -23,11 +23,18 @@ public class ImageHandler extends AbstractHandler {
      * @param jsonObject
      * @return
      */
-    public String imageChange(byte[] bytes, JSONObject jsonObject) throws IOException {
+    public String imageChangeType(byte[] bytes, JSONObject jsonObject) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(2048);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         BufferedImage bufferedImage = ImageIO.read(inputStream);
+        jsonObject.getString("with");
+        jsonObject.getString("height");
         ImageIO.write(bufferedImage, jsonObject.getString("toType"), outputStream);
         return FileUpload2Qiniu.uploadToFile(outputStream.toByteArray());
     }
+    public String imageChangeSize(byte[] bytes, JSONObject jsonObject) {
+        jsonObject.get("with");
+        jsonObject.get("height");
+    }
+
 }
