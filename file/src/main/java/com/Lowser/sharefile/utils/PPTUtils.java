@@ -1,13 +1,18 @@
 package com.Lowser.sharefile.utils;
 
 import com.Lowser.common.error.BizException;
-import org.apache.batik.transcoder.TranscoderException;
+import com.Lowser.sharefile.helper.FileUpload2Qiniu;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.hslf.usermodel.HSLFTextShape;
-import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.sl.usermodel.Shape;
-import org.apache.poi.xslf.usermodel.*;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
+import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -30,7 +35,7 @@ public class PPTUtils {
             throw new BizException("ppt 转图片错误");
         }
         Dimension pgsize = slideShow.getPageSize();
-
+        List<String> imageUrls = new ArrayList<>();
         for (Object object : slideShow.getSlides()) {
             Slide slide = null;
             if (object instanceof Slide) {
@@ -62,32 +67,28 @@ public class PPTUtils {
             BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = img.createGraphics();
             graphics.setPaint(Color.white);
-            //graphics.setPaint(slide.getBackground().getFillColor());
             graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
             // render
             slide.draw(graphics);
             // save the output
-            FileOutputStream out = null;
+            ByteArrayOutputStream out = null;
             try {
-                out = new FileOutputStream("/home/li/Downloads/pptImage/" + slide.getSlideName() + ".png");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            try {
+                out = new ByteArrayOutputStream();
                 javax.imageio.ImageIO.write(img, "png", out);
+                imageUrls.add(FileUpload2Qiniu.uploadToFile(out.toByteArray()));
             } catch (IOException e) {
                 e.printStackTrace();
+            }finally {
+                IOUtils.closeQuietly(out);
             }
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
-        return new ArrayList<>();
+        return imageUrls;
     }
     public static void main(String[] args) throws FileNotFoundException {
-        FileInputStream inputStream = new FileInputStream(new File("/home/li/Downloads/c.ppt"));
-        toPng(inputStream);
+        List<String> imageUrls = toPng(new FileInputStream("D:\\d.pptx"));
+        for (String imageUrl : imageUrls) {
+            System.out.println(imageUrl);
+        }
     }
 }

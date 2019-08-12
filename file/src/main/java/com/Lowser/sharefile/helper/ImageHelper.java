@@ -6,7 +6,6 @@ import com.Lowser.sharefile.utils.PPTUtils;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
@@ -122,7 +121,7 @@ public class ImageHelper {
         @Override
         public List<String> toImageUrl(byte[] bytes) throws IOException, RarException {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-            ByteOutputStream outputStream = null;
+            ByteArrayOutputStream outputStream = null;
             try {
                 Archive archive = new Archive(inputStream);
                 List<FileHeader> fileHeaders = archive.getFileHeaders();
@@ -134,9 +133,9 @@ public class ImageHelper {
                 }
                 for (FileHeader fileHeader : fileHeaders) {
                     if (inFileTypeEnum(fileHeader.getFileNameString())) {
-                        outputStream = new ByteOutputStream();
+                        outputStream = new ByteArrayOutputStream();
                         archive.extractFile(fileHeader, outputStream);
-                        return PPTUtils.ppt2Png(outputStream.getBytes());
+                        return PPTUtils.ppt2Png(outputStream.toByteArray());
                     }
                 }
             } finally {

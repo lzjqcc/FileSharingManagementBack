@@ -49,9 +49,15 @@
 				<artifactId>commons-compress</artifactId>
 				<version>1.18</version>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>7.2.23</version>
+		</dependency>
 		<dependency>
 			<groupId>com.github.junrar</groupId>
 			<artifactId>junrar</artifactId>
