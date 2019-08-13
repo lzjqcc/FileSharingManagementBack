@@ -1,18 +1,15 @@
 package com.Lowser.tool.handler;
 
 import com.Lowser.common.error.BizException;
+import com.Lowser.tool.annotations.MethodParams;
 import com.Lowser.tool.utils.QRCodeUtils;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -23,20 +20,7 @@ import java.util.Base64;
  */
 public class TextHandler extends AbstractHandler {
 
-    public String urlEncode(String url) {
-        try {
-            return URLEncoder.encode(url, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new BizException("不支持编码： " + e.getMessage());
-        }
-    }
-    public String urlDecode(String url) {
-        try {
-            return URLDecoder.decode(url, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new BizException("不支持编码： " + e.getMessage());
-        }
-    }
+    @MethodParams
     public String base64Decode(String text) {
         byte[] bytes = null;
         try {
@@ -46,6 +30,7 @@ public class TextHandler extends AbstractHandler {
             throw new BizException("不支持编码");
         }
     }
+    @MethodParams
     public String base64Encode(String text) {
         try {
             return Base64.getEncoder().encodeToString(text.getBytes("UTF-8"));
@@ -59,6 +44,7 @@ public class TextHandler extends AbstractHandler {
      * @param text 链接 or bas4图片
      * @return
      */
+    @MethodParams(description = "识别链接或者base64图片二维码")
     public  String readQRCode(String text) {
         if (UrlUtils.isAbsoluteUrl(text)) {
             return QRCodeUtils.readQRCode(text);
@@ -84,6 +70,8 @@ public class TextHandler extends AbstractHandler {
      * @param jsonObject
      * @return
      */
+    @MethodParams(ext = "{\"width\":\"int-1\",\"height\":\"int-1\",\"imageUrl\":\"String-0\"}", limit = true, limitTimes = 50,
+    description = "创建二维码")
     public String createQRCode(String text, JSONObject jsonObject) throws IOException {
         Integer width = jsonObject.getInteger("width");
         Integer height = jsonObject.getInteger("height");

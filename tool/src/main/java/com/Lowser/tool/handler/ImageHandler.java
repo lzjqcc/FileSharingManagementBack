@@ -1,22 +1,18 @@
 package com.Lowser.tool.handler;
 
 import com.Lowser.common.utils.FileUpload2Qiniu;
+import com.Lowser.tool.annotations.MethodParams;
 import com.Lowser.tool.utils.QRCodeUtils;
 import com.alibaba.fastjson.JSONObject;
 import net.coobird.thumbnailator.Thumbnails;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Iterator;
 
 public class ImageHandler extends AbstractHandler {
-
+    @MethodParams(description = "图片转base64")
     public byte[] imageBase64Decode(byte[] bytes) throws UnsupportedEncodingException {
         return bytes;
     }
@@ -28,6 +24,8 @@ public class ImageHandler extends AbstractHandler {
      * @param jsonObject
      * @return
      */
+    @MethodParams(ext = "{\"newWidth\":\"int-0\",\"quality\":\"float-0\",\"imageType\":\"String-0\"}",
+            limit = true, limitTimes = 50, description = "修改图片(压缩、拉伸、转换)")
     public String imageChangeType(byte[] bytes, JSONObject jsonObject) throws IOException {
         Integer width = jsonObject.getInteger("newWidth");
         //
@@ -67,6 +65,7 @@ public class ImageHandler extends AbstractHandler {
      * @param bytes
      * @return
      */
+    @MethodParams(description = "识别上传的二维码")
     public String readQRCode(byte[] bytes) {
         return QRCodeUtils.readQRCode(bytes);
     }
