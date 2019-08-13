@@ -7,8 +7,8 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.common.StringUtils;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -52,33 +52,11 @@ public class QRCodeUtils {
             throw new BizException("识别失败");
         }
     }
-    public static String createQRCode(String content, int width, int height) {
-        byte[] qrCode = encode(content, width, height, null);
-        return FileUpload2Qiniu.uploadToFileAutoDeleteAfterOneDay(qrCode);
-    }
-    public static String createQRCode(String contents, int width, int height, byte[] bytes) {
-        try {
-            byte[] qrCode = encode(contents, width, height, ImageIO.read(new ByteArrayInputStream(bytes)));
-            return FileUpload2Qiniu.uploadToFileAutoDeleteAfterOneDay(qrCode);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    public static String createQRCode(String content, int width, int height , String url) {
-        try {
-            byte[] qrCode = encode(content, width, height, ImageIO.read(new URL(url)));
-            return FileUpload2Qiniu.uploadToFileAutoDeleteAfterOneDay(qrCode);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    private static byte[] encode(String contents, int width, int height, BufferedImage logo) {
-        Map<EncodeHintType, Object> hints = new Hashtable();
+    public static String createQRCode(String contents, int width, int height, BufferedImage logo) {
+        Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
-        hints.put(EncodeHintType.MARGIN, Integer.valueOf(2));
+        hints.put(EncodeHintType.MARGIN, 2);
 
         try {
             BitMatrix bitMatrix = (new MultiFormatWriter()).encode(contents, BarcodeFormat.QR_CODE, width, height, hints);
@@ -94,7 +72,7 @@ public class QRCodeUtils {
                 logo.flush();
             }
             ImageIO.write(image, "png", baos);
-            return baos.toByteArray();
+            return FileUpload2Qiniu.uploadToFileAutoDeleteAfterOneDay(baos.toByteArray());
         } catch (Exception var9) {
             var9.printStackTrace();
             return null;

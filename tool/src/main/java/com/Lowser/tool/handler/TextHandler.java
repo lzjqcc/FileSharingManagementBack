@@ -7,9 +7,13 @@ import org.springframework.security.web.util.UrlUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Base64;
@@ -80,14 +84,14 @@ public class TextHandler extends AbstractHandler {
      * @param jsonObject
      * @return
      */
-    public String createQRCode(String text, JSONObject jsonObject) {
+    public String createQRCode(String text, JSONObject jsonObject) throws IOException {
         Integer width = jsonObject.getInteger("width");
         Integer height = jsonObject.getInteger("height");
         String imageUrl = jsonObject.getString("imageUrl");
         if (StringUtils.isEmpty(imageUrl)) {
-            return QRCodeUtils.createQRCode(text, width, height);
+            return QRCodeUtils.createQRCode(text, width, height, null);
         }
-        return QRCodeUtils.createQRCode(text, width, height, imageUrl);
+        return QRCodeUtils.createQRCode(text, width, height, ImageIO.read(new URL(text)));
     }
 
 }
