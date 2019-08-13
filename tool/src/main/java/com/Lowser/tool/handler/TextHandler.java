@@ -91,7 +91,11 @@ public class TextHandler extends AbstractHandler {
         if (StringUtils.isEmpty(imageUrl)) {
             return QRCodeUtils.createQRCode(text, width, height, null);
         }
-        return QRCodeUtils.createQRCode(text, width, height, ImageIO.read(new URL(text)));
+        return QRCodeUtils.createQRCode(text, width, height, ImageIO.read(new URL(imageUrl)));
     }
 
+    public static void main(String[] args) throws IOException {
+        String url = "https://crm.mytijian.com/static/img/rili.0bac3ac.png";
+        System.out.println(ImageIO.read(new URL(url)));
+    }
 }

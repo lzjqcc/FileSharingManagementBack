@@ -15,15 +15,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/tool")
 public class ToolController {
-    @GetMapping(value = "/handleString")
-    public Object handleString(String type, String action, String needHandle,
-                               @RequestParam(name = "ext", required = false) String ext) {
+    @PostMapping(value = "/handleString")
+    public Object handleString(String type, String action,@RequestBody Map<String, Object> needHandlerMap) {
         Handler stringHandler = getHandler(type);
         JSONObject jsonObject = null;
-        if (!StringUtils.isEmpty(ext)) {
-            jsonObject = JSONObject.parseObject(ext, JSONObject.class);
+        if (!StringUtils.isEmpty(needHandlerMap.get("ext"))) {
+            jsonObject = JSONObject.parseObject(JSONObject.toJSONString(needHandlerMap.get("ext")), JSONObject.class);
         }
-        return stringHandler.handler(action, needHandle, jsonObject);
+        return stringHandler.handler(action, needHandlerMap.get("text"), jsonObject);
     }
     @PostMapping(value = "/handleImage")
     public Object handleImage(@RequestParam(value = "image") MultipartFile file, @RequestParam("type") String type,
