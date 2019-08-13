@@ -1,4 +1,4 @@
-package com.Lowser.sharefile.utils;
+package com.Lowser.common.utils;
 
 
 import java.text.SimpleDateFormat;

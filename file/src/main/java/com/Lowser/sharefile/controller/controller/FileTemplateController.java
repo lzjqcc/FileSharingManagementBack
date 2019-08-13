@@ -15,7 +15,7 @@ import com.Lowser.sharefile.dao.repository.GroupRepository;
 import com.Lowser.sharefile.dao.repository.ImageRepository;
 import com.Lowser.sharefile.dao.repository.TagRepository;
 import com.Lowser.sharefile.helper.ImageHelper;
-import com.Lowser.sharefile.utils.GenerateNum;
+import com.Lowser.common.utils.GenerateNum;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

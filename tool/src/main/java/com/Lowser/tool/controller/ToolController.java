@@ -15,14 +15,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/tool")
 public class ToolController {
-    @PostConstruct
-    public void init() {
-        int i = 0;
-    }
     @GetMapping(value = "/handleString")
-    public Object handleString(String type, String action, String needHandle) {
+    public Object handleString(String type, String action, String needHandle,
+                               @RequestParam(name = "ext", required = false) String ext) {
         Handler stringHandler = getHandler(type);
-        return stringHandler.handler(action, needHandle, null);
+        JSONObject jsonObject = null;
+        if (!StringUtils.isEmpty(ext)) {
+            jsonObject = JSONObject.parseObject(ext, JSONObject.class);
+        }
+        return stringHandler.handler(action, needHandle, jsonObject);
     }
     @PostMapping(value = "/handleImage")
     public Object handleImage(@RequestParam(value = "image") MultipartFile file, @RequestParam("type") String type,
@@ -38,6 +39,7 @@ public class ToolController {
         }
         return stringHandler.handler(action, file.getBytes(), jsonObject);
     }
+
     private Handler getHandler(String type) {
         HandlerTypeEnum[] typeEnums = HandlerTypeEnum.values();
         for (HandlerTypeEnum handlerTypeEnum : typeEnums) {
