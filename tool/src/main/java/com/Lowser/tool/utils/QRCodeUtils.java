@@ -9,6 +9,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.common.StringUtils;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import org.apache.tomcat.util.buf.HexUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Random;
 
 public class QRCodeUtils {
     public static String readQRCode(byte[] bytes) {
@@ -59,20 +61,40 @@ public class QRCodeUtils {
         hints.put(EncodeHintType.MARGIN, 2);
 
         try {
-            BitMatrix bitMatrix = (new MultiFormatWriter()).encode(contents, BarcodeFormat.QR_CODE, width, height, hints);
-            BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            if (logo != null) {
-                image = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_sRGB), null).filter(image, null);
-                Graphics2D graphics2D = image.createGraphics();
-                int logoWith = 40,logoHeight = 40;
-                int x = (250-logoWith)/2, y = (250 - logoHeight)/2;
-                graphics2D.drawImage(logo,x,y,logoWith,logoHeight,null);
-                image.flush();
-                logo.flush();
+            BitMatrix matrix = (new MultiFormatWriter()).encode(contents, BarcodeFormat.QR_CODE, width, height, hints);
+            //BufferedImage image = MatrixToImageWriter.toBufferedImage(matrix);
+            int w = matrix.getWidth();
+            int h = matrix.getHeight();
+            int[] data = new int[w * h];
+            for (int y = 0; y < h; y++) {
+                for (int x = 0; x < w; x++) {
+                    if(matrix.get(x, y)){
+                        Color color = new Color(244, 198, 11);
+                        int colorInt = color.getRGB();
+                        data[y * w + x] = colorInt;
+                    }else{
+                        data[y * w + x] = -1;//白色
+                    }
+                }
             }
-            ImageIO.write(image, "png", baos);
-            return FileUpload2Qiniu.uploadToFileAutoDeleteAfterOneDay(baos.toByteArray());
+            //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            if (logo != null) {
+//                image = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_sRGB), null).filter(image, null);
+//                Graphics2D graphics2D = image.createGraphics();
+//                graphics2D.setColor(Color.WHITE);
+//                int logoWith = 40,logoHeight = 40;
+//                int x = (250-logoWith)/2, y = (250 - logoHeight)/2;
+//                graphics2D.drawImage(logo,x,y,logoWith,logoHeight,null);
+//                image.flush();
+//                logo.flush();
+//            }
+            BufferedImage image = new BufferedImage(width, height,
+                    BufferedImage.TYPE_INT_RGB);
+            image.getRaster().setDataElements(0, 0, width, height, data);
+            //ImageIO.write(image, "png", baos);
+            ImageIO.write(image, "png", new FileOutputStream("/home/li/Downloads/pptImage/a.png"));
+            //return FileUpload2Qiniu.uploadToFileAutoDeleteAfterOneDay(baos.toByteArray());
+            return null;
         } catch (Exception var9) {
             var9.printStackTrace();
             return null;
@@ -80,6 +102,6 @@ public class QRCodeUtils {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println(readQRCode(""));
+        System.out.println(createQRCode("as", 200, 200, null));
     }
 }
