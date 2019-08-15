@@ -75,16 +75,17 @@ public class TextHandler extends AbstractHandler {
      * @param jsonObject
      * @return
      */
-    @MethodParams(ext = "{\"width\":\"int-1\",\"height\":\"int-1\",\"imageUrl\":\"String-0\"}", limit = true, limitTimes = 50,
+    @MethodParams(ext = "{\"red\":\"int-1\",\"green\":\"int-1\",\"blue\":\"int-1\",\"width\":\"int-1\",\"height\":\"int-1\",\"logoUrl\":\"String-0\",\"backgroundUrl\":\"String-0\"}", limit = true, limitTimes = 50,
     description = "创建二维码")
     public String createQRCode(String text, JSONObject jsonObject) throws IOException {
         Integer width = jsonObject.getInteger("width");
         Integer height = jsonObject.getInteger("height");
-        String imageUrl = jsonObject.getString("imageUrl");
-        if (StringUtils.isEmpty(imageUrl)) {
-            return fileUpload2QiniuService.uploadToFileAutoDeleteAfterOneDay(QRCodeUtils.createQRCode(text, width, height, null));
-        }
-        return fileUpload2QiniuService.uploadToFileAutoDeleteAfterOneDay(QRCodeUtils.createQRCode(text, width, height, ImageIO.read(new URL(imageUrl))));
+        String imageUrl = jsonObject.getString("logoUrl");
+        String backgroundImageUrl = jsonObject.getString("backgroundUrl");
+        Integer red = jsonObject.getInteger("red");
+        Integer green = jsonObject.getInteger("green");
+        Integer blue = jsonObject.getInteger("blue");
+        return fileUpload2QiniuService.uploadToFileAutoDeleteAfterOneDay(QRCodeUtils.createQRCode(text, width, height, imageUrl, backgroundImageUrl, red, green, blue ));
     }
 
     public static void main(String[] args) throws IOException {

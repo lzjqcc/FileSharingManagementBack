@@ -1,5 +1,6 @@
 package com.Lowser.taobao.controller;
 
+import com.Lowser.common.dao.domain.AppConfig;
 import com.Lowser.common.utils.SecurityUtils;
 import com.Lowser.taobao.dao.domain.AccessToken;
 import com.Lowser.taobao.dao.repository.AccessTokenRepository;
