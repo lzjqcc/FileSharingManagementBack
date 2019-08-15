@@ -1,27 +1,19 @@
 package com.Lowser.tool.utils;
 
 import com.Lowser.common.error.BizException;
-import com.Lowser.common.utils.FileUpload2Qiniu;
 import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.common.StringUtils;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import org.apache.tomcat.util.buf.HexUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
 import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
-import java.util.Random;
 
 public class QRCodeUtils {
     public static String readQRCode(byte[] bytes) {
@@ -54,7 +46,7 @@ public class QRCodeUtils {
             throw new BizException("识别失败");
         }
     }
-    public static String createQRCode(String contents, int width, int height, BufferedImage logo) {
+    public static byte[] createQRCode(String contents, int width, int height, BufferedImage logo) {
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
@@ -77,7 +69,7 @@ public class QRCodeUtils {
                     }
                 }
             }
-            //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 //            if (logo != null) {
 //                image = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_sRGB), null).filter(image, null);
 //                Graphics2D graphics2D = image.createGraphics();
@@ -92,9 +84,9 @@ public class QRCodeUtils {
                     BufferedImage.TYPE_INT_RGB);
             image.getRaster().setDataElements(0, 0, width, height, data);
             //ImageIO.write(image, "png", baos);
-            ImageIO.write(image, "png", new FileOutputStream("/home/li/Downloads/pptImage/a.png"));
+            ImageIO.write(image, "png", baos);
+            return baos.toByteArray();
             //return FileUpload2Qiniu.uploadToFileAutoDeleteAfterOneDay(baos.toByteArray());
-            return null;
         } catch (Exception var9) {
             var9.printStackTrace();
             return null;

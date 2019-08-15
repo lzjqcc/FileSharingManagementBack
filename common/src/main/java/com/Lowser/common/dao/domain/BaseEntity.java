@@ -1,4 +1,4 @@
-package com.Lowser.common.domain;
+package com.Lowser.common.dao.domain;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -19,7 +19,12 @@ public abstract class BaseEntity {
     @Column(name = "update_time", columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP")
     @UpdateTimestamp
     private Date updateTime;
+    public BaseEntity() {
 
+    }
+    public BaseEntity(Integer id) {
+        this.id = id;
+    }
     public Integer getId() {
         return id;
     }

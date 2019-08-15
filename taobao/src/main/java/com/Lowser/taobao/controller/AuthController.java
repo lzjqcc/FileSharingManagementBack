@@ -1,11 +1,9 @@
 package com.Lowser.taobao.controller;
 
-import com.Lowser.common.error.BizException;
 import com.Lowser.common.utils.SecurityUtils;
 import com.Lowser.taobao.dao.domain.AccessToken;
-import com.Lowser.taobao.dao.domain.AppConfig;
 import com.Lowser.taobao.dao.repository.AccessTokenRepository;
-import com.Lowser.taobao.dao.repository.AppConfigRepository;
+import com.Lowser.common.dao.repository.AppConfigRepository;
 import com.Lowser.taobao.utils.UrlUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Controller
 public class AuthController extends BaseController{

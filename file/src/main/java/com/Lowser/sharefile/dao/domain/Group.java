@@ -1,7 +1,7 @@
 package com.Lowser.sharefile.dao.domain;
 
 
-import com.Lowser.common.domain.BaseEntity;
+import com.Lowser.common.dao.domain.BaseEntity;
 
 import javax.persistence.*;
 

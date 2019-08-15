@@ -1,7 +1,7 @@
-package com.Lowser.sharefile.utils;
+package com.Lowser.sharefile.helper;
 
 import com.Lowser.common.error.BizException;
-import com.Lowser.common.utils.FileUpload2Qiniu;
+import com.Lowser.common.service.FileUpload2QiniuService;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
@@ -13,6 +13,8 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -20,13 +22,15 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-public class PPTUtils {
-    public static List<String> ppt2Png(byte[] pptByte) {
+@Component
+public class PPTHelper {
+    @Autowired
+    private FileUpload2QiniuService fileUpload2QiniuService;
+    public List<String> ppt2Png(byte[] pptByte) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(pptByte);
         return toPng(byteArrayInputStream);
     }
-    private static List<String> toPng(InputStream inputStream) {
+    private  List<String> toPng(InputStream inputStream) {
         SlideShow slideShow = null;
         try {
             slideShow = SlideShowFactory.create(inputStream);
@@ -75,7 +79,7 @@ public class PPTUtils {
             try {
                 out = new ByteArrayOutputStream();
                 javax.imageio.ImageIO.write(img, "png", out);
-                imageUrls.add(FileUpload2Qiniu.uploadToFile(out.toByteArray()));
+                imageUrls.add(fileUpload2QiniuService.uploadToFile(out.toByteArray()));
             } catch (IOException e) {
                 e.printStackTrace();
             }finally {
@@ -84,11 +88,5 @@ public class PPTUtils {
 
         }
         return imageUrls;
-    }
-    public static void main(String[] args) throws FileNotFoundException {
-        List<String> imageUrls = toPng(new FileInputStream("D:\\d.pptx"));
-        for (String imageUrl : imageUrls) {
-            System.out.println(imageUrl);
-        }
     }
 }

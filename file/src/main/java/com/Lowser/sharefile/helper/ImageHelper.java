@@ -2,7 +2,6 @@ package com.Lowser.sharefile.helper;
 
 import com.Lowser.common.error.BizException;
 import com.Lowser.sharefile.controller.param.FileTemplateParam;
-import com.Lowser.sharefile.utils.PPTUtils;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
@@ -10,6 +9,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
+import org.assertj.core.util.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -17,16 +18,37 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ppt or pptx to image
  */
 @Component
 public class ImageHelper {
+    @Autowired
+    private PPTHelper pptHelper;
+    private List<FileType> fileTypes = new ArrayList<>();
+    @PostConstruct
+    public void init() {
+        FileType rar = new FileType("52617221", "rar", false, new RaRFile2Image());
+        FileType zip = new FileType("504B0304", "zip", false, new ZipFile2Image());
+        FileType ppt = new FileType("255044462D312E", "ppt", true, new PPTFile2Image());
+        FileType pptx = new FileType("504B0304", "pptx", true, new PPTFile2Image());
+        fileTypes.addAll(Lists.newArrayList(rar, zip, ppt, pptx));
+    }
+    private File2Image getFile2Image(String fileFormat) {
 
+        Optional<FileType> fileType =  fileTypes.stream().filter(t -> t.description.equals(fileFormat)).findFirst();
+        if (fileType.isPresent()) {
+            return fileType.get().file2Image;
+        }
+        return null;
+    }
     public List<String> getImages(FileTemplateParam fileTemplateParam) {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<MultiValueMap<String, Object>> httpEntity = null;
@@ -38,7 +60,7 @@ public class ImageHelper {
         restTemplate.exchange(fileTemplateParam.getUrl(), HttpMethod.GET, httpEntity, byte[].class);
         ResponseEntity<byte[]> entity = restTemplate.getForEntity(fileTemplateParam.getUrl(), byte[].class);
         if (entity.getStatusCode() == HttpStatus.OK) {
-            File2Image file2Image = FileTypeEnum.getFile2Image(fileTemplateParam.getFileFormat());
+            File2Image file2Image = getFile2Image(fileTemplateParam.getFileFormat());
             try {
                 return file2Image.toImageUrl(entity.getBody());
             } catch (IOException | RarException e) {
@@ -80,7 +102,7 @@ public class ImageHelper {
         List<String> toImageUrl(byte[] bytes) throws IOException, RarException;
     }
 
-    private static class ZipFile2Image implements File2Image {
+    private  class ZipFile2Image implements File2Image {
 
         @Override
         public List<String> toImageUrl(byte[] bytes) throws IOException {
@@ -95,7 +117,7 @@ public class ImageHelper {
                         zipFileInputStream = zipFile.getInputStream(zipArchiveEntry);
                         outputStream = new ByteArrayOutputStream();
                         IOUtils.copy(zipFileInputStream, outputStream);
-                        return PPTUtils.ppt2Png(outputStream.toByteArray());
+                        return pptHelper.ppt2Png(outputStream.toByteArray());
                     }finally {
                         IOUtils.closeQuietly(outputStream);
                         IOUtils.closeQuietly(zipFileInputStream);
@@ -106,9 +128,8 @@ public class ImageHelper {
         }
     }
 
-    private static boolean inFileTypeEnum(String name) {
-        FileTypeEnum[] fileTypeEnums = FileTypeEnum.values();
-        for (FileTypeEnum fileTypeEnum : fileTypeEnums) {
+    private  boolean inFileTypeEnum(String name) {
+        for (FileType fileTypeEnum : fileTypes) {
             if (fileTypeEnum.singleFile && name.endsWith(fileTypeEnum.description)) {
                 return true;
             }
@@ -116,7 +137,7 @@ public class ImageHelper {
         return false;
     }
 
-    private static class RaRFile2Image implements File2Image {
+    private  class RaRFile2Image implements File2Image {
 
         @Override
         public List<String> toImageUrl(byte[] bytes) throws IOException, RarException {
@@ -135,7 +156,7 @@ public class ImageHelper {
                     if (inFileTypeEnum(fileHeader.getFileNameString())) {
                         outputStream = new ByteArrayOutputStream();
                         archive.extractFile(fileHeader, outputStream);
-                        return PPTUtils.ppt2Png(outputStream.toByteArray());
+                        return pptHelper.ppt2Png(outputStream.toByteArray());
                     }
                 }
             } finally {
@@ -146,59 +167,26 @@ public class ImageHelper {
         }
     }
 
-    private static class PPTFile2Image implements File2Image {
+    private  class PPTFile2Image implements File2Image {
 
         @Override
         public List<String> toImageUrl(byte[] bytes) {
-            return PPTUtils.ppt2Png(bytes);
+            return pptHelper.ppt2Png(bytes);
         }
     }
-
-    private static enum FileTypeEnum {
-        RAR("52617221", "rar", false, new RaRFile2Image()),
-        ZIP("504B0304", "zip", false, new ZipFile2Image()),
-        PPT("255044462D312E", "ppt", true, new PPTFile2Image()),
-        PPTX("504B0304", "pptx",true, new PPTFile2Image());
+    private static class FileType {
         private String type;
         private String description;
         private File2Image file2Image;
         private boolean singleFile;
-        FileTypeEnum(String type, String description,boolean singleFile, File2Image file2Image) {
+
+        public FileType(String type, String description,boolean singleFile, File2Image file2Image) {
             this.type = type;
             this.description = description;
             this.file2Image = file2Image;
             this.singleFile = singleFile;
         }
 
-        public boolean isSingleFile() {
-            return singleFile;
-        }
-
-        public static File2Image getFile2Image(String type) {
-            FileTypeEnum[] fileTypeEnums = FileTypeEnum.values();
-            for (FileTypeEnum fileTypeEnum : fileTypeEnums) {
-                if (fileTypeEnum.description.equalsIgnoreCase(type)) {
-                    return fileTypeEnum.file2Image;
-                }
-            }
-            throw new BizException("文件类型不支持", type);
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public File2Image getFile2Image() {
-            return file2Image;
-        }
-    }
-
-    public static void main(String[] args) throws IOException, RarException {
-        System.out.println(System.currentTimeMillis() + 1565583576);
     }
 
 

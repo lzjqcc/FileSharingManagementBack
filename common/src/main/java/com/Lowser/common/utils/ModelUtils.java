@@ -1,6 +1,6 @@
 package com.Lowser.common.utils;
 
-import com.Lowser.common.domain.BaseEntity;
+import com.Lowser.common.dao.domain.BaseEntity;
 import com.Lowser.common.error.SystemError;
 import org.springframework.beans.BeanUtils;
 

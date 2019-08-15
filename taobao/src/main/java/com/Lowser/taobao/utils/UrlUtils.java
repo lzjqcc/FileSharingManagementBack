@@ -1,10 +1,10 @@
 package com.Lowser.taobao.utils;
 
+import com.Lowser.common.dao.domain.AppConfig;
 import com.Lowser.common.error.BizException;
 import com.Lowser.common.error.SystemError;
 import com.Lowser.common.utils.SecurityUtils;
 import com.Lowser.taobao.dao.domain.AccessToken;
-import com.Lowser.taobao.dao.domain.AppConfig;
 import com.alibaba.fastjson.JSON;
 import com.taobao.api.internal.util.WebUtils;
 

@@ -1,10 +1,13 @@
 package com.Lowser.tool.handler;
 
 import com.Lowser.common.error.BizException;
+import com.Lowser.common.service.FileUpload2QiniuService;
 import com.Lowser.tool.annotations.MethodParams;
 import com.Lowser.tool.utils.QRCodeUtils;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.util.UrlUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
@@ -18,8 +21,10 @@ import java.util.Base64;
 /**
  * 文本处理
  */
+@Component
 public class TextHandler extends AbstractHandler {
-
+    @Autowired
+    private FileUpload2QiniuService fileUpload2QiniuService;
     @MethodParams
     public String base64Decode(String text) {
         byte[] bytes = null;
@@ -77,13 +82,18 @@ public class TextHandler extends AbstractHandler {
         Integer height = jsonObject.getInteger("height");
         String imageUrl = jsonObject.getString("imageUrl");
         if (StringUtils.isEmpty(imageUrl)) {
-            return QRCodeUtils.createQRCode(text, width, height, null);
+            return fileUpload2QiniuService.uploadToFileAutoDeleteAfterOneDay(QRCodeUtils.createQRCode(text, width, height, null));
         }
-        return QRCodeUtils.createQRCode(text, width, height, ImageIO.read(new URL(imageUrl)));
+        return fileUpload2QiniuService.uploadToFileAutoDeleteAfterOneDay(QRCodeUtils.createQRCode(text, width, height, ImageIO.read(new URL(imageUrl))));
     }
 
     public static void main(String[] args) throws IOException {
         String url = "https://crm.mytijian.com/static/img/rili.0bac3ac.png";
         System.out.println(ImageIO.read(new URL(url)));
+    }
+
+    @Override
+    public String handlerType() {
+        return "handleString";
     }
 }

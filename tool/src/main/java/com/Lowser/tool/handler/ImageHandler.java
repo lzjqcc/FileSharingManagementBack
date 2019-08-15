@@ -1,17 +1,21 @@
 package com.Lowser.tool.handler;
 
-import com.Lowser.common.utils.FileUpload2Qiniu;
+import com.Lowser.common.service.FileUpload2QiniuService;
 import com.Lowser.tool.annotations.MethodParams;
 import com.Lowser.tool.utils.QRCodeUtils;
 import com.alibaba.fastjson.JSONObject;
 import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-
+@Component
 public class ImageHandler extends AbstractHandler {
+    @Autowired
+    private FileUpload2QiniuService fileUpload2QiniuService;
     @MethodParams(description = "图片转base64")
     public byte[] imageBase64Decode(byte[] bytes) throws UnsupportedEncodingException {
         return bytes;
@@ -43,7 +47,7 @@ public class ImageHandler extends AbstractHandler {
             imageType = "jpg";
         }
         ByteArrayOutputStream outputStream = resize(bytes, width,quality, imageType);
-        return FileUpload2Qiniu.uploadToFileAutoDeleteAfterOneDay(outputStream.toByteArray());
+        return fileUpload2QiniuService.uploadToFileAutoDeleteAfterOneDay(outputStream.toByteArray());
     }
     private  ByteArrayOutputStream resize(byte[] bytes,
                                                 int newWidth, float quality, String imageType) throws IOException {
@@ -71,4 +75,8 @@ public class ImageHandler extends AbstractHandler {
     }
 
 
+    @Override
+    public String handlerType() {
+        return "handleImage";
+    }
 }

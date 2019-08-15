@@ -20,16 +20,17 @@ import java.util.stream.Collectors;
 public class InitService {
     @Autowired
     private LimitRepository limitRepository;
+    @Autowired
+    private List<Handler> handlers;
     @PostConstruct
     public void init() {
         HandlerTypeEnum[] typeEnums = HandlerTypeEnum.values();
-        for (HandlerTypeEnum handlerTypeEnum : typeEnums) {
-            Handler handler = handlerTypeEnum.getStringHandler();
+        for (Handler handler : handlers) {
             Method[] methods = handler.getClass().getMethods();
             List<String> notIncludeActions = notActions();
             List<Method> methodsLists = Lists.newArrayList(methods).stream().filter(t-> !notIncludeActions.contains(t.getName())).collect(Collectors.toList());
             for (Method method : methodsLists) {
-                Limit limit = limitRepository.findByTypeAndAction(handlerTypeEnum.getType(), method.getName());
+                Limit limit = limitRepository.findByTypeAndAction(handler.handlerType(), method.getName());
                 MethodParams extParams = method.getAnnotation(MethodParams.class);
                 if (limit == null ) {
                     limit = new Limit();
@@ -41,7 +42,7 @@ public class InitService {
                         limit.setLimit(extParams.limit());
                     }
                     limit.setAction(method.getName());
-                    limit.setType(handlerTypeEnum.getType());
+                    limit.setType(handler.handlerType());
                     //limitRepository.save(limit);
                     System.out.println(JSONObject.toJSON(limit));
                 }
