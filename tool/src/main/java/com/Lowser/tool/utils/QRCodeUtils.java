@@ -9,6 +9,7 @@ import com.google.zxing.common.BitArray;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import net.coobird.thumbnailator.Thumbnails;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -63,6 +64,9 @@ public class QRCodeUtils {
             BufferedImage backgroundImage = null;
             if (backgroundImageUrl != null) {
                 backgroundImage = ImageIO.read(new URL(backgroundImageUrl));
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                Thumbnails.of(backgroundImage).scale(width / backgroundImage.getWidth(null)).outputQuality(0.8).outputFormat("png").toOutputStream(outputStream);
+                backgroundImage = ImageIO.read(new ByteArrayInputStream(outputStream.toByteArray()));
             }else {
                 backgroundImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             }
