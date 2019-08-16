@@ -11,10 +11,10 @@ public abstract class BaseEntity {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Column(name = "is_delete", columnDefinition = "tinyint default 0")
-    private Boolean delete = false;
+    private Boolean delete ;
     @Column(name = "insert_time", columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.DATE)
-    private Date insertTime = new Date();
+    private Date insertTime ;
     @Temporal(TemporalType.DATE)
     @Column(name = "update_time", columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP")
     @UpdateTimestamp
@@ -34,6 +34,9 @@ public abstract class BaseEntity {
     }
 
     public Boolean getDelete() {
+        if (delete == null) {
+            return false;
+        }
         return delete;
     }
 
@@ -42,6 +45,9 @@ public abstract class BaseEntity {
     }
 
     public Date getInsertTime() {
+        if (insertTime == null) {
+            return new Date();
+        }
         return insertTime;
     }
 
