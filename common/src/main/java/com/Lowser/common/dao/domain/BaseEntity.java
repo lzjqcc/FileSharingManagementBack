@@ -11,10 +11,10 @@ public abstract class BaseEntity {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Column(name = "is_delete", columnDefinition = "tinyint default 0")
-    private Boolean delete;
+    private Boolean delete = false;
     @Column(name = "insert_time", columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.DATE)
-    private Date insertTime;
+    private Date insertTime = new Date();
     @Temporal(TemporalType.DATE)
     @Column(name = "update_time", columnDefinition = "datetime DEFAULT CURRENT_TIMESTAMP")
     @UpdateTimestamp

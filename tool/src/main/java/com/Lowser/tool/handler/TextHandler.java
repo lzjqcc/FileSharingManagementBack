@@ -1,18 +1,21 @@
 package com.Lowser.tool.handler;
 
+import ch.qos.logback.core.rolling.helper.FileStoreUtil;
 import com.Lowser.common.error.BizException;
 import com.Lowser.common.service.FileUpload2QiniuService;
 import com.Lowser.tool.annotations.MethodParams;
 import com.Lowser.tool.utils.QRCodeUtils;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.awt.*;
+import java.io.*;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -83,14 +86,20 @@ public class TextHandler extends AbstractHandler {
         String imageUrl = jsonObject.getString("logoUrl");
         String backgroundImageUrl = jsonObject.getString("backgroundUrl");
         Integer red = jsonObject.getInteger("red");
+        if (red == null) {
+            red = 0;
+        }
         Integer green = jsonObject.getInteger("green");
+        if (green == null) {
+            green = 0;
+        }
         Integer blue = jsonObject.getInteger("blue");
-        return fileUpload2QiniuService.uploadToFileAutoDeleteAfterOneDay(QRCodeUtils.createQRCode(text, width, height, imageUrl, backgroundImageUrl, red, green, blue ));
-    }
-
-    public static void main(String[] args) throws IOException {
-        String url = "https://crm.mytijian.com/static/img/rili.0bac3ac.png";
-        System.out.println(ImageIO.read(new URL(url)));
+        if (blue == null) {
+            blue = 0;
+        }
+        byte[] bytes = QRCodeUtils.createQRCode(text, width, height, imageUrl, backgroundImageUrl, new Color(red, green, blue));
+        ImageIO.write(ImageIO.read(new ByteArrayInputStream(bytes)), "png", new File("D:\\pptImage\\as.png"));
+        return null;
     }
 
     @Override

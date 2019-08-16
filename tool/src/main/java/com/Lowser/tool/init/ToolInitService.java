@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class InitService {
+public class ToolInitService {
     @Autowired
     private LimitRepository limitRepository;
     @Autowired
@@ -43,8 +43,8 @@ public class InitService {
                     }
                     limit.setAction(method.getName());
                     limit.setType(handler.handlerType());
-                    //limitRepository.save(limit);
-                    System.out.println(JSONObject.toJSON(limit));
+                    limitRepository.save(limit);
+                    //System.out.println(JSONObject.toJSON(limit));
                 }
             }
         }

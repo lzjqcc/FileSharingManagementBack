@@ -27,7 +27,7 @@ public class InitService {
         for (WebEnum webEnum : webEnums) {
             AppConfig appConfig = appConfigRepository.findByAppKey(webEnum.getAppConfig().getAppKey());
             if (appConfig == null) {
-                appConfigRepository.save(appConfig);
+                appConfigRepository.save(webEnum.getAppConfig());
             }
         }
     }

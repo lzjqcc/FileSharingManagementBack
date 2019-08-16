@@ -14,6 +14,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.*;
@@ -53,7 +54,7 @@ public class QRCodeUtils {
             throw new BizException("识别失败");
         }
     }
-    public static byte[] createQRCode(String contents, int width, int height, String logoUrl, String backgroundImageUrl, int r, int g, int b) {
+    public static byte[] createQRCode(String contents, int width, int height, String logoUrl, String backgroundImageUrl, Color qrCodeColor) {
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
@@ -75,7 +76,7 @@ public class QRCodeUtils {
             for (int y = 0; y < height; y++) {
                 row = matrix.getRow(y, row);
                 for (int x = 0; x < width; x++) {
-                    rowPixels[x] = row.get(x) ? new Color(r, g, b).getRGB() : backgroundImage.getRGB(x,y);
+                    rowPixels[x] = row.get(x) ? qrCodeColor.getRGB() : backgroundImageUrl == null? Color.WHITE.getRGB() : backgroundImage.getRGB(x,y);
                 }
                 backgroundImage.setRGB(0, y, width, 1, rowPixels, 0, width);
             }
@@ -84,12 +85,14 @@ public class QRCodeUtils {
                 BufferedImage logo = ImageIO.read(new URL(logoUrl));
                 backgroundImage = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_sRGB), null).filter(backgroundImage, null);
                 Graphics2D graphics2D = backgroundImage.createGraphics();
+                graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 graphics2D.setColor(Color.WHITE);
-                int logoWith = 40,logoHeight = 40;
-                int x = (width-logoWith)/2, y = (height - logoHeight)/2;
-                graphics2D.drawImage(logo,x,y,logoWith,logoHeight,null);
+                int x = (width-60)/2, y = (height - 60)/2;
+                graphics2D.drawImage(logo.getScaledInstance(60,60, Image.SCALE_SMOOTH),x,y,60,60,null);
+                graphics2D.dispose();
                 backgroundImage.flush();
                 logo.flush();
+
             }
             ImageIO.write(backgroundImage, "png", baos);
             return baos.toByteArray();

@@ -16,7 +16,7 @@ public abstract class AbstractHandler implements Handler {
             } else {
                 method = this.getClass().getDeclaredMethod(action, needHandler.getClass(), jsonObject.getClass());
             }
-            if (method.getName().equals("handler")) {
+            if (method.getName().equals("handler") || method.getName().equals("handleType")) {
                 throw new BizException("不支持处理");
             }
             if (jsonObject == null) {

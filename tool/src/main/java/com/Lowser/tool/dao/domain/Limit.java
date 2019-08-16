@@ -21,9 +21,9 @@ public class Limit extends BaseEntity{
     /**
      * 限制
      */
-    @Column
+    @Column(name = "limit_times")
     private Integer limitTimes;
-    @Column(name = "limit")
+    @Column(name = "is_limit", columnDefinition = "tinyint default 0")
     private Boolean limit = false;
     private String description;
     private String ext;
