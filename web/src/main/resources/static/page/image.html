@@ -85,6 +85,7 @@
 </body>
 <script>
     // base64
+    console.log(host)
     new EasyUploader({
         "el": "#uploader-btn",
         "name": "image",
@@ -117,7 +118,7 @@
         "el": "#qrcode-img-upload",
         "name": "image",
         "accept": "image/*",
-        "url": host + "/tool/handleImage?action=readQRCode",
+        "url": "/tool/handleImage?action=readQRCode",
         "autoUpload": true,
         "allowFileExt": ["jpg", "jpeg", "png"],
         "compress": true,
