@@ -48,7 +48,7 @@ public class AuthController extends BaseController{
     }
     @RequestMapping("/index")
     public String index() {
-        return "index.html";
+        return "index.page";
     }
     public static void main(String[] args) {
         System.out.println(SecurityUtils.AESDncode("BZrW7DqWpH2lLRbjbYGIzA=="));
