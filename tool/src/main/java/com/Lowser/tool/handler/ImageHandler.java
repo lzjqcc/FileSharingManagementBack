@@ -5,6 +5,7 @@ import com.Lowser.tool.annotations.MethodParams;
 import com.Lowser.tool.utils.QRCodeUtils;
 import com.alibaba.fastjson.JSONObject;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -74,7 +75,12 @@ public class ImageHandler extends AbstractHandler {
         return QRCodeUtils.readQRCode(bytes);
     }
 
-
+    public static void main(String[] args) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        FileInputStream inputStream = new FileInputStream("/home/li/Downloads/pptImage/a.png");
+        IOUtils.copy(inputStream, outputStream);
+        System.out.println(QRCodeUtils.readQRCode(outputStream.toByteArray()));
+    }
     @Override
     public String handlerType() {
         return "handleImage";
