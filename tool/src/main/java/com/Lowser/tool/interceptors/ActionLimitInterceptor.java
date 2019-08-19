@@ -51,6 +51,11 @@ public class ActionLimitInterceptor implements HandlerInterceptor {
         return true;
     }
     private void deleteYesterdayUploadLimit() {
-        uploadLimitRepository.deleteUploadLimitByInsertTimeBefore(new Date());
+        try {
+            uploadLimitRepository.deleteUploadLimitByInsertTimeBefore(new Date());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
