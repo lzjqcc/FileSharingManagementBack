@@ -66,7 +66,7 @@
         <div class="card" style="width: 50%; margin-top: 1%">
             <h5 class="card-header">识别二维码</h5>
             <div class="card-body">
-                <textarea rows="10" class="form-control" placeholder="base64二维码/二维码链接 输入完成后按回车" id="qrcode-read-text"></textarea>
+                <textarea rows="10" class="form-control" placeholder="base64二维码/二维码链接" id="qrcode-read-text"></textarea>
 
             </div>
         </div>
@@ -75,7 +75,8 @@
         <div class="card" style="width: 50%;margin-top: 1%">
             <h5 class="card-header">识别结果</h5>
             <div class="card-body">
-                    dd
+                <p class="card-text" id="qrcode-show"></p>
+
             </div>
         </div>
     </div>
@@ -92,12 +93,8 @@
         "autoUpload": true,
         "allowFileExt": ["jpg", "jpeg", "png"],
         "compress": true,
-        "resize": {
-            "maxWidth": 1000,
-            "maxHeight": 1000
-        },
         "compressQuality": 0.9,
-        "maxFileSize": "10M",
+        "maxFileSize": "2M",
         onUploadProgress: function (e) {
             console.log("上传进度为：" + ((e.loaded / e.total) * 100).toFixed(2) + "%");
         },
@@ -117,19 +114,15 @@
     });
     //二维码
     new EasyUploader({
-        "el": "#uploader-btn",
+        "el": "#qrcode-img-upload",
         "name": "image",
         "accept": "image/*",
-        "url": "http://localhost:8080/tool/handleImage?action=imageBase64Decode",
+        "url": "http://localhost:8080/tool/handleImage?action=readQRCode",
         "autoUpload": true,
         "allowFileExt": ["jpg", "jpeg", "png"],
         "compress": true,
-        "resize": {
-            "maxWidth": 1000,
-            "maxHeight": 1000
-        },
         "compressQuality": 0.9,
-        "maxFileSize": "10M",
+        "maxFileSize": "2M",
         onUploadProgress: function (e) {
             console.log("上传进度为：" + ((e.loaded / e.total) * 100).toFixed(2) + "%");
         },
@@ -137,15 +130,26 @@
             console.log('即将上传。。');
         },
         onUploadComplete: function (data) {
-            $("#base64-img-show").attr("src", "data:image/jpeg;base64," + data.body)
+            $("#qrcode-show").text( data.body)
 
         },
         onUploadError: function (statusCode) {
             console.log(statusCode);
         }
     });
-    $('#base64-img-text').bind('input propertychange', function () {
-        $("#base64-img-show").attr("src", "data:image/jpeg;base64," + $(this).val())
-    });
+    $('#qrcode-read-btn').click(function () {
+        var opt = new Object();
+        opt.text = $("#qrcode-read-text").val();
+        $.ajax({
+            type: 'POST',
+            url: "http://localhost:8080/tool/handleString?action=readQRCode",
+            contentType:"application/json;charset=utf-8",
+            data: JSON.stringify(opt),
+            success:function (data,status) {
+                $("#qrcode-show").text(data.body)
+            }
+        });
+
+    })
 </script>
 </html>

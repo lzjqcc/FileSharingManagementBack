@@ -54,6 +54,10 @@ public class TextHandler extends AbstractHandler {
      */
     @MethodParams(description = "识别链接或者base64图片二维码")
     public  String readQRCode(String text) {
+        if (StringUtils.isEmpty(text)) {
+            throw new BizException("字符不能为空");
+        }
+        text = text.trim();
         if (UrlUtils.isAbsoluteUrl(text)) {
             return QRCodeUtils.readQRCode(text);
         }

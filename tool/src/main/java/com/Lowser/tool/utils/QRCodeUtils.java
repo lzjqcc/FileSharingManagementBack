@@ -51,6 +51,7 @@ public class QRCodeUtils {
             Result result = new MultiFormatReader().decode(binaryBitmap, hints);//解码
             return result.getText();
         } catch (NotFoundException e) {
+            e.printStackTrace();
             throw new BizException("识别失败");
         }
     }
