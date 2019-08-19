@@ -19,7 +19,7 @@
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
     <script src="https://unpkg.com/easyuploader/dist/easyuploader.min.js"></script>
-
+    <script src="../js/Http.js"></script>
 </head>
 <body>
 
@@ -89,7 +89,7 @@
         "el": "#uploader-btn",
         "name": "image",
         "accept": "image/*",
-        "url": "http://localhost:8080/tool/handleImage?action=imageBase64Decode",
+        "url": host +"/tool/handleImage?action=imageBase64Decode",
         "autoUpload": true,
         "allowFileExt": ["jpg", "jpeg", "png"],
         "compress": true,
@@ -117,7 +117,7 @@
         "el": "#qrcode-img-upload",
         "name": "image",
         "accept": "image/*",
-        "url": "http://localhost:8080/tool/handleImage?action=readQRCode",
+        "url": host + "/tool/handleImage?action=readQRCode",
         "autoUpload": true,
         "allowFileExt": ["jpg", "jpeg", "png"],
         "compress": true,
@@ -139,16 +139,23 @@
     });
     $('#qrcode-read-btn').click(function () {
         var opt = new Object();
+
         opt.text = $("#qrcode-read-text").val();
-        $.ajax({
-            type: 'POST',
-            url: "http://localhost:8080/tool/handleString?action=readQRCode",
-            contentType:"application/json;charset=utf-8",
-            data: JSON.stringify(opt),
-            success:function (data,status) {
-                $("#qrcode-show").text(data.body)
-            }
+        postJson(opt,function (data) {
+            $("#qrcode-show").text(data.body)
         });
+//        $.ajax({
+//            type: 'POST',
+//            url: "http://localhost:8080/tool/handleString?action=readQRCode",
+//            contentType:"application/json;charset=utf-8",
+//            data: JSON.stringify(opt),
+//            success:function (data,status) {
+//                $("#qrcode-show").text(data.body)
+//            },
+//            error:function(data) {
+//
+//            }
+//        });
 
     })
 </script>
