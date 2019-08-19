@@ -85,12 +85,12 @@
 </body>
 <script>
     // base64
-    console.log(host)
+    console.log(url)
     new EasyUploader({
         "el": "#uploader-btn",
         "name": "image",
         "accept": "image/*",
-        "url": host +"/tool/handleImage?action=imageBase64Decode",
+        "url": url +"/tool/handleImage?action=imageBase64Decode",
         "autoUpload": true,
         "allowFileExt": ["jpg", "jpeg", "png"],
         "compress": true,
@@ -118,7 +118,7 @@
         "el": "#qrcode-img-upload",
         "name": "image",
         "accept": "image/*",
-        "url": "/tool/handleImage?action=readQRCode",
+        "url": url + "/tool/handleImage?action=readQRCode",
         "autoUpload": true,
         "allowFileExt": ["jpg", "jpeg", "png"],
         "compress": true,
