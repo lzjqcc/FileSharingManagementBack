@@ -5,6 +5,7 @@ import com.Lowser.common.dao.domain.StorageConfig;
 import com.Lowser.common.dao.repository.AppConfigRepository;
 import com.Lowser.common.dao.repository.StorageConfigReposiroty;
 import com.Lowser.common.enums.WebEnum;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class InitService {
         for (WebEnum webEnum : webEnums) {
             AppConfig appConfig = appConfigRepository.findByAppKey(webEnum.getAppConfig().getAppKey());
             if (appConfig == null) {
+                System.out.println(JSON.toJSONString(appConfig));
                 appConfigRepository.save(webEnum.getAppConfig());
             }
         }
