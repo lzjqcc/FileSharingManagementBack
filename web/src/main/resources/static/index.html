@@ -1,12 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cn">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<div>
-    shouquan chenggong
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="url-tab" data-toggle="tab" href="#url" role="tab" aria-controls="home"
+           aria-selected="true">
+            <h6>URL编码</h6>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link " id="base64-tab" data-toggle="tab" href="#base64" role="tab" aria-controls="home"
+           aria-selected="true">
+            <h6>字符base64加密</h6>
+        </a>
+    </li>
+
+</ul>
+<div class="tab-content" style="width: auto">
+    <div  role="tabpanel" class="tab-pane  active" id="url" style="margin-left: 35%;padding-top: 1%">
+        <div class="card" style="width: 50%">
+            <div class="card-header">
+                原链接
+            </div>
+            <div class="card-body">
+
+                <p class="card-text" id="url-show"></p>
+            </div>
+        </div>
+        <div style="width: 50%; margin-top: 1%">
+            <textarea rows="10"  class="form-control" id="url-text"></textarea>
+        </div>
+        <div style="margin-top: 1%;width: 50%">
+            <button  type="button" id="url-decode-btn" style="float: right;margin-left: 5%"  class="btn btn-primary">url decode 解码</button>
+            <button  type="button" id="url-encode-btn" style="float: right" class="btn btn-primary">url encode 编码</button>
+        </div>
+    </div>
+    <div  role="tabpanel" class="tab-pane " id="base64" style="margin-left: 35%;padding-top: 1%">
+        <div class="card" style="width: 50%">
+            <div class="card-header">
+                原字符串
+            </div>
+            <div class="card-body">
+
+                <p class="card-text" id="base64-show"></p>
+            </div>
+        </div>
+        <div style="width: 50%; margin-top: 1%">
+            <textarea rows="10"  class="form-control" id="base64-text"></textarea>
+        </div>
+        <div style="margin-top: 1%;width: 50%">
+            <button  type="button" id="base64-decode-btn" style="float: right;margin-left: 5%"  class="btn btn-primary">解密</button>
+            <button  type="button" id="base64-encode-btn" style="float: right" class="btn btn-primary">加密</button>
+        </div>
+    </div>
 </div>
+
 </body>
+<script src="../js/Base64.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+ $("#url-decode-btn").click(function () {
+     var $url = $("#url-text");
+
+     $url.val(decodeURIComponent($url.val()));
+ });
+ $("#url-encode-btn").click(function () {
+     var $url = $("#url-text");
+
+     $url.val(encodeURIComponent($url.val()));
+ })
+
+ $('#url-text').bind('input propertychange', function(){
+     $("#url-show").text($(this).val());
+ });
+
+ var base = new Base64();
+ $("#base64-decode-btn").click(function () {
+     var $base64 = $("#base64-text");
+     if ($base64.val() == $("#base64-show").text()) {
+         return;
+     }
+     $base64.val(base.decode($base64.val()));
+ });
+ $("#base64-encode-btn").click(function () {
+     var $base64 = $("#base64-text");
+
+     $base64.val(base.encode($base64.val()));
+ })
+
+ $('#base64-text').bind('input propertychange', function(){
+     $("#base64-show").text($(this).val());
+ });
+</script>
 </html>
