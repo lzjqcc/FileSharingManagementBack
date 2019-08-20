@@ -21,6 +21,9 @@
             crossorigin="anonymous"></script>
     <script src="https://unpkg.com/easyuploader/dist/easyuploader.min.js"></script>
     <script src="../js/Http.js"></script>
+    <script type="text/javascript" src="../js/jquery.qrcode.min.js"></script>
+    <link rel="stylesheet" href="../css/jquery.cxcolor.css">
+    <script src="../js/jquery.cxcolor.min.js"></script>
 </head>
 <body>
 
@@ -39,10 +42,19 @@
             <h6>识别二维码</h6>
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" id="qrcode-create-tab" data-toggle="tab" href="#qrcode-create" role="tab"
+           aria-controls="home"
+           aria-selected="true">
+            <h6>创建二维码</h6>
+        </a>
+    </li>
 </ul>
 <div class="tab-content" style="width: auto">
     <div role="tabpanel" class="tab-pane  active" id="base64-img" style="margin-left: 35%;padding-top: 1%">
-        <button type="button" id="uploader-btn" style="margin-left: 22%" class="btn btn-primary">图片上传</button>
+        <div style="display: flex;justify-content: center;width: 50%">
+            <button type="button" id="uploader-btn"  class="btn btn-primary">图片上传</button>
+        </div>
         <div class="card" style="width: 50%; margin-top: 1%">
             <h5 class="card-header">Base64图片编码</h5>
             <div class="card-body">
@@ -62,16 +74,21 @@
         </div>
     </div>
     <div role="tabpanel" class="tab-pane" id="qrcode-read" style="margin-left: 35%;padding-top: 1%">
-        <button type="button" id="qrcode-img-upload" style="margin-left: 22%" class="btn btn-primary">二维码上传</button>
+        <div style="display: flex;justify-content: center;width: 50%">
+            <button type="button" id="qrcode-img-upload" class="btn btn-primary">二维码上传</button>
+        </div>
 
         <div class="card" style="width: 50%; margin-top: 1%">
             <h5 class="card-header">识别二维码</h5>
             <div class="card-body">
-                <textarea rows="10" class="form-control" placeholder="base64二维码/二维码链接" id="qrcode-read-text"></textarea>
+                <textarea rows="10" class="form-control" placeholder="输入base64二维码/二维码链接" id="qrcode-read-text"></textarea>
 
             </div>
         </div>
-        <button type="button" id="qrcode-read-btn" style="margin-left: 22%" class="btn btn-primary">识别</button>
+        <div style="display: flex;justify-content: center;width: 50%">
+            <button type="button" id="qrcode-read-btn"  class="btn btn-primary">识别</button>
+        </div>
+
 
         <div class="card" style="width: 50%;margin-top: 1%">
             <h5 class="card-header">识别结果</h5>
@@ -81,10 +98,46 @@
             </div>
         </div>
     </div>
+    <div role="tabpanel" class="tab-pane" id="qrcode-create" style="margin-left: 35%;padding-top: 1%">
+        <div style="display: flex">
+            <div class="card" style="">
+                <h5 class="card-header">创建二维码</h5>
+                <div class="card-body">
+                    <textarea rows="2" class="form-control" placeholder="输入二维码内容" id="qrcode-create-text"></textarea>
+                </div>
+            </div>
+            <div>
+                <div class="card">
+                    <h5 class="card-header">二维码设置</h5>
+                    <div class="card-body">
+                        二维码颜色：<div id="selectColor" style="width: 30px;height: 30px"></div>
+                        二维码大小:
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div style="display: flex;justify-content: center;width: 50%">
+            <button type="button" id="qrcode-create-btn"  class="btn btn-primary">创建</button>
+        </div>
+
+        <div id="code"></div>
+
+
+        <p style="margin-top:90px">
+            and also above the input field
+            <input class="jscolor {position:'top'}">
+    </div>
 </div>
 
 </body>
 <script>
+    //创建二维码
+    $('#code').qrcode("http://www.helloweba.net");
+    $("#selectColor").cxColor({
+        color:"#009900"
+    });
     // base64
     console.log(url)
     new EasyUploader({
