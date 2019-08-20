@@ -110,8 +110,14 @@
                 <div class="card">
                     <h5 class="card-header">二维码设置</h5>
                     <div class="card-body">
-                        二维码颜色：<div id="selectColor" style="width: 30px;height: 30px"></div>
-                        二维码大小:
+                        <div>
+                            <div style="background: gray">
+                                背景色：<div  id="selectBackColor" style="width: 30px;height: 30px;display: inline-block"></div>
+
+                            </div>
+                            前景色：<div  id="selectForeColor" style="width: 30px;height: 30px;display: inline-block"></div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -135,8 +141,11 @@
 <script>
     //创建二维码
     $('#code').qrcode("http://www.helloweba.net");
-    $("#selectColor").cxColor({
-        color:"#009900"
+    $("#selectBackColor").cxColor({
+        color:"#ffffff"
+    });
+    $("#selectForeColor").cxColor({
+        color:"#000000"
     });
     // base64
     console.log(url)
