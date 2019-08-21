@@ -111,51 +111,80 @@
             </div>
         </div>
     </div>
-    <div role="tabpanel" class="tab-pane" id="qrcode-create" style="margin-left: 35%;padding-top: 1%">
-        <div style="display: flex">
-            <div class="card" style="">
+    <div role="tabpanel" class="tab-pane container" id="qrcode-create" style=";padding-top: 1%">
+        <!-- Stack the columns on mobile by making one full-width and the other half-width -->
+        <div class="row">
+            <div class="card col-xs-12 col-md-8" style="">
                 <h5 class="card-header">创建二维码</h5>
                 <div class="card-body">
-                    <textarea rows="2" class="form-control" placeholder="输入二维码内容" id="qrcode-create-text"></textarea>
+                    <textarea rows="5" class="form-control" placeholder="输入二维码内容" id="qrcode-create-text"></textarea>
+                </div>
+                <div style="">
+                    <button type="button" id="qrcode-create-btn" class="btn btn-primary">创建</button>
                 </div>
             </div>
-            <div>
-                <div class="card">
-                    <h5 class="card-header">二维码设置</h5>
-                    <div class="card-body">
-                        <div style="display: flex;justify-content: center">
-                            <p style="font-size: 1rem;vertical-align: middle;">背景:</p>
-                            <div id="selectBackColor" class="box-color rounded-circle"></div>&nbsp;&nbsp;
-                            <p>前景:</p>
-                            <div id="selectForeColor" class="box-color rounded-circle"></div>
-                        </div>
-                        <div>
-                            <p>大小:</p><input type="number" id="qrcode-size" class="form-control" value="200">
-                        </div>
-                        <div>
-                            <img src="../img/logoko.png" id="logo">
-                        </div>
-
+            <div class="card col-xs-6 col-md-3">
+                <h5 class="card-header">二维码设置</h5>
+                <div class="card-body">
+                    <div style="display: flex;">
+                        <p style="font-size: 1rem;vertical-align: middle;">背景:</p>
+                        <div id="selectBackColor" class="box-color rounded-circle"></div>&nbsp;&nbsp;
+                        <p>前景:</p>
+                        <div id="selectForeColor" class="box-color rounded-circle"></div>
                     </div>
+                    <div >
+                        <p style="display: inline">尺寸:</p><input type="number" id="qrcode-size" class="form-control" style="display: inline;width: 50%" value="200">
+                    </div>
+                    <div style="display: flex;margin-top: 10%">
+
+                        <input id="logo-upload" type="file" style="display:none">
+                        <div class="input-append">
+                            <a class="btn btn-primary" onclick="document.getElementById('logo-upload').click()">Logo</a>
+                        </div>
+                        <img src="../img/logoko.png" style="width: 50px;height: 50px" id="logo">
+                    </div>
+                    <div id="code" style="margin-top: 10%;">
+                    </div>
+                    <img src="" style="width: 200px;height: 200px;" id="qrcode-image">
+                    <button type="button" id="qrcode-download-btn" class="btn btn-primary">二维码下载</button>
+
+
                 </div>
 
             </div>
         </div>
 
-        <div style="display: flex;justify-content: center;width: 50%">
-            <button type="button" id="qrcode-create-btn" class="btn btn-primary">创建</button>
-        </div>
 
-        <div id="code"></div>
+
+
+
 
     </div>
-</div>
 </div>
 
 </body>
 <script>
     //创建二维码
-    // $("#code").qrcode("http://tool.shouzan.top")
+    $("#code").qrcode({render: "image", //也可以替换为table
+        minVersion: 1,       // version range somewhere in 1 .. 40
+        maxVersion: 40,
+        ecLevel: 'H',        //识别度  'L', 'M', 'Q' or 'H'
+        //left: 0,
+        //top: 0,
+        size: 200,           //尺寸
+        text: "http://tool.shouzan.top",     //二维码内容
+        radius: 0.1,         // 0.0 .. 0.5
+        quiet: 2,            //边距
+        mode: 4,
+        mSize: 0.1,          //图片大小
+        mPosX: 0.5,
+        mPosY: 0.5,
+        label: 'jQuery.qrcode',
+        fontname: 'sans',
+        fontcolor: '#000',
+        image: $('#logo')[0]})
+    var $qrcode = $("#qrcode-image");
+    $qrcode.attr("src", $("#code>img")[0].src);
     $("#qrcode-create-btn").click(function () {
         size = $("#qrcode-size").val();
         content = $("#qrcode-create-text").val();
@@ -163,14 +192,11 @@
             alert("输入内容");
             return
         }
-
         $("#code").empty();
         forecolor = $("#selectForeColor").css("background-color");
         backColor = $("#selectBackColor").css("background-color");
-
         $("#code").qrcode({
-
-            render: "canvas", //也可以替换为table
+            render: "image", //也可以替换为table
             minVersion: 1,       // version range somewhere in 1 .. 40
             maxVersion: 40,
             ecLevel: 'H',        //识别度  'L', 'M', 'Q' or 'H'
@@ -191,13 +217,26 @@
             fontcolor: '#000',
             image: $('#logo')[0]
         });
-
+        $qrcode.attr("src", $("#code>img")[0].src);
     });
     $("#selectBackColor").cxColor({
         color: "#ffffff"
     });
     $("#selectForeColor").cxColor({
         color: "#000000"
+    });
+    $("#logo-upload").change(function() {
+
+        var $file = $(this);
+        var objUrl = $file[0].files[0];
+        //获得一个http格式的url路径:mozilla(firefox)||webkit or chrome
+        var windowURL = window.URL || window.webkitURL;
+        //createObjectURL创建一个指向该参数对象(图片)的URL
+        var dataURL = windowURL.createObjectURL(objUrl);
+        $("#logo").attr("src", dataURL);
+    });
+    $("#qrcode-download-btn").click(function () {
+        downloadFile("二维码.png", $qrcode[0].src);
     });
     // base64
     console.log(url)
