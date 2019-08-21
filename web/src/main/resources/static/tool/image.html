@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="baidu-site-verification" content="vwd1Ssw9bS" />
+    <meta name="baidu-site-verification" content="vwd1Ssw9bS"/>
     <title>图片工具</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -21,9 +21,21 @@
             crossorigin="anonymous"></script>
     <script src="https://unpkg.com/easyuploader/dist/easyuploader.min.js"></script>
     <script src="../js/Http.js"></script>
-    <script type="text/javascript" src="../js/jquery.qrcode.min.js"></script>
     <link rel="stylesheet" href="../css/jquery.cxcolor.css">
+    <link rel="stylesheet" href="../css/sider.color.css">
     <script src="../js/jquery.cxcolor.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/jquery.qrcode.min.js"></script>
+
+
+    <style>
+        .box-color {
+            width: 25px;
+            height: 25px;
+            display: inline-block;
+            border: solid #b8b8b8 1px
+        }
+    </style>
 </head>
 <body>
 
@@ -53,7 +65,7 @@
 <div class="tab-content" style="width: auto">
     <div role="tabpanel" class="tab-pane  active" id="base64-img" style="margin-left: 35%;padding-top: 1%">
         <div style="display: flex;justify-content: center;width: 50%">
-            <button type="button" id="uploader-btn"  class="btn btn-primary">图片上传</button>
+            <button type="button" id="uploader-btn" class="btn btn-primary">图片上传</button>
         </div>
         <div class="card" style="width: 50%; margin-top: 1%">
             <h5 class="card-header">Base64图片编码</h5>
@@ -81,12 +93,13 @@
         <div class="card" style="width: 50%; margin-top: 1%">
             <h5 class="card-header">识别二维码</h5>
             <div class="card-body">
-                <textarea rows="10" class="form-control" placeholder="输入base64二维码/二维码链接" id="qrcode-read-text"></textarea>
+                <textarea rows="10" class="form-control" placeholder="输入base64二维码/二维码链接"
+                          id="qrcode-read-text"></textarea>
 
             </div>
         </div>
         <div style="display: flex;justify-content: center;width: 50%">
-            <button type="button" id="qrcode-read-btn"  class="btn btn-primary">识别</button>
+            <button type="button" id="qrcode-read-btn" class="btn btn-primary">识别</button>
         </div>
 
 
@@ -110,12 +123,17 @@
                 <div class="card">
                     <h5 class="card-header">二维码设置</h5>
                     <div class="card-body">
+                        <div style="display: flex;justify-content: center">
+                            <p style="font-size: 1rem;vertical-align: middle;">背景:</p>
+                            <div id="selectBackColor" class="box-color rounded-circle"></div>&nbsp;&nbsp;
+                            <p>前景:</p>
+                            <div id="selectForeColor" class="box-color rounded-circle"></div>
+                        </div>
                         <div>
-                            <div style="background: gray">
-                                背景色：<div  id="selectBackColor" style="width: 30px;height: 30px;display: inline-block"></div>
-
-                            </div>
-                            前景色：<div  id="selectForeColor" style="width: 30px;height: 30px;display: inline-block"></div>
+                            <p>大小:</p><input type="number" id="qrcode-size" class="form-control" value="200">
+                        </div>
+                        <div>
+                            <img src="../img/logoko.png" id="logo">
                         </div>
 
                     </div>
@@ -125,27 +143,61 @@
         </div>
 
         <div style="display: flex;justify-content: center;width: 50%">
-            <button type="button" id="qrcode-create-btn"  class="btn btn-primary">创建</button>
+            <button type="button" id="qrcode-create-btn" class="btn btn-primary">创建</button>
         </div>
 
         <div id="code"></div>
 
-
-        <p style="margin-top:90px">
-            and also above the input field
-            <input class="jscolor {position:'top'}">
     </div>
+</div>
 </div>
 
 </body>
 <script>
     //创建二维码
-    $('#code').qrcode("http://www.helloweba.net");
+    // $("#code").qrcode("http://tool.shouzan.top")
+    $("#qrcode-create-btn").click(function () {
+        size = $("#qrcode-size").val();
+        content = $("#qrcode-create-text").val();
+        if (content == undefined || content == '') {
+            alert("输入内容");
+            return
+        }
+
+        $("#code").empty();
+        forecolor = $("#selectForeColor").css("background-color");
+        backColor = $("#selectBackColor").css("background-color");
+
+        $("#code").qrcode({
+
+            render: "canvas", //也可以替换为table
+            minVersion: 1,       // version range somewhere in 1 .. 40
+            maxVersion: 40,
+            ecLevel: 'H',        //识别度  'L', 'M', 'Q' or 'H'
+            //left: 0,
+            //top: 0,
+            size: size,           //尺寸
+            fill: rgbToHexString(forecolor),        //二维码颜色
+            background: rgbToHexString(backColor),    //背景色
+            text: content,     //二维码内容
+            radius: 0.1,         // 0.0 .. 0.5
+            quiet: 2,            //边距
+            mode: 4,
+            mSize: 0.2,          //图片大小
+            mPosX: 0.5,
+            mPosY: 0.5,
+            label: 'jQuery.qrcode',
+            fontname: 'sans',
+            fontcolor: '#000',
+            image: $('#logo')[0]
+        });
+
+    });
     $("#selectBackColor").cxColor({
-        color:"#ffffff"
+        color: "#ffffff"
     });
     $("#selectForeColor").cxColor({
-        color:"#000000"
+        color: "#000000"
     });
     // base64
     console.log(url)
@@ -153,7 +205,7 @@
         "el": "#uploader-btn",
         "name": "image",
         "accept": "image/*",
-        "url": url +"/tool/handleImage?action=imageBase64Decode",
+        "url": url + "/tool/handleImage?action=imageBase64Decode",
         "autoUpload": true,
         "allowFileExt": ["jpg", "jpeg", "png"],
         "compress": true,
@@ -192,7 +244,7 @@
             console.log('即将上传。。');
         },
         onUploadComplete: function (data) {
-            $("#qrcode-show").text( data.body)
+            $("#qrcode-show").text(data.body)
 
         },
         onUploadError: function (statusCode) {
@@ -203,7 +255,7 @@
         var opt = new Object();
 
         opt.text = $("#qrcode-read-text").val();
-        postJson(opt,function (data) {
+        postJson(opt, function (data) {
             $("#qrcode-show").text(data.body)
         });
 //        $.ajax({
