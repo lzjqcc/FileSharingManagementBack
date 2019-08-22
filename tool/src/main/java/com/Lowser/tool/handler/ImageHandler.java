@@ -7,8 +7,11 @@ import com.alibaba.fastjson.JSONObject;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -76,10 +79,10 @@ public class ImageHandler extends AbstractHandler {
     }
 
     public static void main(String[] args) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        FileInputStream inputStream = new FileInputStream("/home/li/Downloads/pptImage/a.png");
-        IOUtils.copy(inputStream, outputStream);
-        System.out.println(QRCodeUtils.readQRCode(outputStream.toByteArray()));
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://upload-images.jianshu.io/upload_images/12208532-ce8515a526ae3964.png";
+        ResponseEntity<byte[]> entity = restTemplate.getForEntity(url, byte[].class);
+        QRCodeUtils.readQRCode(entity.getBody());
     }
     @Override
     public String handlerType() {
