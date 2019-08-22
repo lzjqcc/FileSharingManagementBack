@@ -28,6 +28,8 @@ public abstract class AbstractHandler implements Handler {
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             throw new BizException("执行方法错误 action = " + action);
+        }catch (BizException b) {
+            throw b;
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             throw new BizException("执行错误");
