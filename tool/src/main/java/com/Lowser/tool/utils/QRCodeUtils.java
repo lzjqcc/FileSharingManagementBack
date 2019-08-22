@@ -34,6 +34,7 @@ public class QRCodeUtils {
     }
     public static String readQRCode(String url) {
         try {
+
             BufferedImage bufferedImage = ImageIO.read(new URL(url));
             return readQRCode(bufferedImage);
         } catch (IOException e) {
@@ -48,6 +49,8 @@ public class QRCodeUtils {
             BinaryBitmap binaryBitmap = new BinaryBitmap(binarizer);
             Map<DecodeHintType, Object> hints = new HashMap<DecodeHintType, Object>();
             hints.put(DecodeHintType.CHARACTER_SET, "UTF-8");
+            hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+            hints.put(DecodeHintType.PURE_BARCODE, Boolean.TRUE);
             Result result = new MultiFormatReader().decode(binaryBitmap, hints);//解码
             return result.getText();
         } catch (NotFoundException e) {
