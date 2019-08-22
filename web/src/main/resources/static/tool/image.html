@@ -117,10 +117,10 @@
             <div class="card col-xs-12 col-md-8" style="">
                 <h5 class="card-header">创建二维码</h5>
                 <div class="card-body">
-                    <textarea rows="5" class="form-control" placeholder="输入二维码内容" id="qrcode-create-text"></textarea>
+                    <textarea rows="5" class="form-control" placeholder="输入二维码内容"  id="qrcode-create-text">http://www.shouzan.top</textarea>
                 </div>
-                <div style="">
-                    <button type="button" id="qrcode-create-btn" class="btn btn-primary">创建</button>
+                <div style="display: flex;justify-content: center">
+                    <button type="button" id="qrcode-create-btn" class="btn btn-primary">生成二维码</button>
                 </div>
             </div>
             <div class="card col-xs-6 col-md-3">
@@ -135,30 +135,23 @@
                     <div >
                         <p style="display: inline">尺寸:</p><input type="number" id="qrcode-size" class="form-control" style="display: inline;width: 50%" value="200">
                     </div>
-                    <div style="display: flex;margin-top: 10%">
+                    <div style="display: flex;margin-top: 10%;">
 
                         <input id="logo-upload" type="file" style="display:none">
                         <div class="input-append">
-                            <a class="btn btn-primary" onclick="document.getElementById('logo-upload').click()">Logo</a>
+                            <a class="btn btn-light" onclick="document.getElementById('logo-upload').click()">Logo</a>
                         </div>
-                        <img src="../img/logoko.png" style="width: 50px;height: 50px" id="logo">
+                        <img src="../img/logoko.png" style="width: 50px;height: 50px;margin-left: 10%" id="logo">
                     </div>
                     <div id="code" style="margin-top: 10%;">
                     </div>
                     <img src="" style="width: 200px;height: 200px;" id="qrcode-image">
-                    <button type="button" id="qrcode-download-btn" class="btn btn-primary">二维码下载</button>
-
-
+                    <div style="display: flex;justify-content: center">
+                        <button type="button" id="qrcode-download-btn" class="btn btn-primary">二维码下载</button>
+                    </div>
                 </div>
-
             </div>
         </div>
-
-
-
-
-
-
     </div>
 </div>
 
