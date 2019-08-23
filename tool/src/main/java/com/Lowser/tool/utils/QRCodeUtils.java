@@ -26,9 +26,11 @@ import java.util.Random;
 public class QRCodeUtils {
     public static String readQRCode(byte[] bytes) {
         try {
-            BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
+            //BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(bytes));
+            BufferedImage bufferedImage = ImageUtils.resizeAndToImage(bytes, 200, 1, "jpg");
+            ImageIO.write(bufferedImage, "jpg", new File("D:\\pptImage\\d.jpg"));
             return readQRCode(bufferedImage);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             throw new BizException("识别失败");
         }
     }
@@ -42,16 +44,17 @@ public class QRCodeUtils {
         }
 
     }
-    private static String readQRCode(BufferedImage bufferedImage) {
+    public static String readQRCode(BufferedImage bufferedImage) {
         try {
             LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
             Binarizer binarizer = new HybridBinarizer(source);
             BinaryBitmap binaryBitmap = new BinaryBitmap(binarizer);
             Map<DecodeHintType, Object> hints = new HashMap<DecodeHintType, Object>();
             hints.put(DecodeHintType.CHARACTER_SET, "UTF-8");
-            hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
-            hints.put(DecodeHintType.PURE_BARCODE, Boolean.TRUE);
-            Result result = new MultiFormatReader().decode(binaryBitmap, hints);//解码
+            hints.put(DecodeHintType.TRY_HARDER, true);
+            hints.put(DecodeHintType.PURE_BARCODE, true);
+            MultiFormatReader reader = new MultiFormatReader();
+            Result result = reader.decode(binaryBitmap, hints);//解码
             return result.getText();
         } catch (NotFoundException e) {
             e.printStackTrace();

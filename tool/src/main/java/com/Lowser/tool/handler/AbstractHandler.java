@@ -25,8 +25,13 @@ public abstract class AbstractHandler implements Handler {
             return  method.invoke(this, needHandler, jsonObject);
         } catch (NoSuchMethodException e) {
             throw new BizException("不支持处理" + action);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
+            throw new BizException("执行方法错误 action = " + action);
+        } catch (InvocationTargetException ex) {
+            if (ex.getTargetException() != null) {
+                throw new BizException(ex.getTargetException().getMessage());
+            }
             throw new BizException("执行方法错误 action = " + action);
         }catch (BizException b) {
             throw b;

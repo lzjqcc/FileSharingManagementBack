@@ -6,11 +6,14 @@ function postJson(request,success,error) {
         contentType:"application/json;charset=utf-8",
         data: JSON.stringify(request),
         success:function (data,status) {
+            console.log('success')
             success(data,status)
         },
         error:function (data,status) {
-            if (error == null) {
-                alert(data.body)
+            if (error == undefined) {
+                alert(data.responseJSON.body.errorMsg)
+            } else {
+                error(data);
             }
         }
     });
