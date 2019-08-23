@@ -120,7 +120,7 @@
             <div class="card col-xs-12 col-md-8" style="">
                 <h5 class="card-header">创建二维码</h5>
                 <div class="card-body">
-                    <textarea rows="5" class="form-control" placeholder="输入二维码内容"  id="qrcode-create-text">http://www.shouzan.top</textarea>
+                    <textarea rows="5" class="form-control" placeholder="输入二维码内容" id="qrcode-create-text">http://www.shouzan.top</textarea>
                 </div>
                 <div style="display: flex;justify-content: center">
                     <button type="button" id="qrcode-create-btn" class="btn btn-primary">生成二维码</button>
@@ -135,8 +135,9 @@
                         <p>前景:</p>
                         <div id="selectForeColor" class="box-color rounded-circle"></div>
                     </div>
-                    <div >
-                        <p style="display: inline">尺寸:</p><input type="number" id="qrcode-size" class="form-control" style="display: inline;width: 50%" value="200">
+                    <div>
+                        <p style="display: inline">尺寸:</p><input type="number" id="qrcode-size" class="form-control"
+                                                                 style="display: inline;width: 50%" value="200">
                     </div>
                     <div style="display: flex;margin-top: 10%;">
 
@@ -159,11 +160,19 @@
         </div>
     </div>
 </div>
+<footer>
+    <div class="panel panel-default bg-secondary text-white">
 
+        <div class="panel-footer" style="display: flex;justify-content: center">
+            <p>All Copyright Rights Reserved 瞿大官人 浙ICP备19031729号</p>
+        </div>
+    </div>
+</footer>
 </body>
 <script>
     //创建二维码
-    $("#code").qrcode({render: "image", //也可以替换为table
+    $("#code").qrcode({
+        render: "image", //也可以替换为table
         minVersion: 1,       // version range somewhere in 1 .. 40
         maxVersion: 40,
         ecLevel: 'H',        //识别度  'L', 'M', 'Q' or 'H'
@@ -180,7 +189,8 @@
         label: 'jQuery.qrcode',
         fontname: 'sans',
         fontcolor: '#000',
-        image: $('#logo')[0]})
+        image: $('#logo')[0]
+    })
     var $qrcode = $("#qrcode-image");
     $qrcode.attr("src", $("#code>img")[0].src);
     $("#qrcode-create-btn").click(function () {
@@ -223,7 +233,7 @@
     $("#selectForeColor").cxColor({
         color: "#000000"
     });
-    $("#logo-upload").change(function() {
+    $("#logo-upload").change(function () {
 
         var $file = $(this);
         var objUrl = $file[0].files[0];
