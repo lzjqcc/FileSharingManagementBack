@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="keywords" content="在线免费,二维码识别，彩色个性化二维码创建，Base64图片,图片工具"/>
-    <meta name="description" content="在线免费提供二维码识别，彩色个性化二维码创建，图片转Base64,Base64图片在线显示"/>
+    <meta name="keywords" content="二维码,二维码营销,二维码图片,二维码制作,二维码名片,QR code,二维码是什么,二维码生成,二维码论坛,二维条码,微信二维码,在线免费提供二维码识别，彩色个性化二维码，图片转Base64,Base64图片在线显示，图片工具"/>
+    <meta name="description" content="专业免费好用的图片工具，专为个人打造在线二维码工具，base64图片显示工具"/>
+    <meta name="title" content="图片工具">
     <meta name="referrer" content="no-referrer" />
     <meta name="baidu-site-verification" content="vwd1Ssw9bS"/>
     <title>图片工具</title>
@@ -129,27 +130,31 @@
             </div>
         </div>
         <div style="display: flex;justify-content: center">
-            <div class="card">
-                <h5 class="card-header">二维码显示</h5>
-                <div class="card-body" style="display: flex;justify-content: center" >
-                    <img id="qrcode-read-image" src="" style="width: 20%;height: 20%">
+            <div>
+                <div class="card">
+                    <h5 class="card-header">二维码显示</h5>
+                    <div class="card-body" style="display: flex;justify-content: center" >
+                        <img id="qrcode-read-image" src="../img/logoko.png" style="width: 200px;height: 200px">
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-left: 5%">
+                <button style="margin-top: 100px" type="button" id="qrcode-read-btn" class="btn btn-primary">识别</button>
+            </div>
+            <div style="margin-left: 5%">
+                <div class="card">
+                    <h5 class="card-header">识别结果</h5>
+                    <div class="card-body">
+                        <div  style="width: 300px;height: 200px">
+                            <p class="card-text" id="qrcode-show"></p>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div style="display: flex;justify-content: center;">
-            <button type="button" id="qrcode-read-btn" class="btn btn-primary">识别</button>
-        </div>
-
-        <div style="margin-top: 1%;display: flex;justify-content: center">
-            <div class="card">
-                <h5 class="card-header">识别结果</h5>
-                <div class="card-body">
-                    <p class="card-text" id="qrcode-show"></p>
-
-                </div>
-            </div>
-        </div>
 
     </div>
     <div role="tabpanel" class="tab-pane container" id="qrcode-create" style=";padding-top: 1%">
@@ -188,7 +193,7 @@
                     <div id="code" style="margin-top: 10%;">
                     </div>
                     <div style="display: flex;justify-content: center">
-                        <img src="" style="width: 70%;height: 70%;" id="qrcode-image">
+                        <img src="" style="width: 200px;height: 200px;" id="qrcode-image">
                     </div>
                     <div style="display: flex;justify-content: center">
                         <button type="button" id="qrcode-download-btn" class="btn btn-primary">二维码下载</button>
@@ -217,18 +222,20 @@
         //left: 0,
         //top: 0,
         size: 200,           //尺寸
-        text: "http://tool.shouzan.top",     //二维码内容
+        fill: "#000000",        //二维码颜色
+        background: "#ffffff",    //背景色
+        text: "http://www.shouzan.top",     //二维码内容
         radius: 0.1,         // 0.0 .. 0.5
         quiet: 2,            //边距
         mode: 4,
-        mSize: 0.1,          //图片大小
+        mSize: 0.2,          //图片大小
         mPosX: 0.5,
         mPosY: 0.5,
         label: 'jQuery.qrcode',
         fontname: 'sans',
         fontcolor: '#000',
         image: $('#logo')[0]
-    })
+    });
     var $qrcode = $("#qrcode-image");
     $qrcode.attr("src", $("#code>img")[0].src);
     $("#qrcode-create-btn").click(function () {
@@ -310,7 +317,12 @@
         }
     });
     $('#base64-img-text').bind('input propertychange', function () {
-        $("#base64-img-show").attr("src", "data:image/jpeg;base64," + $(this).val());
+        var reg = /^data:image\/([a-z])+;base64/;
+        if (reg.test($(this).val())) {
+            $("#base64-img-show").attr("src", $(this).val());
+        }else {
+            $("#base64-img-show").attr("src", "data:image/jpeg;base64," + $(this).val());
+        }
     });
 
     //二维码识别
@@ -325,7 +337,7 @@
     })
     $('#qrcode-read-btn').click(function () {
         qrcode.callback = function (data) {
-            $("#qrcode-show").text(data)
+            $("#qrcode-show").text(utf82str(data))
         }
         qrcode.decode($("#qrcode-read-image")[0].src);
         $("#qrcode-show").text()
@@ -336,7 +348,12 @@
         if (reg.test(src)) {
             $("#qrcode-read-image").attr("src", src)
         }else {
-            $("#qrcode-read-image").attr("src", "data:image/jpeg;base64," + src)
+            var base64Reg = /^data:image\/([a-z])+;base64/;
+            if (base64Reg.test(src)) {
+                $("#qrcode-read-image").attr("src", src);
+            }else {
+                $("#qrcode-read-image").attr("src", "data:image/png;base64," + src)
+            }
 
         }
     });
