@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="keywords" content="在线免费,二维码识别，彩色个性化二维码创建，Base64图片,图片工具"/>
     <meta name="description" content="在线免费提供二维码识别，彩色个性化二维码创建，图片转Base64,Base64图片在线显示"/>
-
+    <meta name="referrer" content="no-referrer" />
     <meta name="baidu-site-verification" content="vwd1Ssw9bS"/>
     <title>图片工具</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -28,7 +28,25 @@
     <link rel="stylesheet" href="../css/sider.color.css">
     <script src="../js/jquery.cxcolor.min.js"></script>
     <script src="../js/utils.js"></script>
+
     <script src="../js/jquery.qrcode.min.js"></script>
+    <script type="text/javascript" src="../js/grid.js"></script>
+    <script type="text/javascript" src="../js/version.js"></script>
+    <script type="text/javascript" src="../js/detector.js"></script>
+    <script type="text/javascript" src="../js/formatinf.js"></script>
+    <script type="text/javascript" src="../js/errorlevel.js"></script>
+    <script type="text/javascript" src="../js/bitmat.js"></script>
+    <script type="text/javascript" src="../js/datablock.js"></script>
+    <script type="text/javascript" src="../js/bmparser.js"></script>
+    <script type="text/javascript" src="../js/datamask.js"></script>
+    <script type="text/javascript" src="../js/rsdecoder.js"></script>
+    <script type="text/javascript" src="../js/gf256poly.js"></script>
+    <script type="text/javascript" src="../js/gf256.js"></script>
+    <script type="text/javascript" src="../js/decoder.js"></script>
+    <script type="text/javascript" src="../js/qrcode.js"></script>
+    <script type="text/javascript" src="../js/findpat.js"></script>
+    <script type="text/javascript" src="../js/alignpat.js"></script>
+    <script type="text/javascript" src="../js/databr.js"></script>
 
 
     <style>
@@ -88,31 +106,51 @@
             </div>
         </div>
     </div>
-    <div role="tabpanel" class="tab-pane" id="qrcode-read" style="margin-left: 35%;padding-top: 1%">
-        <div style="display: flex;justify-content: center;width: 50%">
-            <button type="button" id="qrcode-img-upload" class="btn btn-primary">二维码上传</button>
-        </div>
+    <div role="tabpanel" class="tab-pane" id="qrcode-read" style="padding-top: 1%">
+        <div style="display: flex;justify-content: center">
+            <div class="card " style="width: 30%;">
+                <h5 class="card-header" style="">二维码上传</h5>
+                <div class="card-body">
+                    <input type="file" style="display: none" id="qrcode-read-input">
+                    <div style="display: flex;justify-content: center;align-items: center">
+                        <button style="" type="button" onclick="document.getElementById('qrcode-read-input').click()" class="btn btn-primary">二维码上传</button>
 
-        <div class="card" style="width: 50%; margin-top: 1%">
-            <h5 class="card-header">识别二维码</h5>
-            <div class="card-body">
-                <textarea rows="10" class="form-control" placeholder="输入base64二维码/二维码链接"
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="width: 30%">
+                <h5 class="card-header">文本形式二维码</h5>
+                <div class="card-body">
+                <textarea rows="5" class="form-control" placeholder="输入base64二维码/二维码链接"
                           id="qrcode-read-text"></textarea>
 
+                </div>
             </div>
         </div>
-        <div style="display: flex;justify-content: center;width: 50%">
+        <div style="display: flex;justify-content: center">
+            <div class="card">
+                <h5 class="card-header">二维码显示</h5>
+                <div class="card-body" style="display: flex;justify-content: center" >
+                    <img id="qrcode-read-image" src="" style="width: 20%;height: 20%">
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex;justify-content: center;">
             <button type="button" id="qrcode-read-btn" class="btn btn-primary">识别</button>
         </div>
 
+        <div style="margin-top: 1%;display: flex;justify-content: center">
+            <div class="card">
+                <h5 class="card-header">识别结果</h5>
+                <div class="card-body">
+                    <p class="card-text" id="qrcode-show"></p>
 
-        <div class="card" style="width: 50%;margin-top: 1%">
-            <h5 class="card-header">识别结果</h5>
-            <div class="card-body">
-                <p class="card-text" id="qrcode-show"></p>
-
+                </div>
             </div>
         </div>
+
     </div>
     <div role="tabpanel" class="tab-pane container" id="qrcode-create" style=";padding-top: 1%">
         <!-- Stack the columns on mobile by making one full-width and the other half-width -->
@@ -247,7 +285,6 @@
         downloadFile("二维码.png", $qrcode[0].src);
     });
     // base64
-    console.log(url)
     new EasyUploader({
         "el": "#uploader-btn",
         "name": "image",
@@ -265,6 +302,7 @@
         },
         onUploadComplete: function (data) {
             $("#base64-img-show").attr("src", "data:image/jpeg;base64," + data.body)
+            $("#base64-img-text").val(data.body);
 
         },
         onUploadError: function (statusCode) {
@@ -272,52 +310,35 @@
         }
     });
     $('#base64-img-text').bind('input propertychange', function () {
-        $("#base64-img-show").attr("src", "data:image/jpeg;base64," + $(this).val())
+        $("#base64-img-show").attr("src", "data:image/jpeg;base64," + $(this).val());
     });
-    //二维码
-    new EasyUploader({
-        "el": "#qrcode-img-upload",
-        "name": "image",
-        "accept": "image/*",
-        "url": url + "/tool/handleImage?action=readQRCode",
-        "autoUpload": true,
-        "allowFileExt": ["jpg", "jpeg", "png"],
-        "compress": true,
-        "maxFileSize": "2M",
-        onUploadProgress: function (e) {
-            console.log("上传进度为：" + ((e.loaded / e.total) * 100).toFixed(2) + "%");
-        },
-        onUploadStart: function (e) {
-            console.log('即将上传。。');
-        },
-        onUploadComplete: function (data) {
-            $("#qrcode-show").text(data.body)
 
-        },
-        onUploadError: function (statusCode) {
-            console.log(statusCode);
+    //二维码识别
+    $("#qrcode-read-input").change(function () {
+        var $file = $(this);
+        var objUrl = $file[0].files[0];
+        //获得一个http格式的url路径:mozilla(firefox)||webkit or chrome
+        var windowURL = window.URL || window.webkitURL;
+        //createObjectURL创建一个指向该参数对象(图片)的URL
+        var dataURL = windowURL.createObjectURL(objUrl);
+        $("#qrcode-read-image").attr("src", dataURL);
+    })
+    $('#qrcode-read-btn').click(function () {
+        qrcode.callback = function (data) {
+            $("#qrcode-show").text(data)
+        }
+        qrcode.decode($("#qrcode-read-image")[0].src);
+        $("#qrcode-show").text()
+    })
+    $('#qrcode-read-text').bind('input propertychange', function () {
+        var src = $(this).val();
+        var reg=/^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
+        if (reg.test(src)) {
+            $("#qrcode-read-image").attr("src", src)
+        }else {
+            $("#qrcode-read-image").attr("src", "data:image/jpeg;base64," + src)
+
         }
     });
-    $('#qrcode-read-btn').click(function () {
-        var opt = new Object();
-
-        opt.text = $("#qrcode-read-text").val();
-        postJson(opt, function (data) {
-            $("#qrcode-show").text(data.body)
-        });
-//        $.ajax({
-//            type: 'POST',
-//            url: "http://localhost:8080/tool/handleString?action=readQRCode",
-//            contentType:"application/json;charset=utf-8",
-//            data: JSON.stringify(opt),
-//            success:function (data,status) {
-//                $("#qrcode-show").text(data.body)
-//            },
-//            error:function(data) {
-//
-//            }
-//        });
-
-    })
 </script>
 </html>
