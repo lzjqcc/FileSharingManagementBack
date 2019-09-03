@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="keywords" content="二维码,二维码营销,二维码图片,二维码制作,二维码名片,QR code,二维码是什么,二维码生成,二维码论坛,二维条码,微信二维码,在线免费提供二维码识别，彩色个性化二维码，图片转Base64,Base64图片在线显示，图片工具"/>
+    <meta name="keywords"
+          content="二维码,二维码营销,二维码图片,二维码制作,二维码名片,QR code,二维码是什么,二维码生成,二维码论坛,二维条码,微信二维码,在线免费提供二维码识别，彩色个性化二维码，图片转Base64,Base64图片在线显示，图片工具"/>
     <meta name="description" content="专业免费好用的图片工具，专为个人打造在线二维码工具，base64图片显示工具"/>
     <meta name="title" content="图片工具">
-    <meta name="referrer" content="no-referrer" />
+    <meta name="referrer" content="no-referrer"/>
     <meta name="baidu-site-verification" content="vwd1Ssw9bS"/>
     <title>没有钱图片工具</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -26,6 +27,8 @@
     <script src="https://unpkg.com/easyuploader/dist/easyuploader.min.js"></script>
     <script src="../js/Http.js"></script>
     <link rel="stylesheet" href="../css/jquery.cxcolor.css">
+    <link rel="stylesheet" href="../css/comment.css">
+
     <link rel="stylesheet" href="../css/sider.color.css">
     <script src="../js/jquery.cxcolor.min.js"></script>
     <script src="../js/utils.js"></script>
@@ -49,6 +52,7 @@
     <script type="text/javascript" src="../js/alignpat.js"></script>
     <script type="text/javascript" src="../js/databr.js"></script>
 
+    <script type="text/javascript" src="../js/jquery.comment.js"></script>
 
     <style>
         .box-color {
@@ -83,6 +87,13 @@
             <h6>创建二维码</h6>
         </a>
     </li>
+    <!--<li class="nav-item">-->
+        <!--<a class="nav-link" id="comment-tab" data-toggle="tab" href="#comment-page" role="tab"-->
+           <!--aria-controls="home"-->
+           <!--aria-selected="true">-->
+            <!--<h6>评论</h6>-->
+        <!--</a>-->
+    <!--</li>-->
 </ul>
 <div class="tab-content" style="width: auto">
     <div role="tabpanel" class="tab-pane  active" id="base64-img" style="margin-left: 35%;padding-top: 1%">
@@ -114,7 +125,9 @@
                 <div class="card-body">
                     <input type="file" style="display: none" id="qrcode-read-input">
                     <div style="display: flex;justify-content: center;align-items: center">
-                        <button style="" type="button" onclick="document.getElementById('qrcode-read-input').click()" class="btn btn-primary">二维码上传</button>
+                        <button style="" type="button" onclick="document.getElementById('qrcode-read-input').click()"
+                                class="btn btn-primary">二维码上传
+                        </button>
 
                     </div>
                 </div>
@@ -133,7 +146,7 @@
             <div style="margin-right: 5%">
                 <div class="card">
                     <h5 class="card-header">二维码显示</h5>
-                    <div class="card-body" style="display: flex;justify-content: center" >
+                    <div class="card-body" style="display: flex;justify-content: center">
                         <img id="qrcode-read-image" src="../img/logoko.png" style="width: 200px;height: 200px">
                     </div>
                 </div>
@@ -146,7 +159,7 @@
                 <div class="card">
                     <h5 class="card-header">识别结果</h5>
                     <div class="card-body">
-                        <div  style="width: 300px;height: 200px">
+                        <div style="width: 300px;height: 200px">
                             <p class="card-text" id="qrcode-show"></p>
 
                         </div>
@@ -202,6 +215,15 @@
             </div>
         </div>
     </div>
+    <!--<div role="tabpanel" class="tab-pane container" id="comment-page" style="padding-top: 1%">-->
+        <!--<div class="commentbox">-->
+            <!--<textarea cols="80" rows="50" placeholder="来说几句吧......" class="mytextarea" id="content"></textarea>-->
+            <!--<div class="btn btn-info pull-right" id="comment">评论</div>-->
+        <!--</div>-->
+        <!--<div class="comment-list">-->
+
+        <!--</div>-->
+    <!--</div>-->
 </div>
 <footer class="fixed-bottom">
     <div class="panel panel-default bg-secondary text-white">
@@ -320,7 +342,7 @@
         var reg = /^data:image\/([a-z])+;base64/;
         if (reg.test($(this).val())) {
             $("#base64-img-show").attr("src", $(this).val());
-        }else {
+        } else {
             $("#base64-img-show").attr("src", "data:image/jpeg;base64," + $(this).val());
         }
     });
@@ -344,18 +366,36 @@
     })
     $('#qrcode-read-text').bind('input propertychange', function () {
         var src = $(this).val();
-        var reg=/^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
+        var reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
         if (reg.test(src)) {
             $("#qrcode-read-image").attr("src", src)
-        }else {
+        } else {
             var base64Reg = /^data:image\/([a-z])+;base64/;
             if (base64Reg.test(src)) {
                 $("#qrcode-read-image").attr("src", src);
-            }else {
+            } else {
                 $("#qrcode-read-image").attr("src", "data:image/png;base64," + src)
             }
 
         }
     });
+
+    //评论
+//    var arr = [
+//        {id:1,replyName:"帅大叔",beReplyName:"匿名",content:"同学聚会，看到当年追我的屌丝开着宝马车带着他老婆来了，他老婆是我隔壁宿舍的同班同学，心里后悔极了。",time:"2017-10-17 11:42:53",address:"深圳",osname:"",browse:"谷歌",replyBody:[]},
+//    ];
+//    $(function(){
+//        $(".comment-list").addCommentList({data:arr,add:""});
+//        $("#comment").click(function(){
+//            var obj = new Object();
+//            //obj.img="./images/img.jpg";
+//            obj.replyName="懒人";
+//            obj.content=$("#content").val();
+//            obj.browse="深圳";
+//            obj.osname="win10";
+//            obj.replyBody="";
+//            $(".comment-list").addCommentList({data:[],add:obj});
+//        });
+//    })
 </script>
 </html>
