@@ -27,7 +27,7 @@
         <button
                 v-for="item in items"
                 v-bind:key="item"
-                v-bind:class="['btn btn-link', { active: currentTab === item.name }]"
+                v-bind:class="['btn btn-link ', {  active: currentTab === item.name }]"
                 v-on:click="currentTab = item.name"
         >{{ item.name }}</button>
 
