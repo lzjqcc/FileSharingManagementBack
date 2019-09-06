@@ -28,14 +28,32 @@
                 v-for="item in items"
                 v-bind:key="item"
                 v-bind:class="['btn btn-link ', {  active: currentTab === item.name }]"
-                v-on:click="currentTab = item.name"
-        >{{ item.name }}</button>
+                v-on:click="parentTitleClick(item)"
+        >{{ item.name }}
+        </button>
+        <div>
+            <!--<component v-bind:is="currentTab" v-for="childItem in childItems" v-bind:key="childItem"-->
+                       <!--v-bind:post="childItem" v-on:enlarge-text="childTitleClick(childItem)"-->
+                       <!--class="tab"-->
+            <!--&gt;</component>-->
+            <third
+                    v-for="template in childItems" v-bind:key="template"
+                    v-bind:post="template" v-on:enlarge-text="childTitleClick(template)"
+            ></third>
+        </div>
+        <div>
+            <third
+                    v-for="template in thirdChildItems" v-bind:key="template"
+                    v-bind:post="template" v-on:enlarge-text="thirdTitleClick(template)"
+            ></third>
+        </div>
+        <div style="display: flex;flex-wrap: wrap">
+            <file-template  v-for="template in fileTemplates" v-bind:key="template"
+                            v-bind:post="template"
+            ></file-template>
+        </div>
 
-        <component  v-bind:is="currentTabComponent"
-                class="tab"
-        ></component>
     </div>
-
 
 
 </div>
