@@ -1,5 +1,6 @@
 package com.Lowser.sharefile.controller.controller;
 
+import com.Lowser.common.error.BizException;
 import com.Lowser.common.utils.ModelUtils;
 import com.Lowser.sharefile.controller.param.FileTemplateParam;
 import com.Lowser.sharefile.controller.result.FileTemplateResult;
@@ -78,15 +79,25 @@ public class FileTemplateController {
      */
     @GetMapping("/fileTemplatesByPage/{groupId}")
     public Page<FileTemplateResult> getFileTemplateResults(Pageable pageable, @PathVariable("groupId") Integer groupId) {
+        validatePageable(pageable);
         PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupId(groupId, pageable);
         return toFileTemplateResult(page);
     }
     @GetMapping("/findAllByPage/{parentId}")
     public Page<FileTemplateResult> findALl(Pageable pageable, @PathVariable("parentId") Integer parentId) {
+        validatePageable(pageable);
         List<Group> groups = groupRepository.findByParentId(parentId);
         List<Integer> groupIds = groups.stream().map(Group::getId).collect(Collectors.toList());
         PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdIn(groupIds, pageable);
         return toFileTemplateResult(page);
+    }
+    private void validatePageable(Pageable pageable) {
+        if (pageable == null) {
+            return;
+        }
+        if (pageable.getPageSize() >= 100) {
+            throw new BizException("超过最大查询限制");
+        }
     }
     @PostMapping("/fileTemplate/upload")
     public Object uploadFile(List<FileTemplateParam> fileTemplateParams) {

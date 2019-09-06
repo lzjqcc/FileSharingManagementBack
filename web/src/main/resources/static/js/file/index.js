@@ -55,10 +55,10 @@ var parentTitle = new Vue({
         },
         childTitleClick: function (item) {
             this.queryThirdTitle(item.id)
-            this.findAllByPage(item.id, 1, 30)
+            this.findAllByPage(item.id, 0, 30)
         },
         thirdTitleClick: function (item) {
-            this.queryContents(item.id, 1, 30)
+            this.queryContents(item.id, 0, 30)
         },
         queryParentTitle: function () {
             var _this = this;
