@@ -60,7 +60,7 @@
                     v-for="(template,index) in thirdChildItems" v-bind:key="template"
                     v-bind:post="template" v-bind:id="index" v-show="index <=secondShowNum" v-on:enlarge-text="thirdTitleClick(template)"
             ></third>
-            <li class="nav-item"><a class="nav-link " href="#" @click="secondShowMoreClick()">{{secondShowMoreText}}</a></li>
+            <li class="nav-item"><a class="nav-link " href="#"  @click="secondShowMoreClick()">{{secondShowMoreText}}</a></li>
         </ul>
         <div style="background: gray;height: 1px;width: 98%;margin: auto"></div>
 
