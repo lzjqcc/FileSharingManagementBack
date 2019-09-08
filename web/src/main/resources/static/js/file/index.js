@@ -3,7 +3,10 @@
 
 Vue.component("third", {
     props: ['post'],
-    template: '<button type="button" class="btn btn-outline-secondary" v-on:click="$emit(\'enlarge-text\',post.id)" v-bind:value="post.id">{{post.name}}</button>'
+
+    template: ' <li  class="nav-item">\n' +
+    '    <a  class="nav-link " href="#" v-on:click="$emit(\'enlarge-text\',post.id)" v-bind:value="post.id">{{post.name}}</a>\n' +
+    '    </li>'
 
 })
 // 要在父组件上面
@@ -31,18 +34,24 @@ var parentTitle = new Vue({
             {name: "PPT图表", id: 2},
 
         ],
+        secondShowNum: 10,
+        secondShowMoreText: "更多",
         thirdChildItems:[
             {name: '节日模版', id: 10}
         ],
         fileTemplates:[
             {name:"简笔画创意自我介绍PPT",description:"小",images:[{url:"http://www.ypppt.com/uploads/allimg/181212/1-1Q2120T203.jpg"}]},
             {name:"创意自我介绍PPT",description:"小dfd",images:[{url:"http://www.ypppt.com/uploads/allimg/181212/1-1Q2120T203.jpg"}]}
-        ]
+        ],
+        defaultPageSize:20,
+        currentId:1,
+
     },
     mounted: function () {
         this.queryParentTitle();
         this.queryChildTitle(5)
-        this.queryThirdTitle(1)
+        this.queryThirdTitle(this.currentId)
+        this.findAllByPage(this.currentId,0, this.defaultPageSize)
         //this.findAllByPage()
         //this.queryChildTitle()
     },
@@ -50,15 +59,32 @@ var parentTitle = new Vue({
 
     },
     methods: {
+
         parentTitleClick: function (item) {
             this.queryChildTitle(item.id, 2)
         },
+        secondShowMoreClick: function () {
+            if (this.secondShowMoreText == '更多') {
+                this.secondShowNum = 1000;
+                this.secondShowMoreText = "收起"
+                console.log('dd')
+            }else if(this.secondShowMoreText == '收起') {
+                this.secondShowNum = 10;
+                this.secondShowMoreText = "更多"
+            }
+
+
+        },
         childTitleClick: function (item) {
             this.queryThirdTitle(item.id)
-            this.findAllByPage(item.id, 0, 30)
+            this.findAllByPage(item.id, 0, this.defaultPageSize)
+            this.currentId = item.id;
         },
         thirdTitleClick: function (item) {
-            this.queryContents(item.id, 0, 30)
+            this.queryContents(item.id, 0, this.defaultPageSize)
+        },
+        showAllClick: function () {
+          this.findAllByPage(this.currentId, 0, this.defaultPageSize)
         },
         queryParentTitle: function () {
             var _this = this;

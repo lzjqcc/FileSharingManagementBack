@@ -21,35 +21,52 @@
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
 </head>
+<style>
+    a:focus {
+        background: #d4d4d4;
+    }
+</style>
 <body>
 <div id="index">
     <div id="parentTitle" class="demo">
-        <button
-                v-for="item in items"
-                v-bind:key="item"
-                v-bind:class="['btn btn-link ', {  active: currentTab === item.name }]"
-                v-on:click="parentTitleClick(item)"
-        >{{ item.name }}
-        </button>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link"
+                       v-for="item in items"
+                       v-bind:key="item"
+                       v-bind:class="['btn btn-link ', {  active: currentTab === item.name }]"
+                       v-on:click="parentTitleClick(item)"
+                       href="#">{{ item.name }}</a>
+                </div>
+            </div>
+        </nav>
+        <div style="background: gray;height: 1px;width: 98%;margin: auto"></div>
         <div>
-            <!--<component v-bind:is="currentTab" v-for="childItem in childItems" v-bind:key="childItem"-->
-                       <!--v-bind:post="childItem" v-on:enlarge-text="childTitleClick(childItem)"-->
-                       <!--class="tab"-->
-            <!--&gt;</component>-->
-            <third
-                    v-for="template in childItems" v-bind:key="template"
-                    v-bind:post="template" v-on:enlarge-text="childTitleClick(template)"
-            ></third>
+            <ul class="nav">
+                <li ><p class="nav-link text-secondary">分类：</p></li>
+                <third
+                        v-for="template in childItems" v-bind:key="template"
+                        v-bind:post="template" v-on:enlarge-text="childTitleClick(template)"
+                ></third>
+            </ul>
         </div>
-        <div>
+
+        <ul class="nav">
+            <li class="nav-item"><p class="nav-link text-secondary">场景：</p></li>
+            <li class="nav-item"><a class="nav-link " @click="showAllClick" href="#" >全部</a></li>
+
             <third
-                    v-for="template in thirdChildItems" v-bind:key="template"
-                    v-bind:post="template" v-on:enlarge-text="thirdTitleClick(template)"
+                    v-for="(template,index) in thirdChildItems" v-bind:key="template"
+                    v-bind:post="template" v-bind:id="index" v-show="index <=secondShowNum" v-on:enlarge-text="thirdTitleClick(template)"
             ></third>
-        </div>
-        <div style="display: flex;flex-wrap: wrap">
-            <file-template  v-for="template in fileTemplates" v-bind:key="template"
-                            v-bind:post="template"
+            <li class="nav-item"><a class="nav-link " href="#" @click="secondShowMoreClick()">{{secondShowMoreText}}</a></li>
+        </ul>
+        <div style="background: gray;height: 1px;width: 98%;margin: auto"></div>
+
+        <div style="display: flex;flex-wrap: wrap;justify-content: center">
+            <file-template v-for="template in fileTemplates" v-bind:key="template"
+                           v-bind:post="template"
             ></file-template>
         </div>
 
