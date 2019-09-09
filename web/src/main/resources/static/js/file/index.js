@@ -13,7 +13,7 @@ Vue.component("third", {
 Vue.component("file-template", {
     props: ['post'],
     template: '' +
-    '<div style="margin-right: 2%;margin-top: 2%" class="shadow p-3 mb-5 bg-white rounded" >' +
+    '<div style="margin-right: 2%;margin-top: 2%" class="shadow p-3 mb-5 bg-white rounded"  v-on:click="$emit(\'enlarge-text\',post.id)" >' +
     '<div class="card" style="width: 18rem;">\n' +
     '  <img  v-if=\'post.images\' v-bind:src="post.images[0].url" class="card-img-top" alt="...">\n' +
     '  <div class="card-body">\n' +
@@ -70,7 +70,10 @@ var parentTitle = new Vue({
 
     },
     methods: {
-
+        fileTemplateClick: function (template) {
+          console.log(window.location);
+          window.location.href = window.location.origin +"/file/details.html?templateNum="+template.fileNum;
+        },
         parentTitleClick: function (item) {
             this.queryChildTitle(item.id, 2)
             this.currentParentId = item.id;

@@ -74,25 +74,26 @@ body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#80000000',GradientType=1 );
 }
 .vueGallery .thumbnails {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    grid-gap: 5px;
+    /*display: grid;*/
+    /*grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));*/
+    /*grid-gap: 5px;*/
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: scroll;
 }
-.vueGallery .thumbnails div {
-    width: 100%;
+.vueGallery .thumbnails img {
     border: 2px solid #fff;
     outline: 2px solid #fff;
     cursor: pointer;
-    padding-bottom: 65%;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     opacity: 1;
 }
-.vueGallery .thumbnails div:hover {
+.vueGallery .thumbnails img:hover {
     opacity: 0.6;
 }
-.vueGallery .thumbnails div.active {
+.vueGallery .thumbnails img.active {
     outline-color: #5c4084;
     opacity: 1;
 }

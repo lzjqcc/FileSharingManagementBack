@@ -81,6 +81,7 @@
         <div style="display: flex;flex-wrap: wrap;justify-content: center">
             <file-template v-for="template in fileTemplates" v-bind:key="template"
                            v-bind:post="template"
+                           v-on:enlarge-text="fileTemplateClick(template)"
             ></file-template>
         </div>
         <div style="display: flex;justify-content: center">
