@@ -14,4 +14,7 @@ public interface FileTemplateRepository extends JpaRepository<FileTemplate, Inte
 
     PageImpl<FileTemplate> findByGroupIdIn(List<Integer> groupIds, Pageable pageable);
 
+    PageImpl<FileTemplate> findByGroupIdInAndNameLike(List<Integer> groupIds, String name, Pageable pageable);
+
+
 }

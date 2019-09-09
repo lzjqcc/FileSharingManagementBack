@@ -17,6 +17,7 @@ import com.Lowser.sharefile.dao.repository.ImageRepository;
 import com.Lowser.sharefile.dao.repository.TagRepository;
 import com.Lowser.sharefile.helper.ImageHelper;
 import com.Lowser.common.utils.GenerateNum;
+import com.beust.jcommander.internal.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,8 +88,8 @@ public class FileTemplateController {
     @GetMapping("/findAllByPage/{parentId}")
     public Page<FileTemplateResult> findALl(Pageable pageable, @PathVariable("parentId") Integer parentId) {
         validatePageable(pageable);
-        List<Group> groups = groupRepository.findByParentId(parentId);
-        List<Integer> groupIds = groups.stream().map(Group::getId).collect(Collectors.toList());
+        List<Integer> groupIds = new ArrayList<>();
+        setGroupIds(Arrays.asList(parentId), groupIds);
         PageImpl<FileTemplate> page = fileTemplateRepository.findByGroupIdIn(groupIds, pageable);
         return toFileTemplateResult(page);
     }
@@ -117,7 +119,23 @@ public class FileTemplateController {
         return fileTemplates;
         //fileTemplateRepository.saveAll(fileTemplates);
     }
-
+    @GetMapping("/textQuery/{parentId}")
+    public Object textQuery(@PathVariable("parentId") Integer parentId, String text, Pageable pageable) {
+        validatePageable(pageable);
+        List<Integer> childGroupIds = new ArrayList<>();
+        setGroupIds(Arrays.asList(parentId), childGroupIds);
+        PageImpl<FileTemplate> fileTemplatePage = fileTemplateRepository.findByGroupIdInAndNameLike(childGroupIds,"%"+ text+"%", pageable);
+        return toFileTemplateResult(fileTemplatePage);
+    }
+    private void setGroupIds(List<Integer> parentIds, List<Integer> childGroupIds) {
+        childGroupIds.addAll(parentIds);
+        List<Group> groups = groupRepository.findByParentIdIn(parentIds);
+        if (CollectionUtils.isEmpty(groups)) {
+            return;
+        }
+        List<Integer> childIds = groups.stream().map(Group::getId).collect(Collectors.toList());
+        setGroupIds(childIds, childGroupIds);
+    }
     private void saveTags(List<String> tagNames, String fileNum) {
         if (CollectionUtils.isEmpty(tagNames)) {
             return;

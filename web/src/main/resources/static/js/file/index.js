@@ -55,6 +55,7 @@ var parentTitle = new Vue({
         currentClassifyId:1,
         currentParentId:5,
         currentThirdItemId: -1,
+        searchText:null
 
     },
     mounted: function () {
@@ -154,11 +155,40 @@ var parentTitle = new Vue({
             this.currentThirdItemId = -1
         },
         pageClick: function (pageNum) {
+            if (this.searchText != null && this.searchText != '') {
+                this.textQuery(pageNum-1);
+                return;
+            }
             if (this.currentThirdItem == null) {
                 this.findAllByPage(this.currentClassifyId, pageNum-1, this.defaultPageSize);
             }else if (this.currentThirdItem != null){
                 this.queryContents(this.currentThirdItem.id, pageNum - 1, this.defaultPageSize);
             }
+        },
+        textQuery: function (page) {
+            if (this.searchText == null || this.searchText == '') {
+                if (this.currentThirdItemId != -1) {
+                    this.queryContents(this.currentThirdItemId, 0, this.defaultPageSize);
+                }else {
+                    this.findAllByPage(this.currentClassifyId, 0, this.defaultPageSize);
+                }
+                return;
+            }
+            var _this = this;
+            var parentId = this.currentThirdItemId;
+            if (parentId == -1) {
+                parentId = this.currentClassifyId;
+            }
+            console.log(this.currentThirdItemId)
+            axios.get("/template/textQuery/" + parentId + "?page=" + page + "&" + "size=" + this.defaultPageSize + "&text="+this.searchText+"&sort=insertTime,desc").then(function (response) {
+                _this.fileTemplates = response.data.body.content;
+                _this.totalPages = response.data.body.totalPages;
+                console.log(_this.totalPages)
+                //console.log(_this.items)
+            }).catch(function (error) {
+                _this.fileTemplates =  [{name:"简笔","description":"小sdsd","images":[{"url":"http://www.ypppt.com/uploads/allimg/181212/1-1Q2120T203.jpg"}]}];
+            });
+
         }
 
     }

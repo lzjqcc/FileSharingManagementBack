@@ -46,8 +46,8 @@
             </div>
         </nav>
         <div style="display: flex;justify-content:center">
-            <input class="form-control mr-sm-10"  type="search" style="width: 30%" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            <input class="form-control mr-sm-10"  type="search" style="width: 30%" v-model="searchText" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" @click="textQuery(0)">搜索</button>
         </div>
         <div style="margin-top: 1%;display: flex;justify-content: center">
             <div style="color: #d7d7d7;margin-top: 2%;width: 80%" class="shadow-lg p-3 mb-5 bg-light rounded">

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface GroupRepository extends JpaRepository<Group, Integer> {
     List<Group> findByParentId(Integer parentId);
+
+    List<Group> findByParentIdIn(List<Integer> parentIds);
 }
