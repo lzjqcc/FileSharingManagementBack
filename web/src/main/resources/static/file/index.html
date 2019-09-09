@@ -20,16 +20,18 @@
             src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vuejs-paginate@latest"></script>
+
 </head>
 <style>
-    a:focus {
+    .clickbackground > a{
         background: #d4d4d4;
     }
 </style>
 <body>
 <div id="index">
     <div id="parentTitle" class="demo">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-lg p-3 mb-5  rounded">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a class="nav-item nav-link"
@@ -37,31 +39,43 @@
                        v-bind:key="item"
                        v-bind:class="['btn btn-link ', {  active: currentTab === item.name }]"
                        v-on:click="parentTitleClick(item)"
+                       v-bind:class="{ clickbackground: item.id == currentParentId }"
+
                        href="#">{{ item.name }}</a>
                 </div>
             </div>
         </nav>
-        <div style="background: gray;height: 1px;width: 98%;margin: auto"></div>
-        <div>
-            <ul class="nav">
-                <li ><p class="nav-link text-secondary">分类：</p></li>
-                <third
-                        v-for="template in childItems" v-bind:key="template"
-                        v-bind:post="template" v-on:enlarge-text="childTitleClick(template)"
-                ></third>
-            </ul>
+        <div style="display: flex;justify-content:center">
+            <input class="form-control mr-sm-10"  type="search" style="width: 30%" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </div>
+        <div style="margin-top: 1%;display: flex;justify-content: center">
+            <div style="color: #d7d7d7;margin-top: 2%;width: 80%" class="shadow-lg p-3 mb-5 bg-light rounded">
+                <ul class="nav">
+                    <li><p class="nav-link text-secondary">分类：</p></li>
+                    <third
+                            v-for="template in childItems" v-bind:key="template"
+                            v-bind:post="template" v-on:enlarge-text="childTitleClick(template)"
+                            v-bind:class="{ clickbackground: template.id == currentClassifyId }"
+                    ></third>
+                </ul>
+                <ul class="nav">
+                    <li class="nav-item"><p class="nav-link text-secondary">场景：</p></li>
+                    <li class="nav-item" v-bind:class="{ clickbackground: -1 == currentThirdItemId }"><a class="nav-link " @click="showAllClick" href="#">全部</a></li>
+
+                    <third
+                            v-for="(template,index) in thirdChildItems" v-bind:key="template"
+                            v-bind:post="template" v-bind:id="index" v-show="index <=thirdShowNum"
+                            v-on:enlarge-text="thirdTitleClick(template)"
+                            v-bind:class="{ clickbackground: template.id == currentThirdItemId }"
+                    ></third>
+                    <li class="nav-item"><a class="nav-link " href="#" @click="thirdShowMoreClick()">{{ThirdShowMoreText}}</a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
-        <ul class="nav">
-            <li class="nav-item"><p class="nav-link text-secondary">场景：</p></li>
-            <li class="nav-item"><a class="nav-link " @click="showAllClick" href="#" >全部</a></li>
 
-            <third
-                    v-for="(template,index) in thirdChildItems" v-bind:key="template"
-                    v-bind:post="template" v-bind:id="index" v-show="index <=secondShowNum" v-on:enlarge-text="thirdTitleClick(template)"
-            ></third>
-            <li class="nav-item"><a class="nav-link " href="#"  @click="secondShowMoreClick()">{{secondShowMoreText}}</a></li>
-        </ul>
         <div style="background: gray;height: 1px;width: 98%;margin: auto"></div>
 
         <div style="display: flex;flex-wrap: wrap;justify-content: center">
@@ -69,9 +83,20 @@
                            v-bind:post="template"
             ></file-template>
         </div>
-
+        <div style="display: flex;justify-content: center">
+            <paginate
+                    :page-count="totalPages"
+                    :class="'pagination'"
+                    :page-link-class="'page-link'"
+                    :prev-link-class="'page-link'"
+                    :next-link-class="'page-link'"
+                    :page-class="'page-item'"
+                    :prev-class="'page-item'"
+                    :next-class="'page-item'"
+                    :click-handler="pageClick">
+            </paginate>
+        </div>
     </div>
-
 
 </div>
 
