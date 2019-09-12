@@ -1,35 +1,34 @@
+// <div class="vueGallery">
+//     <div v-if="photos.length > 0" class="activePhoto" :style="'background-image: url('+photos[activePhoto].url+');'">
+//     <div style="display: flex;justify-content;center;float: left" @click="previousPhoto()">
+//     <i class="fas fa-chevron-circle-left">&laquo;</i>
+// </div>
+// <div style="display: inline;float: right" class="next" @click="nextPhoto()">
+//     <i class="fas fa-chevron-circle-right">&raquo;</i>
+// </div>
+//
+// </div>
+// <div class="thumbnails" v-if="photos.length > 0">
+//     <img style="height: 50px;margin: 10px"
+// v-for="(photo, index) in photos"
+//     :ref="index"
+// :key="index"
+// :id="index"
+// @click="changePhoto(index)"
+// :class="{'active': activePhoto == index}" :src="photo.url">
+//     </img>
+//
+//     </div>
+//     </div>
+
 Vue.component('vue-gallery', {
-    props: ['photos'],
-    data: function () {
-        return {
-            activePhoto: null
-
-
-        }
-    },
+    props: ['photo'],
     template: `
-    <div class="vueGallery">
-    <div v-if="photos.length > 0" class="activePhoto" :style="'background-image: url('+photos[activePhoto].url+');'">
-      <div style="display: flex;justify-content;center;float: left" @click="previousPhoto()">
-        <i class="fas fa-chevron-circle-left">&laquo;</i>
-       </div>
-      <div style="display: inline;float: right" class="next" @click="nextPhoto()">
-        <i class="fas fa-chevron-circle-right">&raquo;</i>
-    </div>
-     
-    </div>
-    <div class="thumbnails" v-if="photos.length > 0">
-      <img style="height: 50px;margin: 10px"
-           v-for="(photo, index) in photos"
-           :ref="index"
-           :key="index"
-           :id="index"
-           @click="changePhoto(index)"
-           :class="{'active': activePhoto == index}" :src="photo.url">
-      </img>
-      
-    </div>
-  </div>`,
+            <img style="width: 45%;margin: 5px" class="shadow"
+                :src="photo.url">
+            </img>
+        
+    `,
     mounted() {
         this.changePhoto(0)
         document.addEventListener("keydown", (event) => {
@@ -92,9 +91,10 @@ Vue.component("third", {
 
 })
 new Vue({
-    el: '#app',
+    el: '#parent',
     data: {
-        photos: []
+        photos: [],
+        template: null
     },
     mounted: function () {
         this.queryFileTemplate();
@@ -105,6 +105,7 @@ new Vue({
             var _this = this;
             axios.get("/template/fileTemplateDetails/" + templateNum).then(function (response) {
                 _this.photos = response.data.body.images;
+                _this.template = response.data.body;
             }).catch(function (error) {
             })
         },

@@ -24,12 +24,25 @@
 
 </head>
 <body>
-    <div style="display: flex;justify-content: center">
-        <div id="app">
-            <vue-gallery :photos="photos"></vue-gallery>
+<div id="parent">
+    <div>
+
+    </div>
+    <div class="center">
+        <div style="width: 60%;background-color: #d7d7d7;">
+                <vue-gallery :photo="photos[0]"></vue-gallery>
+
+                <div id="app">
+
+                    <vue-gallery v-for="(photo) in photos" :photo="photo"></vue-gallery>
+                </div>
+            <div style="width: 40%">
+                <p v-if="template != null" class="text-muted">{{template.description}}</p>
+            </div>
+
 
         </div>
-        <div>
+        <div style="">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">Cras justo odio</li>
                 <li class="list-group-item">Dapibus ac facilisis in</li>
@@ -38,7 +51,9 @@
                 <li class="list-group-item">Vestibulum at eros</li>
             </ul>
         </div>
+
     </div>
+</div>
 
 
 </body>

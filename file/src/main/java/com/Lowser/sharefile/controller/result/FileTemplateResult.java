@@ -8,8 +8,8 @@ public class FileTemplateResult {
     private String url;
     private Integer downloadNums;
     private Integer thumbsUp;
-    private Integer description;
-    private Integer fileFormat;
+    private String description;
+    private String fileFormat;
     private String fileNum;
     private Integer fileSize;
     private Integer viewNums;
@@ -80,19 +80,19 @@ public class FileTemplateResult {
         this.thumbsUp = thumbsUp;
     }
 
-    public Integer getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(Integer description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Integer getFileFormat() {
+    public String getFileFormat() {
         return fileFormat;
     }
 
-    public void setFileFormat(Integer fileFormat) {
+    public void setFileFormat(String fileFormat) {
         this.fileFormat = fileFormat;
     }
 
