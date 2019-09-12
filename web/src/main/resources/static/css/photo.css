@@ -1,71 +1,42 @@
-body {
-    padding: 25px;
-}
-
-
-
-.heading {
-    text-align: center;
-}
-.heading h1 {
-    background: -webkit-linear-gradient(#fff, #8f70ba);
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    text-align: center;
-    margin: 0 0 5px 0;
-    font-weight: 900;
-    font-size: 4rem;
-    color: #fff;
-}
-.heading h4 {
-    color: #8f70ba;
-    text-align: center;
-    margin: 0 0 35px 0;
-    font-weight: 400;
-    font-size: 24px;
-}
 
 /* demo ��ʼ */
-.container {
+#app{
     padding: 6px;
     background-color: #fff;
     border-radius: 8px;
-    max-width: 800px;
     box-shadow: 0 5px 8px #0000007a;
+    width: 35%;
+
 }
 
 .vueGallery .activePhoto {
-    width: 100%;
     margin-bottom: 5px;
     padding-bottom: 65%;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    border: 2px solid #fff;
-    position: relative;
 }
-.vueGallery .activePhoto button {
+.vueGallery .activePhoto div {
     border: none;
     background-color: transparent;
     font-size: 32px;
     color: #fff;
     opacity: 0.5;
-    position: absolute;
     outline: none;
-    height: 100%;
+    height: 200px;
+    width: 10%;
 }
-.vueGallery .activePhoto button:hover {
+.vueGallery .activePhoto div:hover {
     opacity: 1;
 }
-.vueGallery .activePhoto button.previous {
+.vueGallery .activePhoto div.previous {
     padding: 0 1em 0 0.7em;
-    left: 0;
     background: -moz-linear-gradient(left, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
     background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
     background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80000000', endColorstr='#00000000',GradientType=1 );
 }
-.vueGallery .activePhoto button.next {
+.vueGallery .activePhoto div.next {
     padding: 0 0.7em 0 1em;
     right: 0;
     background: -moz-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
@@ -74,12 +45,10 @@ body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#80000000',GradientType=1 );
 }
 .vueGallery .thumbnails {
-    /*display: grid;*/
-    /*grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));*/
-    /*grid-gap: 5px;*/
     display: flex;
     flex-wrap: nowrap;
     overflow: scroll;
+    background-color: #9c7e60;
 }
 .vueGallery .thumbnails img {
     border: 2px solid #fff;
@@ -89,6 +58,8 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     opacity: 1;
+    padding: 10px;
+    box-shadow: 0 5px 8px #0000007a;
 }
 .vueGallery .thumbnails img:hover {
     opacity: 0.6;

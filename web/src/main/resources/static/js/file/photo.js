@@ -3,22 +3,27 @@ Vue.component('vue-gallery', {
     data: function () {
         return {
             activePhoto: null
+
+
         }
     },
-    template:  `
+    template: `
     <div class="vueGallery">
-    <div v-show="photos.length > 0" class="activePhoto" :style="'background-image: url('+photos[activePhoto].url+');'">
-      <button type="button" aria-label="Previous Photo" class="previous" @click="previousPhoto()">
-        <i class="fas fa-chevron-circle-left"></i>
-      </button>
-      <button type="button" aria-label="Next Photo" class="next" @click="nextPhoto()">
-        <i class="fas fa-chevron-circle-right"></i>
-      </button>
+    <div v-if="photos.length > 0" class="activePhoto" :style="'background-image: url('+photos[activePhoto].url+');'">
+      <div style="display: flex;justify-content;center;float: left" @click="previousPhoto()">
+        <i class="fas fa-chevron-circle-left">&laquo;</i>
+       </div>
+      <div style="display: inline;float: right" class="next" @click="nextPhoto()">
+        <i class="fas fa-chevron-circle-right">&raquo;</i>
     </div>
-    <div class="thumbnails" v-show="photos.length > 0">
-      <img style="height: 100px"
+     
+    </div>
+    <div class="thumbnails" v-if="photos.length > 0">
+      <img style="height: 50px;margin: 10px"
            v-for="(photo, index) in photos"
+           :ref="index"
            :key="index"
+           :id="index"
            @click="changePhoto(index)"
            :class="{'active': activePhoto == index}" :src="photo.url">
       </img>
@@ -28,35 +33,56 @@ Vue.component('vue-gallery', {
     mounted() {
         this.changePhoto(0)
         document.addEventListener("keydown", (event) => {
-            if(event.which == 37)
-        this.previousPhoto()
-        if (event.which == 39)
-            this.nextPhoto()
-    })
+            if (event.which == 37)
+                this.previousPhoto()
+            if (event.which == 39)
+                this.nextPhoto()
+        })
     },
     methods: {
         changePhoto(index) {
             this.activePhoto = index
+
         },
         nextPhoto() {
             this.changePhoto(this.activePhoto + 1 < this.photos.length ? this.activePhoto + 1 : 0)
-            var currentPosition,timer;
-            var speed=1;
-            var i=1;
-            timer=setInterval(function(){
-                i++;
-                var img = document.getElementsByClassName('thumbnails')[0];
-                console.log(img.wi)
+            var div = document.getElementsByClassName("thumbnails")[0]
+            if (this.activePhoto == 0) {
+                this.scroll(-20, div.scrollLeft);
+            } else {
+                var lastPhoto = this.activePhoto == 0 ? this.photos.length - 1 : this.activePhoto - 1;
+                var img = document.getElementById(lastPhoto + "");
+                this.scroll(1, img.offsetWidth)
 
-                if(i <=img.width){
-                    img.scrollLeft +=speed;
-                }else{
-                    clearInterval(timer);
-                }
-            },1);
+            }
         },
         previousPhoto() {
             this.changePhoto(this.activePhoto - 1 >= 0 ? this.activePhoto - 1 : this.photos.length - 1)
+
+            if (this.activePhoto == this.photos.length - 1) {
+                var div = document.getElementsByClassName("thumbnails")[0]
+                this.scroll(20, div.scrollWidth);
+
+            } else {
+                var lastPhoto = this.activePhoto == 0 ? this.photos.length - 1 : this.activePhoto - 1;
+                this.scroll(-1, document.getElementById(lastPhoto + "").offsetWidth)
+            }
+
+        },
+        scroll: function (speed, offset) {
+            var timer;
+            var i = Math.abs(speed);
+            var _this = this;
+            var div = document.getElementsByClassName("thumbnails")[0];
+            timer = setInterval(function () {
+                if (i <= offset) {
+                    div.scrollLeft += speed;
+                } else {
+                    clearInterval(timer);
+                }
+                i += Math.abs(speed);
+
+            }, 1);
         }
     }
 })
@@ -68,32 +94,30 @@ Vue.component("third", {
 new Vue({
     el: '#app',
     data: {
-        photos: [
-
-        ]
+        photos: []
     },
-    mounted: function(){
-      this.queryFileTemplate();
+    mounted: function () {
+        this.queryFileTemplate();
     },
-    methods:{
+    methods: {
         queryFileTemplate: function () {
             var templateNum = this.getQueryVar("templateNum")
             var _this = this;
             axios.get("/template/fileTemplateDetails/" + templateNum).then(function (response) {
                 _this.photos = response.data.body.images;
-                console.log(_this.photos)
-                //console.log(_this.items)
             }).catch(function (error) {
             })
         },
         getQueryVar: function (variable) {
             var query = window.location.search.substring(1);
             var vars = query.split("&");
-            for (var i=0;i<vars.length;i++) {
+            for (var i = 0; i < vars.length; i++) {
                 var pair = vars[i].split("=");
-                if(pair[0] == variable){return pair[1];}
+                if (pair[0] == variable) {
+                    return pair[1];
+                }
             }
-            return(false);
+            return (false);
         }
     }
 });
