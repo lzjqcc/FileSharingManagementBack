@@ -24,7 +24,7 @@
 Vue.component('vue-gallery', {
     props: ['photo'],
     template: `
-            <img style="width: 45%;margin: 5px" class="shadow"
+            <img v-if="photo != null" style="width:40%;margin: 5px" class="shadow"
                 :src="photo.url">
             </img>
         
@@ -119,6 +119,40 @@ new Vue({
                 }
             }
             return (false);
+        },
+        thumbsUpClick: function (el) {
+            if (!el.target.disabled) {
+                if (!this.template.thumbsUp) {
+                    this.template.thumbsUp = 0;
+                }
+                this.template.thumbsUp +=1;
+                el.target.disabled = true;
+                el.target.backgroundColor = '#d7d7d7'
+                let param = {};
+                param.thumbsUp = this.template.thumbsUp;
+                param.fileNum = this.template.fileNum;
+                this.update(param);
+            }
+
+        },
+        downloadClick: function () {
+            if (!this.template.downloadNums) {
+                this.template.downloadNums = 0;
+            }
+            this.template.downloadNums +=1;
+            var param = {};
+            param.fileNum = this.template.fileNum;
+            param.downloadNums = this.template.downloadNums;
+            this.update(param);
+        },
+        update: function (paramObject) {
+            var requestParam = "";
+            for (param in paramObject) {
+                requestParam = requestParam + param + "=" + paramObject[param] + "&";
+            }
+            requestParam = requestParam.substr(0, requestParam.length - 1);
+            console.log(requestParam)
+            axios.get("/template/update?" + requestParam);
         }
     }
 });

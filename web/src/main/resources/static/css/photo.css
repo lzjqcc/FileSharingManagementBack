@@ -4,21 +4,34 @@
     padding: 6px;
     background-color: #d4f6e7;
     border-radius: 8px;
-    width: 30%;
+    width: 98%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-left: 8%;
 }
 .shadow {
     box-shadow: 0 5px 8px #0000007a;
     border-radius: 8px;
 }
+
 .center{
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
+.content-font{
+    font-size: small;
+    font-family: 仿宋;
+    display: inline;
+}
+.normal-font {
+    font-size: small;
+    display: inline;
+}
+img:visited{pointer-events: none;}
+/*
 right {
     display: flex;
     justify-content: flex-start;
-}
+}*/

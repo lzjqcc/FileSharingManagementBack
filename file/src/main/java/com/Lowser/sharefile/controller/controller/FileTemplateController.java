@@ -3,6 +3,7 @@ package com.Lowser.sharefile.controller.controller;
 import com.Lowser.common.error.BizException;
 import com.Lowser.common.utils.ModelUtils;
 import com.Lowser.sharefile.controller.param.FileTemplateParam;
+import com.Lowser.sharefile.controller.param.UpdateTemplateParam;
 import com.Lowser.sharefile.controller.result.FileTemplateResult;
 import com.Lowser.sharefile.controller.result.GroupResult;
 import com.Lowser.sharefile.controller.result.ImageResult;
@@ -72,7 +73,20 @@ public class FileTemplateController {
         fileTemplateResult.setTagResults(ModelUtils.toTargets(tags, TagResult.class));
         return fileTemplateResult;
     }
-
+    @GetMapping("/update")
+    public void update(UpdateTemplateParam param) {
+        FileTemplate fileTemplate = fileTemplateRepository.findByFileNum(param.getFileNum());
+        if (fileTemplate == null) {
+            throw new BizException("文件不存在");
+        }
+        if (param.getDownloadNums() != null) {
+            fileTemplate.setDownloadNums(param.getDownloadNums());
+        }
+        if (param.getThumbsUp() != null) {
+            fileTemplate.setThumbsUp(param.getThumbsUp());
+        }
+        fileTemplateRepository.save(fileTemplate);
+    }
     /**
      * ?page=&size=&sort=firstname&sort=lastname,asc
      * @param pageable
