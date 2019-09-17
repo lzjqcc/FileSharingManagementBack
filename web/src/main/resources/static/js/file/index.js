@@ -39,10 +39,10 @@ Vue.component("file-template", {
 
 Vue.component('paginate', VuejsPaginate);
 
+
 var parentTitle = new Vue({
     el: "#parentTitle",
     data: {
-        currentTab: "PPT",
         items: [{
             name: "PPT", id: 3
         }, {name: "Word", id: 4}],
@@ -75,10 +75,10 @@ var parentTitle = new Vue({
         totalElements: 20,
         totalPages: 1,
         currentClassifyId: 1,
-        currentParentId: 5,
-        currentThirdItemId: -1,
-        searchText: null
-
+        currentParentItem: null,
+        searchText: null,
+        showTemplateDetails: null,
+        currentChildItem: null
     },
     mounted: function () {
         this.queryParentTitle();
@@ -91,12 +91,20 @@ var parentTitle = new Vue({
     computed: {},
     methods: {
         fileTemplateClick: function (template) {
-            console.log(window.location);
-            window.location.href = window.location.origin + "/file/details.html?templateNum=" + template.fileNum;
+            let thirdName = this.currentThirdItem == null ?  '全部' : this.currentThirdItem.name ;
+            let location = this.currentParentItem.name + '->' + this.currentChildItem.name + '->' + thirdName;
+            let storeInfo = {};
+            storeInfo.currentParentItem = this.currentParentItem;
+            storeInfo.parentItems = this.items;
+            storeInfo.location = location;
+            localStorage.setItem("title", JSON.stringify(storeInfo))
+            window.open(window.location.origin + "/file/details.html?templateNum=" + template.fileNum);
+
+
         },
         parentTitleClick: function (item) {
             this.queryChildTitle(item.id, 2)
-            this.currentParentId = item.id;
+            this.currentParentItem = item;
         },
         thirdShowMoreClick: function () {
             if (this.ThirdShowMoreText == '更多') {
@@ -114,22 +122,22 @@ var parentTitle = new Vue({
             this.queryThirdTitle(item.id)
             this.findAllByPage(item.id, 0, this.defaultPageSize)
             this.currentClassifyId = item.id;
+            this.currentChildItem = item;
         },
         thirdTitleClick: function (item) {
             this.queryContents(item.id, 0, this.defaultPageSize);
             this.currentThirdItem = item;
-            this.currentThirdItemId = item.id;
         },
         showAllClick: function () {
             this.findAllByPage(this.currentClassifyId, 0, this.defaultPageSize);
             this.currentThirdItem == null;
-            this.currentThirdItemId = -1;
         },
         queryParentTitle: function () {
             var _this = this;
             axios.get("/template/parentGroups").then(function (response) {
                 _this.items = response.data.body;
-                //console.log(_this.items)
+                _this.currentParentItem = response.data.body[0];
+
             }).catch(function (error) {
 
             })
@@ -138,6 +146,7 @@ var parentTitle = new Vue({
             var _this = this;
             axios.get("/template/childGroups/" + parentId).then(function (response) {
                 _this.childItems = response.data.body;
+                _this.currentChildItem = _this.childItems[0];
                 //console.log(_this.items)
             }).catch(function (error) {
                 _this.childItems = null;
@@ -147,7 +156,6 @@ var parentTitle = new Vue({
             var _this = this;
             axios.get("/template/childGroups/" + parentId).then(function (response) {
                 _this.thirdChildItems = response.data.body;
-                //console.log(_this.items)
             }).catch(function (error) {
                 _this.childItems = null;
             })
@@ -183,7 +191,6 @@ var parentTitle = new Vue({
                 }];
             });
             this.currentThirdItem = null;
-            this.currentThirdItemId = -1
         },
         pageClick: function (pageNum) {
             if (this.searchText != null && this.searchText != '') {
@@ -198,24 +205,23 @@ var parentTitle = new Vue({
         },
         textQuery: function (page) {
             if (this.searchText == null || this.searchText == '') {
-                if (this.currentThirdItemId != -1) {
-                    this.queryContents(this.currentThirdItemId, 0, this.defaultPageSize);
+                if (this.currentThirdItem != null) {
+                    this.queryContents(this.currentThirdItem.id, 0, this.defaultPageSize);
                 } else {
                     this.findAllByPage(this.currentClassifyId, 0, this.defaultPageSize);
                 }
                 return;
             }
             var _this = this;
-            var parentId = this.currentThirdItemId;
-            if (parentId == -1) {
+            var parentId = null;
+            if (this.currentThirdItem == null) {
                 parentId = this.currentClassifyId;
+            }else {
+                parentId = this.currentThirdItem.id;
             }
-            console.log(this.currentThirdItemId)
             axios.get("/template/textQuery/" + parentId + "?page=" + page + "&" + "size=" + this.defaultPageSize + "&text=" + this.searchText + "&sort=insertTime,desc").then(function (response) {
                 _this.fileTemplates = response.data.body.content;
                 _this.totalPages = response.data.body.totalPages;
-                console.log(_this.totalPages)
-                //console.log(_this.items)
             }).catch(function (error) {
                 _this.fileTemplates = [{
                     name: "简笔",

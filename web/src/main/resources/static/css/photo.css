@@ -30,6 +30,10 @@
     display: inline;
 }
 img:visited{pointer-events: none;}
+
+.clickbackground {
+    background-color: #333333;
+}
 /*
 right {
     display: flex;

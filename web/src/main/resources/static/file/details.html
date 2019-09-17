@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -26,8 +26,24 @@
 <body>
 <div id="parent">
     <div>
-
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-lg p-3 mb-5  rounded">
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav" v-if="currentParentItem != null">
+                    <a class="nav-item nav-link" href="index.html">回到首页</a>
+                    <a class="nav-item nav-link"
+                       v-for="item in parentItems"
+                       v-bind:key="item"
+                       v-bind:class="['btn btn-link ']"
+                       href="#">{{ item.name }}</a>
+                </div>
+            </div>
+        </nav>
     </div>
+    <div style="margin-left: 5%;margin-bottom: 2%">
+        <p class="normal-font">当前位置：</p>
+        <p class="normal-font">{{currentLocation}}</p>
+    </div>
+
     <div style="display: flex;justify-content: center">
         <div style="width: 40%;background-color: #d7d7d7;" class="center">
                 <vue-gallery style="width: 98%" :photo="photos[0]"></vue-gallery>
@@ -81,8 +97,11 @@
         </div>
     </div>
 </div>
-
+<div id="footer">
+    <footer-component></footer-component>
+</div>
 
 </body>
 <script src="../js/file/photo.js"></script>
+<script src="../js/file/common.js"></script>
 </html>

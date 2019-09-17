@@ -31,15 +31,15 @@
 <body>
 <div id="index">
     <div id="parentTitle" class="demo">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-lg p-3 mb-5  rounded">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-lg p-3 mb-5  rounded" v-show="currentParentItem != null">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
+                <div class="navbar-nav" >
                     <a class="nav-item nav-link"
                        v-for="item in items"
                        v-bind:key="item"
-                       v-bind:class="['btn btn-link ', {  active: currentTab === item.name }]"
+                       v-bind:class="['btn btn-link ']"
                        v-on:click="parentTitleClick(item)"
-                       v-bind:class="{ clickbackground: item.id == currentParentId }"
+                       v-bind:class="{ clickbackground: currentParentItem.id != null && item.id == currentParentItem.id }"
 
                        href="#">{{ item.name }}</a>
                 </div>
@@ -59,15 +59,15 @@
                             v-bind:class="{ clickbackground: template.id == currentClassifyId }"
                     ></third>
                 </ul>
-                <ul class="nav">
+                <ul class="nav" v-if="thirdChildItems != null && thirdChildItems.length > 0">
                     <li class="nav-item"><p class="nav-link text-secondary">场景：</p></li>
-                    <li class="nav-item" v-bind:class="{ clickbackground: -1 == currentThirdItemId }"><a class="nav-link " @click="showAllClick" href="#">全部</a></li>
+                    <li class="nav-item" v-bind:class="{ clickbackground: null == currentThirdItem }"><a class="nav-link " @click="showAllClick" href="#">全部</a></li>
 
                     <third
                             v-for="(template,index) in thirdChildItems" v-bind:key="template"
                             v-bind:post="template" v-bind:id="index" v-show="index <=thirdShowNum"
                             v-on:enlarge-text="thirdTitleClick(template)"
-                            v-bind:class="{ clickbackground: template.id == currentThirdItemId }"
+                            v-bind:class="{ clickbackground: currentThirdItem != null && template.id == currentThirdItem.id }"
                     ></third>
                     <li class="nav-item"><a class="nav-link " href="#" @click="thirdShowMoreClick()">{{ThirdShowMoreText}}</a>
                     </li>
@@ -77,31 +77,35 @@
 
 
         <div style="background: gray;height: 1px;width: 98%;margin: auto"></div>
+        <div v-if="fileTemplates != null">
+            <div style="display: flex;flex-wrap: wrap;justify-content: center">
+                <file-template v-for="template in fileTemplates" v-bind:key="template"
+                               v-bind:post="template"
+                               v-on:enlarge-text="fileTemplateClick(template)"
+                ></file-template>
+            </div>
+            <div style="display: flex;justify-content: center">
+                <paginate
+                        :page-count="totalPages"
+                        :class="'pagination'"
+                        :page-link-class="'page-link'"
+                        :prev-link-class="'page-link'"
+                        :next-link-class="'page-link'"
+                        :page-class="'page-item'"
+                        :prev-class="'page-item'"
+                        :next-class="'page-item'"
+                        :click-handler="pageClick">
+                </paginate>
+            </div>
+        </div>
 
-        <div style="display: flex;flex-wrap: wrap;justify-content: center">
-            <file-template v-for="template in fileTemplates" v-bind:key="template"
-                           v-bind:post="template"
-                           v-on:enlarge-text="fileTemplateClick(template)"
-            ></file-template>
-        </div>
-        <div style="display: flex;justify-content: center">
-            <paginate
-                    :page-count="totalPages"
-                    :class="'pagination'"
-                    :page-link-class="'page-link'"
-                    :prev-link-class="'page-link'"
-                    :next-link-class="'page-link'"
-                    :page-class="'page-item'"
-                    :prev-class="'page-item'"
-                    :next-class="'page-item'"
-                    :click-handler="pageClick">
-            </paginate>
-        </div>
     </div>
 
 </div>
-
+<div id="footer">
+    <footer-component></footer-component>
+</div>
 </body>
 <script src="../js/file/index.js"></script>
-
+<script src="../js/file/common.js"></script>
 </html>

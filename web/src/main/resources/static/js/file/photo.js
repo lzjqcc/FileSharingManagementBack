@@ -1,25 +1,4 @@
-// <div class="vueGallery">
-//     <div v-if="photos.length > 0" class="activePhoto" :style="'background-image: url('+photos[activePhoto].url+');'">
-//     <div style="display: flex;justify-content;center;float: left" @click="previousPhoto()">
-//     <i class="fas fa-chevron-circle-left">&laquo;</i>
-// </div>
-// <div style="display: inline;float: right" class="next" @click="nextPhoto()">
-//     <i class="fas fa-chevron-circle-right">&raquo;</i>
-// </div>
-//
-// </div>
-// <div class="thumbnails" v-if="photos.length > 0">
-//     <img style="height: 50px;margin: 10px"
-// v-for="(photo, index) in photos"
-//     :ref="index"
-// :key="index"
-// :id="index"
-// @click="changePhoto(index)"
-// :class="{'active': activePhoto == index}" :src="photo.url">
-//     </img>
-//
-//     </div>
-//     </div>
+
 
 Vue.component('vue-gallery', {
     props: ['photo'],
@@ -94,12 +73,23 @@ new Vue({
     el: '#parent',
     data: {
         photos: [],
-        template: null
+        template: null,
+        currentParentItem: null,
+        parentItems: null,
+        currentLocation: null,
     },
     mounted: function () {
         this.queryFileTemplate();
+        this.initParentTitle();
     },
     methods: {
+        initParentTitle: function () {
+            var title = localStorage.getItem("title");
+            title = JSON.parse(title);
+            this.currentParentItem = title.currentParentItem;
+            this.parentItems = title.parentItems;
+            this.currentLocation = title.location;
+        },
         queryFileTemplate: function () {
             var templateNum = this.getQueryVar("templateNum")
             var _this = this;
