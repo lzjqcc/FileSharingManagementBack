@@ -3,7 +3,7 @@
 Vue.component('vue-gallery', {
     props: ['photo'],
     template: `
-            <img v-if="photo != null" style="width:40%;margin: 5px" class="shadow"
+            <img v-if="photo != null" style="width:50%;margin: 5px" class="shadow"
                 :src="photo.url">
             </img>
         
