@@ -76,7 +76,16 @@
                     <li class="nav-item"><a class="nav-link " href="#" @click="thirdShowMoreClick()">{{ThirdShowMoreText}}</a>
                     </li>
                 </ul>
+                <div style="background: gray;height: 1px;width: 98%;margin: auto"></div>
+                <div style="margin-top: 1%">
+                    <p style="display: inline;" class="nav-link text-secondary">排序：</p>
+                    <a class="btn btn-outline-primary" v-bind:class="{active : sortClick== 'upload'}"  @click="newestUploadClick">最新上传</a>
+                    <a class="btn btn-outline-primary" v-bind:class="{active : sortClick== 'download'}" @click="hotDownloadClick">热门下载</a>
+                    <a class="btn btn-outline-primary" v-bind:class="{active : sortClick== 'view'}" @click="hotViewNumsClcik">热门关注</a>
+                    <a class="btn btn-outline-primary" v-bind:class="{active : sortClick== 'thumbsup'}" @click="hotThumbsUpClick">点赞最多</a>
+                </div>
             </div>
+
         </div>
 
 

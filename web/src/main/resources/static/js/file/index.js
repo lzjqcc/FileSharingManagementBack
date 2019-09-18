@@ -78,7 +78,9 @@ var parentTitle = new Vue({
         currentParentItem: null,
         searchText: null,
         showTemplateDetails: null,
-        currentChildItem: null
+        currentChildItem: null,
+        sort: '&sort=insertTime,desc',
+        sortClick:'upload'
     },
     mounted: function () {
         this.queryParentTitle();
@@ -90,6 +92,34 @@ var parentTitle = new Vue({
     },
     computed: {},
     methods: {
+        hotDownloadClick: function () {
+            this.sortClick = 'download';
+            this.sort = '&sort=downloadNums,desc';
+            this.queryTemplates();
+        },
+        hotViewNumsClcik: function () {
+            this.sortClick = 'view';
+            this.sort = '&sort=viewNums,desc';
+            this.queryTemplates();
+        },
+        hotThumbsUpClick: function () {
+            this.sortClick = 'thumbsup';
+            this.sort = '&sort=thumbsUp,desc'
+            this.queryTemplates();
+        },
+        newestUploadClick: function () {
+            this.sortClick = 'upload';
+            this.sort = '&sort=insertTime,desc';
+            this.queryTemplates();
+        },
+        queryTemplates: function () {
+            if (this.currentThirdItem == null) {
+
+                this.findAllByPage(this.currentClassifyId, 0, this.defaultPageSize);
+            }else {
+                this.queryContents(this.currentThirdItem.id, 0, this.defaultPageSize)
+            }
+        },
         fileTemplateClick: function (template) {
             let thirdName = this.currentThirdItem == null ?  '全部' : this.currentThirdItem.name ;
             let location = this.currentParentItem.name + '->' + this.currentChildItem.name + '->' + thirdName;
@@ -162,7 +192,7 @@ var parentTitle = new Vue({
         },
         queryContents: function (childGroupId, page, size) {
             var _this = this;
-            axios.get("/template/fileTemplatesByPage/" + childGroupId + "?page=" + page + "&" + "size=" + size + "&sort=insertTime,desc").then(function (response) {
+            axios.get("/template/fileTemplatesByPage/" + childGroupId + "?page=" + page + "&" + "size=" + size + this.sort).then(function (response) {
                 _this.fileTemplates = response.data.body.content;
                 _this.totalPages = response.data.body.totalPages;
 
@@ -178,7 +208,7 @@ var parentTitle = new Vue({
         },
         findAllByPage: function (parentId, page, size) {
             var _this = this;
-            axios.get("/template/findAllByPage/" + parentId + "?page=" + page + "&" + "size=" + size + "&sort=insertTime,desc").then(function (response) {
+            axios.get("/template/findAllByPage/" + parentId + "?page=" + page + "&" + "size=" + size + this.sort).then(function (response) {
                 _this.fileTemplates = response.data.body.content;
                 _this.totalPages = response.data.body.totalPages;
                 console.log(_this.totalPages)
@@ -219,7 +249,7 @@ var parentTitle = new Vue({
             }else {
                 parentId = this.currentThirdItem.id;
             }
-            axios.get("/template/textQuery/" + parentId + "?page=" + page + "&" + "size=" + this.defaultPageSize + "&text=" + this.searchText + "&sort=insertTime,desc").then(function (response) {
+            axios.get("/template/textQuery/" + parentId + "?page=" + page + "&" + "size=" + this.defaultPageSize + "&text=" + this.searchText + this.sort).then(function (response) {
                 _this.fileTemplates = response.data.body.content;
                 _this.totalPages = response.data.body.totalPages;
             }).catch(function (error) {
