@@ -128,7 +128,7 @@ var parentTitle = new Vue({
             storeInfo.parentItems = this.items;
             storeInfo.location = location;
             localStorage.setItem("title", JSON.stringify(storeInfo))
-            window.open(window.location.origin + "/file/details.html?templateNum=" + template.fileNum);
+            window.open(window.location.origin + "/details.html?templateNum=" + template.fileNum);
 
 
         },
