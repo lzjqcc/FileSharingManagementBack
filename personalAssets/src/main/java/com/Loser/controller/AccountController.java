@@ -210,18 +210,17 @@ public class AccountController {
         double retval = 0;
         if (r == 0) {
             retval = -1*(f+p)/n;
+            return retval;
         }
-        else {
-            double r1 = r + 1;
-            retval = ( f + p * Math.pow(r1, n) ) * r
-                    /
-                    ((t ? r1 : 1) * (1 - Math.pow(r1, n)));
-        }
+        double r1 = r + 1;
+        retval = ( f + p * Math.pow(r1, n) ) * r
+                /
+                ((t ? r1 : 1) * (1 - Math.pow(r1, n)));
         return retval;
     }
 
     public static void main(String[] args) {
-        System.out.println(pmt(0.1 /12 , 10 *12 , 0, -5000000, false)
+        System.out.println(pmt(0.1  , 5 , 0, -1000000, false)
         );
     }
 }

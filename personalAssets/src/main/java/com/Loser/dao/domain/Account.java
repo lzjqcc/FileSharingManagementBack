@@ -5,6 +5,7 @@ import com.Lowser.common.dao.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "tb_account")
@@ -82,4 +83,6 @@ public class Account extends BaseEntity{
     public void setTargetReturnRate(Integer targetReturnRate) {
         this.targetReturnRate = targetReturnRate;
     }
+
+
 }
