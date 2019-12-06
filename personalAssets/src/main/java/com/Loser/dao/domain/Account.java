@@ -26,7 +26,7 @@ public class Account extends BaseEntity{
      * 目标年化收益
      */
     @Column(name = "target_return_rate")
-    private Integer targetReturnRate;
+    private Double targetReturnRate;
 
     public String getName() {
         return name;
@@ -76,13 +76,11 @@ public class Account extends BaseEntity{
         this.targetYear = targetYear;
     }
 
-    public Integer getTargetReturnRate() {
+    public Double getTargetReturnRate() {
         return targetReturnRate;
     }
 
-    public void setTargetReturnRate(Integer targetReturnRate) {
+    public void setTargetReturnRate(Double targetReturnRate) {
         this.targetReturnRate = targetReturnRate;
     }
-
-
 }

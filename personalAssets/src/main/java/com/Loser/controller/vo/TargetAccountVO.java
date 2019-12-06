@@ -10,7 +10,7 @@ public class TargetAccountVO {
     /**
      * 目标年化收益
      */
-    private Integer targetReturnRate;
+    private Double targetReturnRate;
 
     public Integer getInitAmount() {
         return initAmount;
@@ -36,11 +36,11 @@ public class TargetAccountVO {
         this.targetYear = targetYear;
     }
 
-    public Integer getTargetReturnRate() {
+    public Double getTargetReturnRate() {
         return targetReturnRate;
     }
 
-    public void setTargetReturnRate(Integer targetReturnRate) {
+    public void setTargetReturnRate(Double targetReturnRate) {
         this.targetReturnRate = targetReturnRate;
     }
 }
