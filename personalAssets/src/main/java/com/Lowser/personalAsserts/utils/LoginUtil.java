@@ -6,7 +6,7 @@ import com.Lowser.common.error.BizException;
 import javax.servlet.http.HttpSession;
 
 public class LoginUtil {
-    private static String key = "login_account";
+    public static String key = "login_account";
     public static Account getAccount(HttpSession session) {
        Object account =  session.getAttribute(key);
        if (account == null) {

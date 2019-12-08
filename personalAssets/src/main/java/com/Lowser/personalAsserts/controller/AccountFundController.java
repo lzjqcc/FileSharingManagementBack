@@ -43,10 +43,15 @@ public class AccountFundController {
     private AccountFundTargetDetailsRepository accountFundTargetDetailsRepository;
     @PostMapping("/login")
     public Object login(String email, String password, HttpSession session) {
+        if (session.getAttribute(LoginUtil.key) != null) {
+            ;
+            return "ok";
+        }
         Account account = accountRepository.findByEmailAndPassword(email, password);
         if (account == null) {
             throw new BizException("登录失败");
         }
+
         LoginUtil.setAccount(session, account);
         return "ok";
     }
