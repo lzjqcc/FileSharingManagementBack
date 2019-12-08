@@ -17,19 +17,58 @@ function postJson(request,success,error) {
             }
         }
     });
-    /**
-     * $.ajax({
-        type: 'POST',
-        url:"http://3.duotucms.com/index.php/index/order",
-        contentType:"application/x-www-form-urlencoded; charset=UTF-8",
-        data:"name=%E7%9E%BF%E8%B6%85%E8%B6%85&tel=&sn=36042419940916498X",
-        success:function (data,status) {
-            console.log(data)
+}
 
+function postJson(requesturl, paramObject, successCallBack, errorCallBack) {
+    $.ajax({
+        type:'post',
+        url:url + requesturl,
+        contentType:"application/json;charset=utf-8",
+        data: JSON.stringify(paramObject),
+        success: function (data, status) {
+            successCallBack(data,status)
         },
-        error:function (data,status) {
-           console.log(data)
+        error: function (data) {
+            errorCallBack(data)
         }
-    });
-     */
+    })
+}
+function postForm(requestUrl, paramObject, successCallBack, errorCallBack) {
+    $.ajax({
+        type:'post',
+        url:url + requestUrl,
+        data: toFormData(paramObject),
+        success: function (data, status) {
+            successCallBack(data,status)
+        },
+        error: function (data) {
+            errorCallBack(data)
+        }
+    })
+}
+function getJSON(requesturl, paramObject, successCallBack, errorCallBack) {
+
+    $.ajax({
+        type:'get',
+        url: url + requesturl,
+        data: toFormData(paramObject),
+        success: function (data) {
+            successCallBack(data);
+        },
+        error: function (data) {
+            errorCallBack(data);
+        }
+    })
+}
+function toFormData(paramObject) {
+    if (paramObject == null || paramObject == '' || paramObject == undefined) {
+        return '';
+    }
+    var requestParam = '';
+    for (var key in paramObject) {
+        requestParam += key + '=' + paramObject[key] + "&";
+    }
+    requestParam = requestParam.split(0, requestParam.length-2)[0]
+    console.log(requestParam)
+    return requestParam;
 }
