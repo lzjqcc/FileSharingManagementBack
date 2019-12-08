@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.5.0/dist/echarts.min.js"></script>
+    <script
+            src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <script src="../js/Http.js"></script>
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<div id="targetAccount">
+    <div class="card border-dark mb-3" style="max-width: 100rem;">
+        <div class="card-header">目标</div>
+        <div class="card-body text-dark">
+            <div style="display: flex;justify-content: center">
+
+                <label for="targetAmount" class="col-form-label">目标资产</label>
+                <div>
+                    <input type="text" readonly class="form-control-plaintext" id="targetAmount" value="1000000">
+                </div>
+                <label for="targetRate" class="col-form-label">目标收益率</label>
+                <div>
+                    <input type="text" readonly class="form-control-plaintext" id="targetRate" value="0.07">
+                </div>
+                <label for="targetYear" class="col-form-label">耗费年限</label>
+                <div>
+                    <input type="text" readonly class="form-control-plaintext" id="targetYear" value="5">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<span style="width: 100px;color: black;height: 2px"></span>
+<div id="actualAccount">
+    <div class="card border-dark mb-3" style="max-width: 80rem;">
+        <div class="card-header">资金账户</div>
+        <div class="card-body text-dark">
+            <div class="card border-dark mb-3" style="max-width: 18rem;">
+                <div class="card-header">支付宝</div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="charts" style="height: 500px;width: 1000px">
+
+</div>
+</body>
+<script>
+    option = {
+        title: {
+            text: '折线图堆叠'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['总资产', '现金贡献', '收益贡献']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: []
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '总资产',
+                type: 'line',
+                stack: '总量',
+                data: [120, 132, 101, 134, 90, 230, 210]
+            },
+            {
+                name: '现金贡献',
+                type: 'line',
+                stack: '总量',
+                data: [220, 182, 191, 234, 290, 330, 310]
+            },
+            {
+                name: '收益贡献',
+                type: 'line',
+                stack: '总量',
+                data: [150, 232, 201, 154, 190, 330, 410]
+            }
+        ]
+    };
+    postForm('/asserts/login', {'email': '1161889163@qq.com', 'password': '11111111a'}, function (successData) {
+        getJSON('/asserts/getTargetInfo', {'d': 'd'}, function (successData) {
+//            var myChart = echarts.init(document.getElementById('charts'));
+//            myChart.setOption(option);
+            var targetInfos = successData.body;
+            option.xAxis.data = [];
+            option.series[0].data = [];
+            option.series[1].data = [];
+            option.series[2].data = [];
+            for (var data of targetInfos) {
+                var date = new Date(data.targetDate);
+                option.xAxis.data.push(date.getFullYear() + "-" + date.getMonth() + 1 + "-" + date.getDate())
+                option.series[0].data.push(data.currentAmount);
+                option.series[1].data.push(data.currentCash);
+                option.series[2].data.push(data.currentInterest);
+            }
+            var myChart = echarts.init(document.getElementById('charts'));
+            myChart.setOption(option);
+        })
+    })
+</script>
+</html>
