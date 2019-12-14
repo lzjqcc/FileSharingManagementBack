@@ -121,22 +121,26 @@
                                 </td>
                                 <td>
                                     <v-row>
-                                        <v-col cols="12"
-                                               sm="4">
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <v-icon v-on="on" @click="deleteAccountFund(parentAccountFund.id)">
-                                                        delete
-                                                    </v-icon>
-                                                </template>
-                                                <span>删除</span>
-                                            </v-tooltip>
-                                        </v-col>
+                                        <!--<v-col cols="12"-->
+                                               <!--sm="4">-->
+                                            <!--<v-tooltip bottom>-->
+                                                <!--<template v-slot:activator="{ on }">-->
+                                                    <!--<v-icon small v-on="on" @click="deleteAccountFund(parentAccountFund.id)">-->
+                                                        <!--delete-->
+                                                    <!--</v-icon>-->
+                                                <!--</template>-->
+                                                <!--<span>删除</span>-->
+                                            <!--</v-tooltip>-->
+                                        <!--</v-col>-->
                                         <v-col cols="12"
                                                sm="8">
                                             <!--<v-btn style="float: right" @click="clickEditTable(item, $event)">编辑</v-btn>-->
-                                            <v-icon>mdi-edit</v-icon>
-
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-icon>edit-outline</v-icon>
+                                                </template>
+                                                <span>编辑</span>
+                                            </v-tooltip>
                                         </v-col>
                                     </v-row>
                                 </td>
