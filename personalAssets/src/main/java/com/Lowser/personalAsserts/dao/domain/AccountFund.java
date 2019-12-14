@@ -21,9 +21,9 @@ public class AccountFund extends BaseEntity{
      * 资金账户类型
      */
     @Column(name = "account_fund_type_id")
-    private int accountfundTypeId;
+    private Integer accountfundTypeId;
     @Column(name = "init_amount")
-    private int initAmount;
+    private Integer initAmount;
     @Column(name = "total_cash")
     private Integer totalCash;
     @Column(name = "total_interest")
@@ -32,27 +32,10 @@ public class AccountFund extends BaseEntity{
     private Integer totalAmount;
 
     public Integer getTotalCash() {
+        if (totalCash == null) {
+            return 0;
+        }
         return totalCash;
-    }
-
-    public void setTotalCash(Integer totalCash) {
-        this.totalCash = totalCash;
-    }
-
-    public Integer getTotalInterest() {
-        return totalInterest;
-    }
-
-    public void setTotalInterest(Integer totalInterest) {
-        this.totalInterest = totalInterest;
-    }
-
-    public Integer getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(Integer totalAmount) {
-        this.totalAmount = totalAmount;
     }
 
     public Integer getAccountId() {
@@ -79,19 +62,45 @@ public class AccountFund extends BaseEntity{
         this.name = name;
     }
 
-    public int getAccountfundTypeId() {
+    public Integer getAccountfundTypeId() {
         return accountfundTypeId;
     }
 
-    public void setAccountfundTypeId(int accountfundTypeId) {
+    public void setAccountfundTypeId(Integer accountfundTypeId) {
         this.accountfundTypeId = accountfundTypeId;
     }
 
-    public int getInitAmount() {
+    public Integer getInitAmount() {
         return initAmount;
     }
 
-    public void setInitAmount(int initAmount) {
+    public void setInitAmount(Integer initAmount) {
         this.initAmount = initAmount;
+    }
+
+    public void setTotalCash(Integer totalCash) {
+        this.totalCash = totalCash;
+    }
+
+    public Integer getTotalInterest() {
+        if (totalInterest == null) {
+            return 0;
+        }
+        return totalInterest;
+    }
+
+    public void setTotalInterest(Integer totalInterest) {
+        this.totalInterest = totalInterest;
+    }
+
+    public Integer getTotalAmount() {
+        if (totalAmount == null) {
+            return 0;
+        }
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Integer totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

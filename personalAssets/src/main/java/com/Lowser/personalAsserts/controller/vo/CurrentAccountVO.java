@@ -3,6 +3,7 @@ package com.Lowser.personalAsserts.controller.vo;
 import java.util.List;
 
 public class CurrentAccountVO {
+    private Integer id;
     private Integer totalAmount;
     private Integer totalCash;
     private Integer totalInterest;
@@ -13,6 +14,14 @@ public class CurrentAccountVO {
     private Integer yearReturnRate;
     private String name;
     private String fundType;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -30,7 +39,7 @@ public class CurrentAccountVO {
         this.fundType = fundType;
     }
 
-    private List<CurrentAccountVO> childs;
+    private List<CurrentAccountVO> childAccountFunds;
 
     public Integer getTotalAmount() {
         return totalAmount;
@@ -64,11 +73,11 @@ public class CurrentAccountVO {
         this.returnRate = returnRate;
     }
 
-    public List<CurrentAccountVO> getChilds() {
-        return childs;
+    public List<CurrentAccountVO> getChildAccountFunds() {
+        return childAccountFunds;
     }
 
-    public void setChilds(List<CurrentAccountVO> childs) {
-        this.childs = childs;
+    public void setChildAccountFunds(List<CurrentAccountVO> childAccountFunds) {
+        this.childAccountFunds = childAccountFunds;
     }
 }

@@ -7,4 +7,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 public interface AccountFundRepository extends JpaRepository<AccountFund, Integer>{
     List<AccountFund> findByAccountId(Integer accountId);
+
+    List<AccountFund> findByAccountIdAndParentId(Integer accountId, Integer parentId);
+
+    void deleteByIdIn(List<Integer> ids);
+
+
+
 }

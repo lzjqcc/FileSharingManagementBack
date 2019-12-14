@@ -9,4 +9,6 @@ import java.util.List;
 @Component
 public interface AccountFundDetailsRepository extends JpaRepository<AccountFundDetails, Integer> {
     List<AccountFundDetails> findByAccountFundIdAndInsertTime(Integer accountFundId, Date insertTime);
+
+    void deleteByAccountFundIdIn(List<Integer> accountFundIds);
 }

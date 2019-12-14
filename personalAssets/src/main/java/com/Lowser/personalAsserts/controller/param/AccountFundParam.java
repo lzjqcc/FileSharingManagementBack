@@ -4,8 +4,18 @@ public class AccountFundParam {
     private String name;
     private Integer parentId;
     private Integer initAmount;
-    private Integer currentAmount;
-    private Integer accountfundTypeId;
+    private Integer totalAmount;
+    private Integer totalCash;
+    private Integer totalInterest;
+    private String fundType;
+
+    public String getFundType() {
+        return fundType;
+    }
+
+    public void setFundType(String fundType) {
+        this.fundType = fundType;
+    }
 
     public String getName() {
         return name;
@@ -31,19 +41,28 @@ public class AccountFundParam {
         this.initAmount = initAmount;
     }
 
-    public Integer getCurrentAmount() {
-        return currentAmount;
+    public Integer getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setCurrentAmount(Integer currentAmount) {
-        this.currentAmount = currentAmount;
+    public void setTotalAmount(Integer totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
-    public Integer getAccountfundTypeId() {
-        return accountfundTypeId;
+    public Integer getTotalCash() {
+        return totalCash;
     }
 
-    public void setAccountfundTypeId(Integer accountfundTypeId) {
-        this.accountfundTypeId = accountfundTypeId;
+    public void setTotalCash(Integer totalCash) {
+        this.totalCash = totalCash;
     }
+
+    public Integer getTotalInterest() {
+        return totalInterest;
+    }
+
+    public void setTotalInterest(Integer totalInterest) {
+        this.totalInterest = totalInterest;
+    }
+
 }

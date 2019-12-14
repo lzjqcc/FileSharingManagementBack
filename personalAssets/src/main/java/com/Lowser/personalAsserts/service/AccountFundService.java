@@ -1,9 +1,12 @@
 package com.Lowser.personalAsserts.service;
 
+import com.Lowser.personalAsserts.dao.AccountFundDetailsRepository;
+import com.Lowser.personalAsserts.dao.AccountFundRepository;
 import com.Lowser.personalAsserts.dao.AccountFundTargetDetailsRepository;
-import com.Lowser.personalAsserts.dao.domain.Account;
-import com.Lowser.personalAsserts.dao.domain.AccountFundTargetDetails;
+import com.Lowser.personalAsserts.dao.AccountFundTypeRepository;
+import com.Lowser.personalAsserts.dao.domain.*;
 import com.alibaba.fastjson.JSON;
+import com.beust.jcommander.internal.Lists;
 import org.apache.poi.ss.formula.functions.Finance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,12 @@ public class AccountFundService {
     @Autowired
     private AccountFundTargetDetailsRepository accountFundTargetDetailsRepository;
     private static Integer monthOfYear = 12;
+    @Autowired
+    private AccountFundTypeRepository accountFundTypeRepository;
+    @Autowired
+    private AccountFundRepository accountFundRepository;
+    @Autowired
+    private AccountFundDetailsRepository accountFundDetailsRepository;
     @Transactional
     public  void initAccountFundTargetDetails(Account account) {
         assert account.getTargetYear() != null;
@@ -60,22 +69,26 @@ public class AccountFundService {
     }
     private static Date getDate(int year, int month) {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, year * monthOfYear + month );
+        calendar.add(Calendar.MONTH, year * monthOfYear + month  );
         return calendar.getTime();
     }
 
     public static void main(String[] args) {
         AccountFundService accountFundService = new AccountFundService();
-        Account account = new Account();
-        account.setTargetAmount(5000000);
-        account.setTargetYear(10);
-        account.setTargetReturnRate(0.1);
-       accountFundService.initAccountFundTargetDetails(account);
-
-        System.out.println(accountFundService.rateOfMonth(0.1));
-        System.out.println(accountFundService.calculateCash(0.1, 5, 5000000));
+        for (int i = 0;i<5;i++) {
+            for (int month = 1;month <= monthOfYear; month++) {
+                getDate(i, month);
+            }
+        }
+//        Account account = new Account();
+//        account.setTargetAmount(5000000);
+//        account.setTargetYear(10);
+//        account.setTargetReturnRate(0.1);
+//       accountFundService.initAccountFundTargetDetails(account);
+//
+//        System.out.println(accountFundService.rateOfMonth(0.1));
+//        System.out.println(accountFundService.calculateCash(0.1, 5, 5000000));
 
     }
-
 
 }
