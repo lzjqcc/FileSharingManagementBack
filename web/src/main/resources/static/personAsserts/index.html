@@ -22,17 +22,6 @@
 <body>
 <div id="parentTitle">
     <v-app id="inspire">
-
-        </span>
-
-        <span class="group pa-2 teal">
-        <v-icon x-large dark>folder_open</v-icon>
-        <v-icon x-large dark>widgets</v-icon>
-        <v-icon x-large dark>gavel</v-icon>
-      </span>
-        </v-row>
-        </v-container>
-
         <div class="card border-dark mb-3" style="max-width: 100rem;">
             <div class="card-header">目标</div>
             <div class="card-body text-dark">
@@ -74,9 +63,27 @@
                 </v-card-title>
                 <v-card v-for="parentAccountFund in accountFunds">
                     <v-card-subtitle>
+                        <v-row>
+                            <v-col cols="12"
+                                   sm="8">
+                                <span>{{parentAccountFund.name}}</span>
 
-                        <span>{{parentAccountFund.name}}</span>
-                        <v-btn style="float: right" @click="childAccountFundDialogShow(parentAccountFund)">新建子帐号</v-btn>
+
+                            </v-col>
+                            <v-col cols="12" sm="4">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon small v-on="on" @click="deleteAccountFund(parentAccountFund.id)">
+                                            delete
+                                        </v-icon>
+                                    </template>
+                                    <span>删除</span>
+                                </v-tooltip>
+                                <v-btn  @click="childAccountFundDialogShow(parentAccountFund)">新建子帐号</v-btn>
+                            </v-col>
+                        </v-row>
+
+
                     </v-card-subtitle>
 
                     <v-simple-table>
@@ -121,17 +128,17 @@
                                 </td>
                                 <td>
                                     <v-row>
-                                        <!--<v-col cols="12"-->
-                                               <!--sm="4">-->
-                                            <!--<v-tooltip bottom>-->
-                                                <!--<template v-slot:activator="{ on }">-->
-                                                    <!--<v-icon small v-on="on" @click="deleteAccountFund(parentAccountFund.id)">-->
-                                                        <!--delete-->
-                                                    <!--</v-icon>-->
-                                                <!--</template>-->
-                                                <!--<span>删除</span>-->
-                                            <!--</v-tooltip>-->
-                                        <!--</v-col>-->
+                                        <v-col cols="12"
+                                               sm="4">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-icon small v-on="on" @click="deleteAccountFund(parentAccountFund.id)">
+                                                        delete
+                                                    </v-icon>
+                                                </template>
+                                                <span>删除</span>
+                                            </v-tooltip>
+                                        </v-col>
                                         <v-col cols="12"
                                                sm="8">
                                             <!--<v-btn style="float: right" @click="clickEditTable(item, $event)">编辑</v-btn>-->
@@ -258,6 +265,7 @@
                                             cols="12"
                                             sm="9"
                                     >
+                                        {{childAccountFund.totalInterest}}
                                         <v-text-field prefix="¥"
                                                       label="当前收益" v-model="childAccountFund.totalInterest"
                                         ></v-text-field>
@@ -268,10 +276,14 @@
                                             cols="12"
                                             sm="9"
                                     >
-                                        <v-autocomplete v-model="childAccountFund.fundType"
+                                        <v-combobox v-model="childAccountFund.fundType"
+                                                        v-bind:value="childAccountFund.fundType"
                                                         label="子帐号类型"
                                                         :items="childFundTypeNames"
-                                        ></v-autocomplete>
+                                        ></v-combobox>
+                                        <!--<v-text-field-->
+                                                      <!--label="子帐号类型" v-model="childAccountFund.fundType"-->
+                                        <!--&gt;</v-text-field>-->
                                     </v-col>
                                 </v-row>
                             </v-container>

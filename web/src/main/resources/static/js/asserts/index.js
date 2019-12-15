@@ -23,7 +23,7 @@ var parent = new Vue({
         childAccountFund: {
             name:'',totalAmount:0,totalCash:0, totalInterest:0, parentId:0,fundType:''
         },
-        childFundType:{name:'',remarks:''},
+        childFundType:{name:'娜娜',remarks:''},
         childFundTypes:[{name:'',remarks:''}],
         childFundTypeNames:[],
         parentAccountFundDialog:false,
@@ -141,7 +141,7 @@ var parent = new Vue({
         newChildAccountFund:function () {
             this.childAccountFund.parentId = this.currentParentAccountFundId;
             var that = this;
-
+            console.log(this.childAccountFund)
             postJson('/asserts/createAccountFund', this.childAccountFund, function (successDate) {
                 that.getAccountInfo();
                 that.childAccountFundDialog = false;

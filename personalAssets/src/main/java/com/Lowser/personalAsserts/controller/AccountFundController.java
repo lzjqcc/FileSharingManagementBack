@@ -332,7 +332,7 @@ public class AccountFundController {
         currentAccountVO.setTotalAmount(accountFund.getTotalAmount());
         currentAccountVO.setTotalCash(accountFund.getTotalCash());
         currentAccountVO.setTotalInterest(accountFund.getTotalInterest());
-        currentAccountVO.setReturnRate(accountFund.getTotalInterest() / (accountFund.getTotalCash()));
+        //currentAccountVO.setReturnRate(accountFund.getTotalInterest() / (accountFund.getTotalCash()));
         currentAccountVO.setId(accountFund.getId());
         return currentAccountVO;
     }
