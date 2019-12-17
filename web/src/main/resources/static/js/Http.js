@@ -65,10 +65,13 @@ function toFormData(paramObject) {
         return '';
     }
     var requestParam = '';
+
     for (var key in paramObject) {
+
         requestParam += key + '=' + paramObject[key] + "&";
     }
-    requestParam = requestParam.split(0, requestParam.length-2)[0]
-    console.log(requestParam)
+    requestParam.trim();
+    requestParam = requestParam.substring(0, requestParam.length-1);
+
     return requestParam;
 }

@@ -103,4 +103,21 @@ public class AccountFund extends BaseEntity{
     public void setTotalAmount(Integer totalAmount) {
         this.totalAmount = totalAmount;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof AccountFund)) {
+            return false;
+        }
+        AccountFund accountFund = (AccountFund) obj;
+        return accountFund.getId().equals(this.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId();
+    }
 }

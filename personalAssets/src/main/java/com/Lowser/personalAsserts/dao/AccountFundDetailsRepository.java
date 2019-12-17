@@ -11,4 +11,8 @@ public interface AccountFundDetailsRepository extends JpaRepository<AccountFundD
     List<AccountFundDetails> findByAccountFundIdAndInsertTime(Integer accountFundId, Date insertTime);
 
     void deleteByAccountFundIdIn(List<Integer> accountFundIds);
+
+    List<AccountFundDetails> findByIdIn(List<Integer> ids);
+
+    List<AccountFundDetails> findByAccountIdAndAccountFundIdIn(Integer accountId, List<Integer> accountFundIds);
 }

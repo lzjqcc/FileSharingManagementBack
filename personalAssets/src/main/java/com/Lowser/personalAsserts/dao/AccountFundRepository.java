@@ -9,7 +9,6 @@ public interface AccountFundRepository extends JpaRepository<AccountFund, Intege
     List<AccountFund> findByAccountId(Integer accountId);
 
     List<AccountFund> findByAccountIdAndParentId(Integer accountId, Integer parentId);
-
     void deleteByIdIn(List<Integer> ids);
 
 

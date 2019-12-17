@@ -3,10 +3,7 @@ package com.Lowser.personalAsserts.controller;
 import com.Lowser.personalAsserts.controller.param.AccountFundDetailsParam;
 import com.Lowser.personalAsserts.controller.param.AccountFundParam;
 import com.Lowser.personalAsserts.controller.param.AccountFundTypeParam;
-import com.Lowser.personalAsserts.controller.vo.AccountFundVo;
-import com.Lowser.personalAsserts.controller.vo.AccountVo;
-import com.Lowser.personalAsserts.controller.vo.CurrentAccountVO;
-import com.Lowser.personalAsserts.controller.vo.TargetAccountVO;
+import com.Lowser.personalAsserts.controller.vo.*;
 import com.Lowser.personalAsserts.dao.*;
 import com.Lowser.personalAsserts.dao.domain.*;
 import com.Lowser.personalAsserts.service.AccountFundService;
@@ -167,7 +164,7 @@ public class AccountFundController {
         parentAccountFund.setTotalAmount(parentAccountFund.getTotalAmount() + accountFund.getTotalAmount());
         parentAccountFund.setTotalInterest(parentAccountFund.getTotalInterest() + accountFund.getTotalInterest());
         parentAccountFund.setTotalCash(parentAccountFund.getTotalCash() + accountFund.getTotalCash());
-        accountFundRepository.saveAll(Lists.newArrayList(accountFund, parentAccountFund));
+        List<AccountFund> afterAccountFunds = accountFundRepository.saveAll(Lists.newArrayList(accountFund, parentAccountFund));
         // parentFunDetails
         AccountFundDetails parentAccountFundDetails = new AccountFundDetails();
         parentAccountFundDetails.setAccountId(account.getId());
@@ -183,6 +180,8 @@ public class AccountFundController {
         childAccountFundDetails.setCurrentCash(accountFund.getTotalCash());
         childAccountFundDetails.setAddInterest(accountFund.getTotalInterest());
         childAccountFundDetails.setAddCash(accountFund.getTotalCash());
+        AccountFund afterChildAccountFund = afterAccountFunds.stream().filter(saveAccountFund -> saveAccountFund.getParentId() != null).findFirst().get();
+        childAccountFundDetails.setAccountFundId(afterChildAccountFund.getId());
         accountFundDetailsRepository.saveAll(Lists.newArrayList(childAccountFundDetails, parentAccountFundDetails));
     }
     @GetMapping("/fundTypes")
@@ -289,6 +288,28 @@ public class AccountFundController {
         accountFundRepository.deleteById(accountFund.getId());
         accountFundRepository.save(parentAccountFund);
 
+    }
+    @GetMapping(value = "/getAllParentAcountFundAndDetails")
+    public Map<String, List<AccountFundDetailsVO>> getParentAccountFundAndDetails(Account account) {
+        List<AccountFund> parentAccountFunds = accountFundRepository.findByAccountIdAndParentId(account.getId(), null);
+        List<Integer> parentAccountFundIds = parentAccountFunds.stream().map(AccountFund::getId).collect(Collectors.toList());
+        List<AccountFundDetails> accountFundDetails = accountFundDetailsRepository.findByAccountIdAndAccountFundIdIn(account.getId(), parentAccountFundIds);
+        return toParentAccountFundAndDetailsMap(parentAccountFunds, accountFundDetails);
+    }
+    private Map<String, List<AccountFundDetailsVO>> toParentAccountFundAndDetailsMap(List<AccountFund> parentAccountFunds, List<AccountFundDetails> details) {
+        List<AccountFundDetailsVO> detailsVOS = new ArrayList<>();
+        for (AccountFundDetails accountFundDetails : details) {
+            AccountFundDetailsVO accountFundDetailsVO = new AccountFundDetailsVO();
+            BeanUtils.copyProperties(accountFundDetails, accountFundDetailsVO);
+            accountFundDetailsVO.setCurrentAmount(accountFundDetails.getCurrentCash() + accountFundDetails.getCurrentInterest());
+            detailsVOS.add(accountFundDetailsVO);
+        }
+        Map<String, List<AccountFundDetailsVO>> map = new HashMap<>();
+        Map<Integer, List<AccountFundDetailsVO>> parentFundAccountIdAndDetails = detailsVOS.stream().collect(Collectors.groupingBy(AccountFundDetailsVO::getAccountFundId, Collectors.toList()));
+        for (AccountFund accountFund : parentAccountFunds) {
+            map.put(accountFund.getName(), parentFundAccountIdAndDetails.get(accountFund.getId()));
+        }
+        return map;
     }
     private TargetAccountVO buildTargetAccountVO(Account account) {
         TargetAccountVO targetAccountVO = new TargetAccountVO();

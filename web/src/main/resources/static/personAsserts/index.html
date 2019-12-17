@@ -9,7 +9,6 @@
             src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@4.5.0/dist/echarts.min.js"></script>
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
@@ -22,6 +21,11 @@
 <body>
 <div id="parentTitle">
     <v-app id="inspire">
+        <div>
+            <v-chart :options="targetChartOption"/>
+        </div>
+        <!---->
+
         <div class="card border-dark mb-3" style="max-width: 100rem;">
             <div class="card-header">目标</div>
             <div class="card-body text-dark">
@@ -44,7 +48,7 @@
                 </div>
             </div>
         </div>
-        <div id="targetChart" style="width: 80rem;height: 30rem"></div>
+        <!--<div id="targetChart" style="width: 80rem;height: 30rem"></div>-->
         <div id="actualAccount">
 
             <v-card
@@ -73,7 +77,7 @@
                             <v-col cols="12" sm="4">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon small v-on="on" @click="deleteAccountFund(parentAccountFund.id)">
+                                        <v-icon small v-on="on" @click="deleteAccountFund(parentAccountFund)">
                                             delete
                                         </v-icon>
                                     </template>
@@ -132,7 +136,7 @@
                                                sm="4">
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on }">
-                                                    <v-icon small v-on="on" @click="deleteAccountFund(parentAccountFund.id)">
+                                                    <v-icon small v-on="on" @click="deleteAccountFund(item)">
                                                         delete
                                                     </v-icon>
                                                 </template>
@@ -165,6 +169,24 @@
             </v-card>
 
 
+        </div>
+        <div>
+            <v-card
+                    class="mx-auto"
+                    max-width="55rem"
+                    outlined
+            >
+                <v-card-title>
+                    <span>资金帐号</span>
+                    <v-col>
+
+                    </v-col>
+                </v-card-title>
+                <div v-for="option in parentAccountFundDetailsOptions">
+                        <v-chart :options="option"/>
+
+                </div>
+            </v-card>
         </div>
         <div class="text-center">
             <v-dialog
@@ -347,6 +369,8 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.1.14/dist/vuetify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@4.5.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2"></script>
 <script src="../js/Http.js"></script>
 <script src="../js/asserts/index.js"></script>
 
