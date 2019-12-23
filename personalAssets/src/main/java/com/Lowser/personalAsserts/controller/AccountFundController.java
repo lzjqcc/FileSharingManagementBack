@@ -1,5 +1,8 @@
 package com.Lowser.personalAsserts.controller;
 
+import com.Lowser.common.error.BizException;
+import com.Lowser.common.utils.AssertUtils;
+import com.Lowser.common.utils.DateUtils;
 import com.Lowser.personalAsserts.controller.param.AccountFundDetailsParam;
 import com.Lowser.personalAsserts.controller.param.AccountFundParam;
 import com.Lowser.personalAsserts.controller.param.AccountFundTypeParam;
@@ -8,8 +11,6 @@ import com.Lowser.personalAsserts.dao.*;
 import com.Lowser.personalAsserts.dao.domain.*;
 import com.Lowser.personalAsserts.service.AccountFundService;
 import com.Lowser.personalAsserts.utils.LoginUtil;
-import com.Lowser.common.error.BizException;
-import com.Lowser.common.utils.AssertUtils;
 import com.beust.jcommander.internal.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +129,14 @@ public class AccountFundController {
         type.setAccountId(account.getId());
         accountFundTypeRepository.save(type);
     }
-
+    @GetMapping("/totalParentAccountDetails")
+    public List<AccountFundDetailsVO> getTotalParentAccountDetails(Account account) {
+        AccountFund topAccountFund = accountFundRepository.findByAccountIdAndParentId(account.getId(), null).get(0);
+        List<Integer> fundIds = new ArrayList<>();
+        fundIds.add(topAccountFund.getId());
+        List<AccountFundDetails> accountFundDetails = accountFundDetailsRepository.findByAccountIdAndAccountFundIdIn(account.getId(), fundIds);
+        return toAccountFundDetailsVO(accountFundDetails);
+    }
     /**
      * 第二步：创建资金账户
      * @param param
@@ -145,8 +153,11 @@ public class AccountFundController {
         }
         BeanUtils.copyProperties(param, accountFund);
         accountFund.setAccountId(account.getId());
+        AccountFund toPAccountFund = accountFundRepository.findByAccountIdAndParentId(account.getId(), null).get(0);
+
         // 保存父帐号
         if (param.getParentId() == null) {
+            accountFund.setParentId(toPAccountFund.getId());
             accountFundRepository.save(accountFund);
             return;
         }
@@ -161,10 +172,15 @@ public class AccountFundController {
         }
         accountFund.setAccountfundTypeId(accountFundType.getId());
         AccountFund parentAccountFund = accountFundRepository.findById(param.getParentId()).get();
-        parentAccountFund.setTotalAmount(parentAccountFund.getTotalAmount() + accountFund.getTotalAmount());
-        parentAccountFund.setTotalInterest(parentAccountFund.getTotalInterest() + accountFund.getTotalInterest());
-        parentAccountFund.setTotalCash(parentAccountFund.getTotalCash() + accountFund.getTotalCash());
-        List<AccountFund> afterAccountFunds = accountFundRepository.saveAll(Lists.newArrayList(accountFund, parentAccountFund));
+
+        parentAccountFund.setTotalInterest(parentAccountFund.getTotalInterest() + param.getTotalInterest());
+        parentAccountFund.setTotalCash(parentAccountFund.getTotalCash() + param.getTotalCash());
+        parentAccountFund.setTotalAmount(parentAccountFund.getTotalCash() + parentAccountFund.getTotalInterest());
+
+        toPAccountFund.setTotalInterest(toPAccountFund.getTotalInterest() + param.getTotalInterest());
+        toPAccountFund.setTotalCash(toPAccountFund.getTotalCash() + param.getTotalCash() );
+        toPAccountFund.setTotalAmount(toPAccountFund.getTotalInterest() + toPAccountFund.getTotalCash());
+        List<AccountFund> afterAccountFunds = accountFundRepository.saveAll(Lists.newArrayList(accountFund, parentAccountFund, toPAccountFund));
         // parentFunDetails
         AccountFundDetails parentAccountFundDetails = new AccountFundDetails();
         parentAccountFundDetails.setAccountId(account.getId());
@@ -182,7 +198,15 @@ public class AccountFundController {
         childAccountFundDetails.setAddCash(accountFund.getTotalCash());
         AccountFund afterChildAccountFund = afterAccountFunds.stream().filter(saveAccountFund -> saveAccountFund.getParentId() != null).findFirst().get();
         childAccountFundDetails.setAccountFundId(afterChildAccountFund.getId());
-        accountFundDetailsRepository.saveAll(Lists.newArrayList(childAccountFundDetails, parentAccountFundDetails));
+
+        AccountFundDetails topFundDetail = new AccountFundDetails();
+        topFundDetail.setAddCash(parentAccountFundDetails.getAddCash());
+        topFundDetail.setAddInterest(parentAccountFundDetails.getAddInterest());
+        topFundDetail.setCurrentCash(toPAccountFund.getTotalCash());
+        topFundDetail.setCurrentInterest(toPAccountFund.getTotalInterest());
+        topFundDetail.setAccountFundId(toPAccountFund.getId());
+        topFundDetail.setAccountId(account.getId());
+        accountFundDetailsRepository.saveAll(Lists.newArrayList(childAccountFundDetails, parentAccountFundDetails,topFundDetail));
     }
     @GetMapping("/fundTypes")
     public List<AccountFundType> getAccountFundType(Account account) {
@@ -212,34 +236,34 @@ public class AccountFundController {
      * 第三步： 添加当前现金和收益
      * 增量现金 = 当前现金 - 之前现金
      * @param fundId
-     * @param currentCash
-     * @param currentInterest
+     * @param totalCash
+     * @param totalInterest
      * @param account
      */
     @GetMapping("/addFundInfo/{fundId}")
     @Transactional
     public void addAccountFundInfo(@PathVariable("fundId") Integer fundId,
-                                   @Param("currentCash") Integer currentCash,
-                                   @Param("currentInterest") Integer currentInterest, Account account) {
+                                   @Param("totalCash") Integer totalCash,
+                                   @Param("totalInterest") Integer totalInterest, Account account) {
         AccountFund accountFund = accountFundRepository.findById(fundId).get();
         // 子帐号
         AccountFundDetails fundDetails = new AccountFundDetails();
         fundDetails.setAccountId(account.getId());
         fundDetails.setAccountFundId(fundId);
-        fundDetails.setCurrentCash(currentCash);
-        fundDetails.setCurrentInterest(currentInterest);
-        fundDetails.setAddCash(currentCash - accountFund.getTotalCash());
-        fundDetails.setAddInterest(currentInterest - accountFund.getTotalInterest());
+        fundDetails.setCurrentCash(totalCash);
+        fundDetails.setCurrentInterest(totalInterest);
+        fundDetails.setAddCash(totalCash - accountFund.getTotalCash());
+        fundDetails.setAddInterest(totalInterest - accountFund.getTotalInterest());
         accountFundDetailsRepository.save(fundDetails);
-        accountFund.setTotalCash(currentCash);
-        accountFund.setTotalInterest(currentInterest);
+        accountFund.setTotalCash(totalCash);
+        accountFund.setTotalInterest(totalInterest);
         accountFund.setTotalAmount(accountFund.getTotalCash() + accountFund.getTotalInterest());
         accountFundRepository.save(accountFund);
         // 父帐号
         AccountFund parentAccountFund = accountFundRepository.findById(accountFund.getParentId()).get();
         parentAccountFund.setTotalCash(parentAccountFund.getTotalCash() + fundDetails.getAddCash());
         parentAccountFund.setTotalInterest(parentAccountFund.getTotalInterest() + fundDetails.getAddInterest());
-        parentAccountFund.setTotalAmount(parentAccountFund.getTotalCash() + parentAccountFund.getTotalAmount());
+        parentAccountFund.setTotalAmount(parentAccountFund.getTotalCash() + parentAccountFund.getTotalInterest());
         accountFundRepository.save(parentAccountFund);
         AccountFundDetails parentAccountFundDetails = new AccountFundDetails();
         parentAccountFundDetails.setAccountId(account.getId());
@@ -271,8 +295,21 @@ public class AccountFundController {
     @Transactional
     public void deleteAccountFund(@RequestParam("accountFundId") Integer accountFundId, Account account) {
         AccountFund accountFund = accountFundRepository.getOne(accountFundId);
+        AccountFund topAccountFund = accountFundRepository.findByAccountIdAndParentId(account.getId(), null).get(0);
+        topAccountFund.setTotalInterest(topAccountFund.getTotalInterest() - accountFund.getTotalInterest());
+        topAccountFund.setTotalCash(topAccountFund.getTotalCash() - accountFund.getTotalCash());
+        topAccountFund.setTotalAmount(topAccountFund.getTotalCash() + topAccountFund.getTotalInterest());
+        accountFundRepository.save(topAccountFund);
+        AccountFundDetails topFundDetails = new AccountFundDetails();
+        topFundDetails.setCurrentInterest(topAccountFund.getTotalInterest());
+        topFundDetails.setCurrentCash(topAccountFund.getTotalCash());
+        topFundDetails.setAddInterest(-accountFund.getTotalCash());
+        topFundDetails.setAddCash(-accountFund.getTotalCash());
+        topFundDetails.setAccountFundId(topAccountFund.getId());
+        topFundDetails.setAccountId(account.getId());
+        accountFundDetailsRepository.save(topFundDetails);
         // 删除父帐号
-        if (accountFund.getParentId() == null) {
+        if (accountFund.getParentId() != null && accountFund.getAccountfundTypeId() == null) {
             List<AccountFund> childAccountFunds = accountFundRepository.findByAccountIdAndParentId(account.getId(), accountFundId);
             List<Integer> accountFundIds = childAccountFunds.stream().map(AccountFund::getId).collect(Collectors.toList());
             accountFundIds.add(accountFundId);
@@ -281,35 +318,48 @@ public class AccountFundController {
             return;
         }
         // 删除子帐号
-        AccountFund parentAccountFund = accountFundRepository.getOne(accountFund.getId());
+        AccountFund parentAccountFund = accountFundRepository.getOne(accountFund.getParentId());
         parentAccountFund.setTotalAmount(parentAccountFund.getTotalAmount() - accountFund.getTotalAmount());
         parentAccountFund.setTotalCash(parentAccountFund.getTotalCash() - accountFund.getTotalCash());
         parentAccountFund.setTotalInterest(parentAccountFund.getTotalInterest() - accountFund.getTotalInterest());
         accountFundRepository.deleteById(accountFund.getId());
         accountFundRepository.save(parentAccountFund);
-
+        AccountFundDetails parentDetails = new AccountFundDetails();
+        parentDetails.setCurrentInterest(parentAccountFund.getTotalInterest());
+        parentDetails.setCurrentCash(parentAccountFund.getTotalCash());
+        parentDetails.setAddInterest(-accountFund.getTotalCash());
+        parentDetails.setAddCash(-accountFund.getTotalCash());
+        parentDetails.setAccountFundId(parentAccountFund.getId());
+        parentDetails.setAccountId(account.getId());
+        accountFundDetailsRepository.save(parentDetails);
     }
     @GetMapping(value = "/getAllParentAcountFundAndDetails")
     public Map<String, List<AccountFundDetailsVO>> getParentAccountFundAndDetails(Account account) {
-        List<AccountFund> parentAccountFunds = accountFundRepository.findByAccountIdAndParentId(account.getId(), null);
+        AccountFund topAccountFund = accountFundRepository.findByAccountIdAndParentId(account.getId(), null).get(0);
+        List<AccountFund> parentAccountFunds = accountFundRepository.findByAccountIdAndParentId(account.getId(), topAccountFund.getId());
         List<Integer> parentAccountFundIds = parentAccountFunds.stream().map(AccountFund::getId).collect(Collectors.toList());
         List<AccountFundDetails> accountFundDetails = accountFundDetailsRepository.findByAccountIdAndAccountFundIdIn(account.getId(), parentAccountFundIds);
+
         return toParentAccountFundAndDetailsMap(parentAccountFunds, accountFundDetails);
     }
     private Map<String, List<AccountFundDetailsVO>> toParentAccountFundAndDetailsMap(List<AccountFund> parentAccountFunds, List<AccountFundDetails> details) {
-        List<AccountFundDetailsVO> detailsVOS = new ArrayList<>();
-        for (AccountFundDetails accountFundDetails : details) {
-            AccountFundDetailsVO accountFundDetailsVO = new AccountFundDetailsVO();
-            BeanUtils.copyProperties(accountFundDetails, accountFundDetailsVO);
-            accountFundDetailsVO.setCurrentAmount(accountFundDetails.getCurrentCash() + accountFundDetails.getCurrentInterest());
-            detailsVOS.add(accountFundDetailsVO);
-        }
+        List<AccountFundDetailsVO> detailsVOS = toAccountFundDetailsVO(details);
         Map<String, List<AccountFundDetailsVO>> map = new HashMap<>();
         Map<Integer, List<AccountFundDetailsVO>> parentFundAccountIdAndDetails = detailsVOS.stream().collect(Collectors.groupingBy(AccountFundDetailsVO::getAccountFundId, Collectors.toList()));
         for (AccountFund accountFund : parentAccountFunds) {
             map.put(accountFund.getName(), parentFundAccountIdAndDetails.get(accountFund.getId()));
         }
         return map;
+    }
+    private List<AccountFundDetailsVO> toAccountFundDetailsVO(List<AccountFundDetails> accountFunds) {
+        List<AccountFundDetailsVO> detailsVOS = new ArrayList<>();
+        for (AccountFundDetails accountFundDetails : accountFunds) {
+            AccountFundDetailsVO accountFundDetailsVO = new AccountFundDetailsVO();
+            BeanUtils.copyProperties(accountFundDetails, accountFundDetailsVO);
+            accountFundDetailsVO.setCurrentAmount(accountFundDetails.getCurrentCash() + accountFundDetails.getCurrentInterest());
+            detailsVOS.add(accountFundDetailsVO);
+        }
+        return detailsVOS;
     }
     private TargetAccountVO buildTargetAccountVO(Account account) {
         TargetAccountVO targetAccountVO = new TargetAccountVO();
@@ -369,13 +419,13 @@ public class AccountFundController {
         if (CollectionUtils.isEmpty(funds)) {
             return Lists.newArrayList();
         }
-        return funds.stream().filter(t-> t.getParentId() == null).collect(Collectors.toList());
+        return funds.stream().filter(t-> t.getParentId() != null && t.getAccountfundTypeId() == null).collect(Collectors.toList());
     }
     private Map<Integer, List<AccountFund>> getChildAccountFunds(List<AccountFund> funds) {
         if (CollectionUtils.isEmpty(funds)) {
             return new HashMap<>();
         }
-        List<AccountFund> childs = funds.stream().filter(t -> t.getParentId() != null).collect(Collectors.toList());
+        List<AccountFund> childs = funds.stream().filter(t -> t.getParentId() != null && t.getAccountfundTypeId() != null).collect(Collectors.toList());
         return childs.stream().collect(Collectors.groupingBy(AccountFund::getParentId, Collectors.toList()));
     }
 }

@@ -9,14 +9,14 @@ public class AccountFundDetailsVO {
     private Integer currentCash;
     private Integer currentInterest;
     private Integer currentAmount;
-    private Date insertTime;
+    private Date createDate;
 
-    public Date getInsertTime() {
-        return insertTime;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setInsertTime(Date insertTime) {
-        this.insertTime = insertTime;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     public Integer getAccountFundId() {

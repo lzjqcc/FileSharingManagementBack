@@ -10,6 +10,12 @@ var parent = new Vue({
             targetReturnRate: 0.07,
             targetYear: 7
         },
+        targetMonth:{
+            currentAmount:0,
+            addCash:0,
+            addInterest:0
+        },
+
         accountFunds: [
             {
                 edit: false, childAccountFunds: [
@@ -36,15 +42,30 @@ var parent = new Vue({
         errorMessage: '',
         showErrorMessage: false,
         targetChartOption: {},
-        parentAccountFundDetailsOptions: []
+        parentAccountFundDetailsOptions: [],
+        realChartOption: {},
+        realMonthAddAmount:0,
+        realTotalParentAccountFund:{},
+        targetDialog:false,
+        loginPage:true
     },
     mounted: function () {
         this.initTargetCharts();
         this.getAccountInfo();
         this.getAccountFundTypes();
         this.getAllParentAccountFundAndDetails();
+        this.resizeChart();
+        this.initRealCharts();
     },
     methods: {
+        resizeChart: function () {
+            const self = this;//因为箭头函数会改变this指向，指向windows。所以先把this保存
+            // setTimeout(() => {
+            //     window.onresize = function() {
+            //         self.$refs.targetChart.resize();
+            //     }
+            // },500)
+        },
         buildOption: function (title = {text: '折线图'}, legend = {data: ['总资产', '现金贡献', '收益贡献']},
                                series = [
                                    {
@@ -62,7 +83,7 @@ var parent = new Vue({
                                        type: 'line',
                                        data: []
                                    }
-                               ],startValue) {
+                               ], startValue) {
             return option = {
                 title: title,
                 tooltip: {
@@ -96,14 +117,16 @@ var parent = new Vue({
                 series: series
             };
         },
-        clickEditTable: function (childAccountFund, event) {
-            if (this.currentEditChildAccountFundId != childAccountFund.id) {
-                event.target.innerText = '保存';
-                this.currentEditChildAccountFundId = childAccountFund.id;
+        clickEditTable: function (childAccountFund) {
 
+            if (this.currentEditChildAccountFundId != childAccountFund.id) {
+                this.currentEditChildAccountFundId = childAccountFund.id;
             } else {
-                event.target.innerText = '编辑';
+                var self = this;
                 this.currentEditChildAccountFundId = -1;
+                getJSON('/asserts/addFundInfo/' + childAccountFund.id, childAccountFund, function (data) {
+                    self.getAccountInfo();
+                })
             }
         },
 
@@ -114,19 +137,60 @@ var parent = new Vue({
                     var targetInfos = successData.body;
                     var option = that.buildOption();
                     option.xAxis.data = [];
+                    option.title = {text: "目标"}
                     option.series[0].data = [];
                     option.series[1].data = [];
                     option.series[2].data = [];
                     for (var data of targetInfos) {
                         var date = new Date(data.targetDate);
+                        var now = new Date();
+                        if (date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth()) {
+                            that.targetMonth.currentAmount = data.currentAmount;
+                            that.targetMonth.addCash = data.addCash;
+                            that.targetMonth.addInterest = data.addInterest;
+                        }
                         option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
                         option.series[2].data.push(data.currentInterest);
                         option.series[1].data.push(data.currentCash);
                         option.series[0].data.push(data.currentAmount);
                     }
-                    var startDate = new Date(targetInfos[0].targetDate);
                     that.targetChartOption = option;
                 })
+            })
+        },
+        initRealCharts: function () {
+            var that = this;
+            getJSON('/asserts/totalParentAccountDetails', null, function (successDate) {
+                var realInfos = successDate.body;
+                if (realInfos.length <= 0) {
+                    return;
+                }
+                var option = that.buildOption();
+                option.xAxis.data = [];
+                option.title = {text: "实际"}
+                option.series[0].data = [];
+                option.series[1].data = [];
+                option.series[2].data = [];
+                that.realTotalParentAccountFund = {addCash:0,addInterest:0,currentAmount:0};
+                var now = new Date();
+                var createDate = new Date(realInfos[0].createDate);
+                that.realTotalParentAccountFund.month = (createDate.getFullYear() - now.getFullYear() ) * 12 + now.getMonth() - createDate.getMonth() +1;
+
+
+                for (var data of realInfos) {
+                    var date = new Date(data.createDate);
+                    if (date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth()) {
+                        that.realTotalParentAccountFund.addCash = that.realTotalParentAccountFund.addCash + data.addCash;
+                        that.realTotalParentAccountFund.addInterest = that.realTotalParentAccountFund.addInterest + data.addInterest;
+                        that.realTotalParentAccountFund.currentAmount = data.currentAmount;
+
+                    }
+                    option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
+                    option.series[2].data.push(data.currentInterest);
+                    option.series[1].data.push(data.currentCash);
+                    option.series[0].data.push(data.currentAmount);
+                }
+                that.realChartOption = option;
             })
         },
         getAccountInfo: function () {
@@ -134,9 +198,6 @@ var parent = new Vue({
             getJSON('/asserts/accountInfo', null, function (successData) {
                 that.target = successData.body.targetAccountVO;
                 that.accountFunds = successData.body.currentAccountVOS;
-                for (var accountFund of that.accountFunds) {
-                    accountFund.edit = false;
-                }
             })
         },
         newParentAccountFund: function () {
@@ -194,7 +255,7 @@ var parent = new Vue({
                     option.series[1].data = [];
                     option.series[2].data = [];
                     for (var data of successData.body[key]) {
-                        var date = new Date(data.insertTime);
+                        var date = new Date(data.createDate);
                         option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
                         option.series[0].data.push(data.currentAmount);
                         option.series[1].data.push(data.currentCash);
@@ -203,6 +264,13 @@ var parent = new Vue({
                     that.parentAccountFundDetailsOptions.push(option);
                 }
 
+            })
+        },
+        saveTargetInfo:function () {
+            this.targetDialog = false;
+            var that = this;
+            postForm('/asserts/initTargetAmount', this.target, function (date) {
+                that.initTargetCharts()
             })
         }
     }

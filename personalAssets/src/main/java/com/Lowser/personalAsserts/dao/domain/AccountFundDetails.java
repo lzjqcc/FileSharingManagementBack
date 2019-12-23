@@ -1,10 +1,13 @@
 package com.Lowser.personalAsserts.dao.domain;
 
 import com.Lowser.common.dao.domain.BaseEntity;
+import com.Lowser.common.utils.DateUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Calendar;
+import java.util.Date;
 
 @Entity
 @Table(name = "tb_account_fund_details")
@@ -27,6 +30,16 @@ public class AccountFundDetails extends BaseEntity{
     private Integer currentCash;
     @Column(name = "current_inerest")
     private Integer currentInterest;
+    @Column(name = "create_date")
+    private Date createDate = DateUtils.getBeginTimeOfDay();
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
     public Integer getCurrentCash() {
         return currentCash;
