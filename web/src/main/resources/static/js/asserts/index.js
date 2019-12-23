@@ -10,10 +10,10 @@ var parent = new Vue({
             targetReturnRate: 0.07,
             targetYear: 7
         },
-        targetMonth:{
-            currentAmount:0,
-            addCash:0,
-            addInterest:0
+        targetMonth: {
+            currentAmount: 0,
+            addCash: 0,
+            addInterest: 0
         },
 
         accountFunds: [
@@ -44,20 +44,30 @@ var parent = new Vue({
         targetChartOption: {},
         parentAccountFundDetailsOptions: [],
         realChartOption: {},
-        realMonthAddAmount:0,
-        realTotalParentAccountFund:{},
-        targetDialog:false,
-        loginPage:true
+        realMonthAddAmount: 0,
+        realTotalParentAccountFund: {},
+        targetDialog: false,
+        loginPage: true,
+        loginInfo: {}
     },
     mounted: function () {
-        this.initTargetCharts();
-        this.getAccountInfo();
-        this.getAccountFundTypes();
-        this.getAllParentAccountFundAndDetails();
         this.resizeChart();
-        this.initRealCharts();
+        this.isLogin()
     },
     methods: {
+        isLogin: function () {
+            var that = this;
+            getJSON('/asserts/isLogin', null, function (successData) {
+                that.loginPage = false;
+                that.initTargetCharts()
+                that.getAccountInfo();
+                that.getAccountFundTypes();
+                that.getAllParentAccountFundAndDetails();
+                that.initRealCharts();
+            }, function (errorData) {
+                that.loginPage = true;
+            })
+        },
         resizeChart: function () {
             const self = this;//因为箭头函数会改变this指向，指向windows。所以先把this保存
             // setTimeout(() => {
@@ -132,30 +142,43 @@ var parent = new Vue({
 
         initTargetCharts: function () {
             var that = this;
-            postForm('/asserts/login', {'email': '1161889163@qq.com', 'password': '11111111a'}, function (successData) {
-                getJSON('/asserts/getTargetInfo', null, function (successData) {
-                    var targetInfos = successData.body;
-                    var option = that.buildOption();
-                    option.xAxis.data = [];
-                    option.title = {text: "目标"}
-                    option.series[0].data = [];
-                    option.series[1].data = [];
-                    option.series[2].data = [];
-                    for (var data of targetInfos) {
-                        var date = new Date(data.targetDate);
-                        var now = new Date();
-                        if (date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth()) {
-                            that.targetMonth.currentAmount = data.currentAmount;
-                            that.targetMonth.addCash = data.addCash;
-                            that.targetMonth.addInterest = data.addInterest;
-                        }
-                        option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
-                        option.series[2].data.push(data.currentInterest);
-                        option.series[1].data.push(data.currentCash);
-                        option.series[0].data.push(data.currentAmount);
+            getJSON('/asserts/getTargetInfo', null, function (successData) {
+                var targetInfos = successData.body;
+                var option = that.buildOption();
+                option.xAxis.data = [];
+                option.title = {text: "目标"}
+                option.series[0].data = [];
+                option.series[1].data = [];
+                option.series[2].data = [];
+                for (var data of targetInfos) {
+                    var date = new Date(data.targetDate);
+                    var now = new Date();
+                    if (date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth()) {
+                        that.targetMonth.currentAmount = data.currentAmount;
+                        that.targetMonth.addCash = data.addCash;
+                        that.targetMonth.addInterest = data.addInterest;
                     }
-                    that.targetChartOption = option;
-                })
+                    option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
+                    option.series[2].data.push(data.currentInterest);
+                    option.series[1].data.push(data.currentCash);
+                    option.series[0].data.push(data.currentAmount);
+                }
+                that.targetChartOption = option;
+            })
+        },
+        loginAction: function () {
+            var that = this;
+            postForm('/asserts/login', this.loginInfo, function (successData) {
+                that.loginPage = false;
+                that.initTargetCharts()
+                that.getAccountInfo();
+                that.getAccountFundTypes();
+                that.getAllParentAccountFundAndDetails();
+                that.initRealCharts();
+
+            }, function (fail) {
+                that.errorMessage = fail.responseJSON.body.errorMsg;
+
             })
         },
         initRealCharts: function () {
@@ -171,10 +194,10 @@ var parent = new Vue({
                 option.series[0].data = [];
                 option.series[1].data = [];
                 option.series[2].data = [];
-                that.realTotalParentAccountFund = {addCash:0,addInterest:0,currentAmount:0};
+                that.realTotalParentAccountFund = {addCash: 0, addInterest: 0, currentAmount: 0};
                 var now = new Date();
                 var createDate = new Date(realInfos[0].createDate);
-                that.realTotalParentAccountFund.month = (createDate.getFullYear() - now.getFullYear() ) * 12 + now.getMonth() - createDate.getMonth() +1;
+                that.realTotalParentAccountFund.month = (createDate.getFullYear() - now.getFullYear() ) * 12 + now.getMonth() - createDate.getMonth() + 1;
 
 
                 for (var data of realInfos) {
@@ -266,7 +289,7 @@ var parent = new Vue({
 
             })
         },
-        saveTargetInfo:function () {
+        saveTargetInfo: function () {
             this.targetDialog = false;
             var that = this;
             postForm('/asserts/initTargetAmount', this.target, function (date) {

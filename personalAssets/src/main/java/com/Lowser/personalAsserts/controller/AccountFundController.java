@@ -56,7 +56,10 @@ public class AccountFundController {
         LoginUtil.setAccount(session, account);
         return "ok";
     }
-
+    @GetMapping("/isLogin")
+    public boolean isLogin(Account account) {
+        return account != null;
+    }
     /**
      * 初始化目标金额
      * @param targetAmount

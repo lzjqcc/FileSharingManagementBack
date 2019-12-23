@@ -22,23 +22,54 @@
 <body>
 <div id="parentTitle">
 
-    <v-app  id="inspire">
-        <div v-if="loginPage">
-            <v-row>
-                <v-text-field label="用户名"></v-text-field>
-            </v-row>
-            <v-row>
-                <v-text-field label="密码">
-
-                </v-text-field>
-            </v-row>
-            <v-row>
-                <v-btn color="primary" style="float: right" @click="loginPage=false">
-                    登录
-                </v-btn>
-            </v-row>
-            dd
-        </div>
+    <v-app id="inspire">
+        <v-content v-if="loginPage">
+            <v-container
+                    class="fill-height"
+                    fluid
+            >
+                <v-row
+                        align="center"
+                        justify="center"
+                >
+                    <v-col
+                            cols="12"
+                            sm="8"
+                            md="4"
+                    >
+                        <v-card class="elevation-12">
+                            <v-toolbar
+                                    color="primary"
+                                    dark
+                                    flat
+                            >
+                                <v-toolbar-title>登录</v-toolbar-title>
+                                <v-spacer/>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-text-field
+                                        label="Login"
+                                        prepend-icon="person"
+                                        v-model="loginInfo.email"
+                                        type="text"
+                                ></v-text-field>
+                                <v-text-field
+                                        id="password"
+                                        label="Password"
+                                        prepend-icon="lock"
+                                        type="password"
+                                        v-model="loginInfo.password"
+                                ></v-text-field>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer/>
+                                <v-btn color="primary" @click="loginAction()">登录</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-content>
         <div v-if="!loginPage">
             <v-card
                     class="mx-auto"
@@ -77,7 +108,7 @@
                             <td>{{targetMonth.currentAmount}}</td>
                         </tr>
                         <tr>
-                            <td>现实</td>
+                            <td>实际</td>
                             <td>{{ realTotalParentAccountFund.currentAmount }}</td>
                             <td>{{ target.targetReturnRate }}</td>
                             <td>{{ realTotalParentAccountFund.month }}</td>
@@ -90,16 +121,18 @@
                     </template>
                 </v-simple-table>
                 <v-row>
-                    <v-col cols="12"
-                           sm="5">
-                        <div>
-                            <v-chart :options="targetChartOption"/>
-                        </div>
-                    </v-col>
                     <v-col cols="12" sm="1"></v-col>
                     <v-col cols="12" sm="5">
                         <div>
-                            <v-chart :options="realChartOption"/>
+                            <v-chart style="height: 30rem" :options="realChartOption"/>
+                        </div>
+                    </v-col>
+
+                    <v-col cols="12" sm="1"></v-col>
+                    <v-col cols="12"
+                           sm="5">
+                        <div>
+                            <v-chart style="height: 30rem" :options="targetChartOption"/>
                         </div>
                     </v-col>
                 </v-row>
