@@ -2,6 +2,7 @@ package com.Lowser.personalAsserts.controller;
 
 import com.Lowser.common.error.BizException;
 import com.Lowser.common.utils.AssertUtils;
+import com.Lowser.common.utils.CodeUtils;
 import com.Lowser.common.utils.DateUtils;
 import com.Lowser.personalAsserts.controller.param.AccountFundDetailsParam;
 import com.Lowser.personalAsserts.controller.param.AccountFundParam;
@@ -21,8 +22,15 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,17 +50,34 @@ public class AccountFundController {
     private AccountFundService accountService;
     @Autowired
     private AccountFundTargetDetailsRepository accountFundTargetDetailsRepository;
+    private List<Character> codes = null;
+    @PostConstruct
+    public void init() {
+        codes = new ArrayList<>(23);
+        for (int i = 0; i<23;i++) {
+            codes.add((char) ('A' + i));
+        }
+    }
     @PostMapping("/login")
-    public Object login(String email, String password, HttpSession session) {
+    public Object login(String email, String password,String code, HttpSession session) {
         if (session.getAttribute(LoginUtil.key) != null) {
-            ;
             return "ok";
         }
+        CodeUtils.validateCode(code, session);
         Account account = accountRepository.findByEmailAndPassword(email, password);
         if (account == null) {
             throw new BizException("登录失败");
         }
-
+        List<AccountFund> topAccountFunds = accountFundRepository.findByAccountIdAndParentId(account.getId(), null);
+        if (CollectionUtils.isEmpty(topAccountFunds)) {
+            AccountFund topAccountFund = new AccountFund();
+            topAccountFund.setTotalAmount(0);
+            topAccountFund.setTotalCash(0);
+            topAccountFund.setTotalInterest(0);
+            topAccountFund.setAccountId(account.getId());
+            topAccountFund.setName("总帐号");
+            accountFundRepository.save(topAccountFund);
+        }
         LoginUtil.setAccount(session, account);
         return "ok";
     }
@@ -60,20 +85,58 @@ public class AccountFundController {
     public boolean isLogin(Account account) {
         return account != null;
     }
+    @PostMapping("/register")
+    public void register(@RequestParam("email") String email,
+                           @RequestParam("password") String password,
+                           @RequestParam("code") String code,
+                         HttpSession session) {
+        CodeUtils.validateCode(code, session);
+        Account account = new Account();
+        account.setTargetAmount(0);
+        account.setTargetReturnRate(0d);
+        account.setTargetYear(0);
+        account.setEmail(email);
+        account.setPassword(password);
+        accountRepository.save(account);
+    }
+    @GetMapping("/code")
+    public void code(HttpServletResponse response, HttpSession session) throws IOException {
+
+        BufferedImage image = new BufferedImage(40, 30, BufferedImage.TYPE_INT_RGB);
+
+        Graphics graphics = image.getGraphics();
+        Random random = new Random();
+        String codeString = "";
+        for (int i = 0;i < 4;i++) {
+            Character code = codes.get(random.nextInt(codes.size()-1));
+            codeString = codeString + code;
+            graphics.drawString(code.toString(),  10 * i, 15);
+        }
+        session.setAttribute("code", codeString);
+        session.setAttribute("codeTime", new Date());
+        //干扰线
+        for (int i = 0;i < 4; i++ ) {
+            graphics.drawLine(0, random.nextInt(13) * i,
+                                random.nextInt(20) * i,random.nextInt(13) * i);
+        }
+        ImageIO.write(image, "png", response.getOutputStream());
+       // graphics.drawString();
+
+    }
     /**
      * 初始化目标金额
      * @param targetAmount
-     * @param targetRate
+     * @param targetReturnRate
      * @param targetYear
      * @param account
      */
     @PostMapping("initTargetAmount")
-    public void initTargetAmount(Integer targetAmount, Double targetRate, Integer targetYear, Account account) {
+    public void initTargetAmount(Integer targetAmount, Double targetReturnRate, Integer targetYear, Account account) {
         assert targetAmount != null;
-        assert targetRate != null;
+        assert targetReturnRate != null;
         assert targetYear != null;
         account.setTargetAmount(targetAmount);
-        account.setTargetReturnRate(targetRate);
+        account.setTargetReturnRate(targetReturnRate);
         account.setTargetYear(targetYear);
         accountService.initAccountFundTargetDetails(account);
     }

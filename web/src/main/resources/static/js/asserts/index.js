@@ -48,7 +48,8 @@ var parent = new Vue({
         realTotalParentAccountFund: {},
         targetDialog: false,
         loginPage: true,
-        loginInfo: {}
+        loginInfo: {},
+        codeImage:null,
     },
     mounted: function () {
         this.resizeChart();
@@ -76,6 +77,10 @@ var parent = new Vue({
             //     }
             // },500)
         },
+        backgroundImageCode: function (event) {
+            var that = this;
+            event.target.src = 'http://localhost:8080/asserts/code?ranom = ' + Math.random() ;
+        },
         buildOption: function (title = {text: '折线图'}, legend = {data: ['总资产', '现金贡献', '收益贡献']},
                                series = [
                                    {
@@ -101,10 +106,10 @@ var parent = new Vue({
                 },
                 legend: legend,
                 grid: {
-                    // left: '3%',
-                    // right: '4%',
-                    // bottom: '3%',
-                    // containLabel: true
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
                 },
                 toolbox: {
                     feature: {
@@ -159,11 +164,14 @@ var parent = new Vue({
                         that.targetMonth.addInterest = data.addInterest;
                     }
                     option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
-                    option.series[2].data.push(data.currentInterest);
-                    option.series[1].data.push(data.currentCash);
                     option.series[0].data.push(data.currentAmount);
+                    option.series[1].data.push(data.currentCash);
+                    option.series[2].data.push(data.currentInterest);
+
+
                 }
                 that.targetChartOption = option;
+                console.log(option.series[0])
             })
         },
         loginAction: function () {
@@ -178,7 +186,7 @@ var parent = new Vue({
 
             }, function (fail) {
                 that.errorMessage = fail.responseJSON.body.errorMsg;
-
+                that.showErrorMessage = true;
             })
         },
         initRealCharts: function () {

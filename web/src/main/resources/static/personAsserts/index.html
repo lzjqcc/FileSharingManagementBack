@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html"
-      xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+      xmlns:v-slot="http://www.w3.org/1999/XSL/Transform" xmlns:http="http://www.w3.org/1999/xhtml"
+      xmlns:https="http://www.w3.org/1999/xhtml">
 <!--https://vuetifyjs.com/zh-Hans/components/icons-->
 <head>
     <meta charset="UTF-8">
@@ -60,6 +61,21 @@
                                         type="password"
                                         v-model="loginInfo.password"
                                 ></v-text-field>
+                                <v-row>
+                                    <v-col cols="12" sm="9">
+                                        <v-text-field label="验证码" prepend-icon="code" v-model="loginInfo.code">
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" sm="2">
+                                        <!--<div v-bind:style="{backgroundImage:'url(codeImage)'}" @click="backgroundImageCode()"></div>-->
+                                        <v-row>
+                                            <img src="http://localhost:8080/asserts/code" @click="backgroundImageCode($event)"/>
+                                            <span>点击图片刷新</span>
+                                        </v-row>
+
+                                    </v-col>
+                                </v-row>
+
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer/>
@@ -122,21 +138,25 @@
                 </v-simple-table>
                 <v-row>
                     <v-col cols="12" sm="1"></v-col>
-                    <v-col cols="12" sm="5">
+                    <v-col cols="12" sm="4">
                         <div>
-                            <v-chart style="height: 30rem" :options="realChartOption"/>
+                            <v-chart style="height: 25rem" :options="realChartOption"/>
                         </div>
                     </v-col>
 
                     <v-col cols="12" sm="1"></v-col>
                     <v-col cols="12"
-                           sm="5">
+                           sm="4">
                         <div>
-                            <v-chart style="height: 30rem" :options="targetChartOption"/>
+                            <v-chart style="height: 25rem" :options="targetChartOption"/>
                         </div>
                     </v-col>
                 </v-row>
-
+                <v-row>
+                    <v-col>
+                        <v-chart/>
+                    </v-col>
+                </v-row>
 
             </v-card>
 
@@ -501,33 +521,34 @@
                     </v-card>
                 </v-dialog>
             </div>
-            <v-row justify="center">
-                <v-dialog
-                        v-model="showErrorMessage"
-                        max-width="290"
-                >
-                    <v-card>
-                        <v-card-title class="headline">错误提示</v-card-title>
 
-                        <v-card-text>
-                            {{errorMessage}}
-                        </v-card-text>
-
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-
-                            <v-btn
-                                    color="green darken-1"
-                                    text
-                                    @click="showErrorMessage = false"
-                            >
-                                确定
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-row>
         </div>
+        <v-row justify="center">
+            <v-dialog
+                    v-model="showErrorMessage"
+                    max-width="290"
+            >
+                <v-card>
+                    <v-card-title class="headline">错误提示</v-card-title>
+
+                    <v-card-text>
+                        {{errorMessage}}
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+
+                        <v-btn
+                                color="green darken-1"
+                                text
+                                @click="showErrorMessage = false"
+                        >
+                            确定
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-row>
     </v-app>
 </div>
 
