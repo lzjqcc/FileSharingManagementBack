@@ -79,7 +79,7 @@ var parent = new Vue({
         },
         backgroundImageCode: function (event) {
             var that = this;
-            event.target.src = 'http://localhost:8080/asserts/code?ranom = ' + Math.random() ;
+            event.target.src = url+'/asserts/code?ranom = ' + Math.random() ;
         },
         buildOption: function (title = {text: '折线图'}, legend = {data: ['总资产', '现金贡献', '收益贡献']},
                                series = [
@@ -243,6 +243,8 @@ var parent = new Vue({
             var that = this;
             postJson('/asserts/createAccountFund', this.childAccountFund, function (successDate) {
                 that.getAccountInfo();
+                that.initRealCharts();
+                that.getAllParentAccountFundAndDetails()
                 that.childAccountFundDialog = false;
             }, function (errorData) {
                 that.errorMessage = errorData.responseJSON.body.errorMsg;
@@ -274,11 +276,14 @@ var parent = new Vue({
             var that = this;
             getJSON('/asserts/deleteAccountFund', {accountFundId: accountFund.id}, function (successDate) {
                 that.getAccountInfo();
+                that.getAllParentAccountFundAndDetails();
+                that.initRealCharts();
             })
         },
         getAllParentAccountFundAndDetails: function () {
             var that = this;
             getJSON('/asserts/getAllParentAcountFundAndDetails', null, function (successData) {
+                that.parentAccountFundDetailsOptions =[];
                 for (var key in successData.body) {
                     var option = that.buildOption({text: key});
                     option.xAxis.data = [];
@@ -292,7 +297,7 @@ var parent = new Vue({
                         option.series[1].data.push(data.currentCash);
                         option.series[2].data.push(data.currentInterest);
                     }
-                    that.parentAccountFundDetailsOptions.push(option);
+                        that.parentAccountFundDetailsOptions.push(option);
                 }
 
             })

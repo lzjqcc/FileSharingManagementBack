@@ -50,6 +50,7 @@ public class AccountFundController {
     private AccountFundService accountService;
     @Autowired
     private AccountFundTargetDetailsRepository accountFundTargetDetailsRepository;
+    private String loginTimes = "loginTimes";
     private List<Character> codes = null;
     @PostConstruct
     public void init() {
@@ -64,10 +65,18 @@ public class AccountFundController {
             return "ok";
         }
         CodeUtils.validateCode(code, session);
+        if (session.getAttribute(loginTimes) == null) {
+            session.setAttribute(loginTimes, 0);
+        }
+        if ((int)session.getAttribute(loginTimes) > 10) {
+            throw new BizException("超过最大登录次数");
+        }
+
         Account account = accountRepository.findByEmailAndPassword(email, password);
         if (account == null ) {
             if (!Objects.equals(autoRegister, true)) {
-                throw new BizException("登录失败:帐号或密码错误");
+                session.setAttribute(loginTimes, (int)session.getAttribute(loginTimes) + 1);
+                throw new BizException("登录失败:帐号或密码错误,剩余登录次数 " + (10 -(int)(session.getAttribute(loginTimes))));
             }
             if (accountRepository.findByEmail(email) != null) {
                 throw new BizException("自动注册登录失败:帐号"+ email +"已经存在");
