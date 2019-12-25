@@ -59,14 +59,26 @@ public class AccountFundController {
         }
     }
     @PostMapping("/login")
-    public Object login(String email, String password,String code, HttpSession session) {
+    public Object login(String email, String password,String code,Boolean autoRegister,  HttpSession session) {
         if (session.getAttribute(LoginUtil.key) != null) {
             return "ok";
         }
         CodeUtils.validateCode(code, session);
         Account account = accountRepository.findByEmailAndPassword(email, password);
-        if (account == null) {
-            throw new BizException("登录失败");
+        if (account == null ) {
+            if (!Objects.equals(autoRegister, true)) {
+                throw new BizException("登录失败:帐号或密码错误");
+            }
+            if (accountRepository.findByEmail(email) != null) {
+                throw new BizException("自动注册登录失败:帐号"+ email +"已经存在");
+            }
+            account = new Account();
+            account.setTargetAmount(0);
+            account.setTargetReturnRate(0d);
+            account.setTargetYear(0);
+            account.setEmail(email);
+            account.setPassword(password);
+            account = accountRepository.save(account);
         }
         List<AccountFund> topAccountFunds = accountFundRepository.findByAccountIdAndParentId(account.getId(), null);
         if (CollectionUtils.isEmpty(topAccountFunds)) {

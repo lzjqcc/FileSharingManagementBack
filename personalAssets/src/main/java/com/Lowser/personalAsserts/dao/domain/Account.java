@@ -4,10 +4,14 @@ import com.Lowser.common.dao.domain.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tb_account")
+@Table(name = "tb_account", indexes = {
+        @Index(columnList = "email",name = "email_password_index"),
+        @Index(columnList = "password", name = "email_password_index")
+})
 public class Account extends BaseEntity{
     private String name;
     private String email;
