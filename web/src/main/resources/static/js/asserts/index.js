@@ -6,11 +6,11 @@ var parent = new Vue({
     data: {
         aa: 10,
         target: {
-            targetAmount: 100,
-            targetReturnRate: 0.07,
-            targetYear: 7,
-            currentCash:10,
-            currentInterest:10
+            targetAmount: 0,
+            targetReturnRate: 0,
+            targetYear: 0,
+            currentCash:0,
+            currentInterest:0
         },
         targetMonth: {
             currentAmount: 0,
