@@ -5,12 +5,16 @@ import com.Lowser.common.utils.DateUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import java.util.Calendar;
 import java.util.Date;
 
 @Entity
-@Table(name = "tb_account_fund_details")
+@Table(name = "tb_account_fund_details",indexes = {
+        @Index(columnList = "account_id",name = "account_id_account_fund_id"),
+        @Index(columnList = "account_fund_id", name = "account_id_account_fund_id")
+})
 public class AccountFundDetails extends BaseEntity{
     @Column(name = "account_id")
     private Integer accountId;

@@ -4,10 +4,13 @@ import com.Lowser.common.dao.domain.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tb_account_fund")
+@Table(name = "tb_account_fund",indexes =
+        {@Index(columnList = "account_id",name = "account_id_parent_id_index"),
+        @Index(columnList = "parent_id", name = "account_id_parent_id_index")})
 public class AccountFund extends BaseEntity{
     @Column(name = "account_id")
     private Integer accountId;
