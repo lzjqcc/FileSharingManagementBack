@@ -51,7 +51,7 @@ var parent = new Vue({
         targetDialog: false,
         loginPage: true,
         loginInfo: {},
-        codeImage:null,
+        codeUrl: url + "/asserts/code"
     },
     mounted: function () {
         this.resizeChart();
@@ -79,9 +79,9 @@ var parent = new Vue({
             //     }
             // },500)
         },
-        backgroundImageCode: function (event) {
+        backgroundImageCode: function () {
             var that = this;
-            event.target.src = url+'/asserts/code?ranom = ' + Math.random() ;
+            this.codeUrl = url+'/asserts/code?ranom = ' + Math.random() ;
         },
         buildOption: function (title = {text: '折线图'}, legend = {data: ['总资产', '现金贡献', '收益贡献']},
                                series = [
@@ -108,8 +108,7 @@ var parent = new Vue({
                 },
                 legend: legend,
                 grid: {
-                    left: '3%',
-                    right: '4%',
+
                     bottom: '3%',
                     containLabel: true
                 },

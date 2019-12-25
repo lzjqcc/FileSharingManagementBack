@@ -69,7 +69,7 @@
                                     <v-col cols="12" sm="2">
                                         <!--<div v-bind:style="{backgroundImage:'url(codeImage)'}" @click="backgroundImageCode()"></div>-->
                                         <v-row>
-                                            <img src="http://localhost:8080/asserts/code" @click="backgroundImageCode($event)"/>
+                                            <img v-bind:src="codeUrl" @click="backgroundImageCode()"/>
                                             <span>点击图片刷新</span>
                                         </v-row>
 
@@ -143,27 +143,18 @@
                     </template>
                 </v-simple-table>
                 <v-row>
-                    <v-col cols="12" sm="1"></v-col>
-                    <v-col cols="12" sm="4">
-                        <div>
-                            <v-chart style="height: 25rem" :options="realChartOption"/>
-                        </div>
+                    <v-col cols="16" sm="6">
+                            <v-chart style="height: 25rem" :options="realChartOption" />
                     </v-col>
 
-                    <v-col cols="12" sm="1"></v-col>
-                    <v-col cols="12"
-                           sm="4">
+                    <v-col cols="16" sm="1"></v-col>
+                    <v-col cols="16"
+                           sm="6">
                         <div>
                             <v-chart style="height: 25rem" :options="targetChartOption"/>
                         </div>
                     </v-col>
                 </v-row>
-                <v-row>
-                    <v-col>
-                        <v-chart/>
-                    </v-col>
-                </v-row>
-
             </v-card>
 
             <!---->
