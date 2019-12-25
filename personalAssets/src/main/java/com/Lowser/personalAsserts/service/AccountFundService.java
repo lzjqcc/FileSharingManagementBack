@@ -1,10 +1,7 @@
 package com.Lowser.personalAsserts.service;
 
 import com.Lowser.common.error.BizException;
-import com.Lowser.personalAsserts.dao.AccountFundDetailsRepository;
-import com.Lowser.personalAsserts.dao.AccountFundRepository;
-import com.Lowser.personalAsserts.dao.AccountFundTargetDetailsRepository;
-import com.Lowser.personalAsserts.dao.AccountFundTypeRepository;
+import com.Lowser.personalAsserts.dao.*;
 import com.Lowser.personalAsserts.dao.domain.*;
 import com.alibaba.fastjson.JSON;
 import com.beust.jcommander.internal.Lists;
@@ -19,6 +16,8 @@ import java.util.*;
 public class AccountFundService {
     @Autowired
     private AccountFundTargetDetailsRepository accountFundTargetDetailsRepository;
+    @Autowired
+    private AccountRepository accountRepository;
     private static Integer monthOfYear = 12;
     @Transactional
     public  void initAccountFundTargetDetails(Account account) {
@@ -53,6 +52,7 @@ public class AccountFundService {
             }
         }
         accountFundTargetDetailsRepository.saveAll(list);
+        accountRepository.save(account);
     }
     private  int calculateInterest(int everyMonthCash, double rateOfMonth, int nper) {
         int totalCash = everyMonthCash * nper;
