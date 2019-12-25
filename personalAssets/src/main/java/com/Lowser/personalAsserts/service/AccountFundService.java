@@ -1,5 +1,6 @@
 package com.Lowser.personalAsserts.service;
 
+import com.Lowser.common.error.BizException;
 import com.Lowser.personalAsserts.dao.AccountFundDetailsRepository;
 import com.Lowser.personalAsserts.dao.AccountFundRepository;
 import com.Lowser.personalAsserts.dao.AccountFundTargetDetailsRepository;
@@ -19,25 +20,21 @@ public class AccountFundService {
     @Autowired
     private AccountFundTargetDetailsRepository accountFundTargetDetailsRepository;
     private static Integer monthOfYear = 12;
-    @Autowired
-    private AccountFundTypeRepository accountFundTypeRepository;
-    @Autowired
-    private AccountFundRepository accountFundRepository;
-    @Autowired
-    private AccountFundDetailsRepository accountFundDetailsRepository;
     @Transactional
     public  void initAccountFundTargetDetails(Account account) {
         assert account.getTargetYear() != null;
         assert account.getTargetYear() <=30;
+        assert account.getTargetReturnRate() != null;
+        if (account.getTargetReturnRate() == null || account.getTargetReturnRate() >= 1 || account.getTargetReturnRate() <=0) {
+            throw new BizException("收益率必须在0~1之间");
+        }
         accountFundTargetDetailsRepository.removeByAccountId(account.getId());
 
         List<AccountFundTargetDetails> list = new ArrayList<>();
         Integer currentCash = 0;
         int cashOfYear = calculateCash(account.getTargetReturnRate(), account.getTargetYear(), account.getTargetAmount());
         double rateOfMonth = rateOfMonth(account.getTargetReturnRate());
-        System.out.println(rateOfMonth);
         int everyMonthCash = calculateCash(rateOfMonth, monthOfYear, cashOfYear);
-        System.out.println(everyMonthCash +":" + rateOfMonth + ":" + cashOfYear);
         int nper = 1;
         for (int i = 0; i < account.getTargetYear(); i++) {
 

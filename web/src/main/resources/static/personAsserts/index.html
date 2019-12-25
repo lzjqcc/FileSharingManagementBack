@@ -96,7 +96,7 @@
                     outlined
             >
                 <v-card-title>
-                    <span>资金帐号</span>
+                    <span>目标与实际</span>
                     <v-col>
                         <v-btn color="primary" style="float: right" @click="targetDialog = true">
                             编辑
@@ -109,31 +109,34 @@
                         <tr>
                             <th class="text-left">类型</th>
                             <th class="text-left">总资产</th>
-                            <th class="text-left">年华收益率</th>
+                            <th class="text-left">收益率</th>
                             <th class="text-left">耗费时间/月</th>
                             <th class="text-left">本月现金</th>
                             <th class="text-left">本月收益</th>
-                            <th class="text-left">当前资产</th>
+                            <th class="text-left">总现金</th>
+                            <th class="text-left">总收益</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
                             <td>目标</td>
                             <td>{{ target.targetAmount }}</td>
-                            <td>{{ target.targetReturnRate }}</td>
+                            <td>{{ target.targetReturnRate }}(年化)</td>
                             <td>{{ target.targetYear * 12 }}</td>
                             <td>{{targetMonth.addCash}}</td>
                             <td>{{targetMonth.addInterest}}</td>
-                            <td>{{targetMonth.currentAmount}}</td>
+                            <td>{{target.currentCash }}</td>
+                            <td>{{target.currentInterest }}</td>
                         </tr>
                         <tr>
                             <td>实际</td>
                             <td>{{ realTotalParentAccountFund.currentAmount }}</td>
-                            <td>{{ target.targetReturnRate }}</td>
+                            <td>{{ realTotalParentAccountFund.returnRate}}(总收益率)</td>
                             <td>{{ realTotalParentAccountFund.month }}</td>
                             <td>{{realTotalParentAccountFund.addCash}}</td>
                             <td>{{realTotalParentAccountFund.addInterest}}</td>
-                            <td>{{realTotalParentAccountFund.currentAmount}}</td>
+                            <td>{{realTotalParentAccountFund.currentCash}}</td>
+                            <td>{{realTotalParentAccountFund.currentInterest}}</td>
 
                         </tr>
                         </tbody>
@@ -189,8 +192,16 @@
                                     <v-row>
                                         <v-col cols="12"
                                                sm="4">
-                                            <span>{{parentAccountFund.name}}</span>
-
+                                            <v-chip
+                                                    class="ma-2"
+                                                    color="indigo"
+                                                    text-color="white"
+                                            >
+                                                <v-avatar left>
+                                                    <v-icon>mdi-account-circle</v-icon>
+                                                </v-avatar>
+                                                {{parentAccountFund.name}}
+                                            </v-chip>
 
                                         </v-col>
                                         <v-col cols="12" sm="4"></v-col>
@@ -224,6 +235,7 @@
                                             <th class="text-left">当前资产</th>
                                             <th class="text-left">当前收益</th>
                                             <th class="text-left">贡献现金</th>
+                                            <th class="text-left">收益率</th>
                                             <th class="text-left">帐号类型</th>
                                             <th class="text-left">操作</th>
                                         </tr>
@@ -231,12 +243,7 @@
                                         <tbody>
                                         <tr v-for="item in parentAccountFund.childAccountFunds" :key="item.name">
                                             <td>
-                                                <v-row>
-                                                    <v-col cols="12"
-                                                           sm="8">
-                                                        <v-text-field disabled v-model="item.name"></v-text-field>
-                                                    </v-col>
-                                                </v-row>
+                                                <v-chip outlined>{{item.name}}</v-chip>
                                             </td>
                                             <td>
                                                 <v-text-field :disabled="currentEditChildAccountFundId != item.id"
@@ -253,8 +260,16 @@
 
                                             </td>
                                             <td>
+                                                {{item.returnRate}}
+                                            </td>
+                                            <td>
                                                 <!--<span v-if="!parentAccountFund.edit">{{item.fundType}}</span>-->
-                                                <v-text-field disabled v-model="item.fundType"></v-text-field>
+                                                <!--<v-text-field disabled v-model="item.fundType"></v-text-field>-->
+                                                <v-combobox v-model="item.fundType"
+                                                            :disabled="currentEditChildAccountFundId != item.id"
+                                                            v-bind:value="childAccountFund.fundType"
+                                                            :items="childFundTypeNames"
+                                                ></v-combobox>
                                             </td>
                                             <td>
                                                 <v-row>
@@ -300,6 +315,8 @@
                                             <th class="text-left">{{parentAccountFund.totalAmount}}</th>
                                             <th class="text-left">{{parentAccountFund.totalInterest}}</th>
                                             <th class="text-left">{{parentAccountFund.totalCash}}</th>
+                                            <th class="text-left">{{parentAccountFund.returnRate}}</th>
+
                                         </tr>
                                         </tbody>
                                     </template>

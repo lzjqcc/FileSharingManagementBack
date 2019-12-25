@@ -10,8 +10,7 @@ public class CurrentAccountVO {
     /**
      * 总收益
      */
-    private Integer returnRate;
-    private Integer yearReturnRate;
+    private Double returnRate;
     private String name;
     private String fundType;
 
@@ -65,11 +64,11 @@ public class CurrentAccountVO {
         this.totalInterest = totalInterest;
     }
 
-    public Integer getReturnRate() {
+    public Double getReturnRate() {
         return returnRate;
     }
 
-    public void setReturnRate(Integer returnRate) {
+    public void setReturnRate(Double returnRate) {
         this.returnRate = returnRate;
     }
 

@@ -8,7 +8,9 @@ var parent = new Vue({
         target: {
             targetAmount: 100,
             targetReturnRate: 0.07,
-            targetYear: 7
+            targetYear: 7,
+            currentCash:10,
+            currentInterest:10
         },
         targetMonth: {
             currentAmount: 0,
@@ -162,7 +164,10 @@ var parent = new Vue({
                         that.targetMonth.currentAmount = data.currentAmount;
                         that.targetMonth.addCash = data.addCash;
                         that.targetMonth.addInterest = data.addInterest;
+                        that.target.currentInterest = data.currentInterest == undefined ? 0 : data.currentInterest;
+                        that.target.currentCash = data.currentCash == undefined ? 0 : data.currentCash;
                     }
+
                     option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
                     option.series[0].data.push(data.currentAmount);
                     option.series[1].data.push(data.currentCash);
@@ -171,7 +176,7 @@ var parent = new Vue({
 
                 }
                 that.targetChartOption = option;
-                console.log(option.series[0])
+                console.log(that.target)
             })
         },
         loginAction: function () {
@@ -202,7 +207,7 @@ var parent = new Vue({
                 option.series[0].data = [];
                 option.series[1].data = [];
                 option.series[2].data = [];
-                that.realTotalParentAccountFund = {addCash: 0, addInterest: 0, currentAmount: 0};
+                that.realTotalParentAccountFund = {addCash: 0, addInterest: 0, currentAmount: 0, currentInterest:0,currentCash:0};
                 var now = new Date();
                 var createDate = new Date(realInfos[0].createDate);
                 that.realTotalParentAccountFund.month = (createDate.getFullYear() - now.getFullYear() ) * 12 + now.getMonth() - createDate.getMonth() + 1;
@@ -214,20 +219,27 @@ var parent = new Vue({
                         that.realTotalParentAccountFund.addCash = that.realTotalParentAccountFund.addCash + data.addCash;
                         that.realTotalParentAccountFund.addInterest = that.realTotalParentAccountFund.addInterest + data.addInterest;
                         that.realTotalParentAccountFund.currentAmount = data.currentAmount;
-
                     }
                     option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
                     option.series[2].data.push(data.currentInterest);
                     option.series[1].data.push(data.currentCash);
                     option.series[0].data.push(data.currentAmount);
                 }
+                var lastData = realInfos[realInfos.length -1];
+                that.realTotalParentAccountFund.currentInterest = lastData.currentInterest;
+                that.realTotalParentAccountFund.currentCash = lastData.currentCash;
+                var currentCash = that.realTotalParentAccountFund.currentCash == 0 ? 1 : that.realTotalParentAccountFund.currentCash;
+                that.realTotalParentAccountFund.returnRate = Math.round(that.realTotalParentAccountFund.currentInterest / currentCash * 10000)/ 10000;
                 that.realChartOption = option;
             })
         },
         getAccountInfo: function () {
             var that = this;
             getJSON('/asserts/accountInfo', null, function (successData) {
-                that.target = successData.body.targetAccountVO;
+                var targetVo = successData.body.targetAccountVO;
+                that.target.targetYear = targetVo.targetYear;
+                that.target.targetReturnRate = targetVo.targetReturnRate;
+                that.target.targetAmount = targetVo.targetAmount;
                 that.accountFunds = successData.body.currentAccountVOS;
             })
         },

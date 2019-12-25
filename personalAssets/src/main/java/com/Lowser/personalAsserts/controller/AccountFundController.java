@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
@@ -331,8 +332,24 @@ public class AccountFundController {
     @Transactional
     public void addAccountFundInfo(@PathVariable("fundId") Integer fundId,
                                    @Param("totalCash") Integer totalCash,
-                                   @Param("totalInterest") Integer totalInterest, Account account) {
+                                   @Param("totalInterest") Integer totalInterest,
+                                   @Param("fundType") String fundType,
+                                   Account account) {
+        if (totalCash <=0) {
+            throw new BizException("现金必须大于0");
+        }
+        if (totalInterest <0) {
+            throw new BizException("收益必须大于或等于0");
+        }
+        AccountFundType accountFundType = accountFundTypeRepository.findByAccountIdAndName(account.getId(), fundType);
+        if (accountFundType == null) {
+            accountFundType = new AccountFundType();
+            accountFundType.setName(fundType);
+            accountFundType.setAccountId(account.getId());
+            accountFundType = accountFundTypeRepository.save(accountFundType);
+        }
         AccountFund accountFund = accountFundRepository.findById(fundId).get();
+        accountFund.setAccountfundTypeId(accountFundType.getId());
         // 子帐号
         AccountFundDetails fundDetails = new AccountFundDetails();
         fundDetails.setAccountId(account.getId());
@@ -490,7 +507,9 @@ public class AccountFundController {
         currentAccountVO.setTotalAmount(accountFund.getTotalAmount());
         currentAccountVO.setTotalCash(accountFund.getTotalCash());
         currentAccountVO.setTotalInterest(accountFund.getTotalInterest());
-        //currentAccountVO.setReturnRate(accountFund.getTotalInterest() / (accountFund.getTotalCash()));
+        Integer totalCash = accountFund.getTotalCash() == 0 ? 1 : accountFund.getTotalCash();
+        DecimalFormat format = new DecimalFormat("#.0000");
+        currentAccountVO.setReturnRate(Double.parseDouble(format.format((double)accountFund.getTotalInterest()/ (double) totalCash)));
         currentAccountVO.setId(accountFund.getId());
         return currentAccountVO;
     }
