@@ -378,7 +378,20 @@ public class AccountFundController {
         parentAccountFundDetails.setAccountFundId(parentAccountFund.getId());
         accountFundDetailsRepository.save(parentAccountFundDetails);
 
-
+        // top 帐号
+        AccountFund topAccountFund = accountFundRepository.findByAccountIdAndParentId(account.getId(), null).get(0);
+        topAccountFund.setTotalCash(topAccountFund.getTotalCash() + fundDetails.getAddCash());
+        topAccountFund.setTotalInterest(topAccountFund.getTotalInterest() + fundDetails.getAddInterest());
+        topAccountFund.setTotalAmount(topAccountFund.getTotalCash() + topAccountFund.getTotalInterest());
+        accountFundRepository.save(topAccountFund);
+        AccountFundDetails topDetails = new AccountFundDetails();
+        topDetails.setAccountId(account.getId());
+        topDetails.setAccountFundId(topAccountFund.getId());
+        topDetails.setAddCash(fundDetails.getAddCash());
+        topDetails.setAddInterest(fundDetails.getAddInterest());
+        topDetails.setCurrentCash(topAccountFund.getTotalCash());
+        topDetails.setCurrentInterest(topAccountFund.getTotalInterest());
+        accountFundDetailsRepository.save(topDetails);
     }
 
     /**
