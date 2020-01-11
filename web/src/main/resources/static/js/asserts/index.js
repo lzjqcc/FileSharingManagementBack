@@ -175,7 +175,6 @@ var parent = new Vue({
 
                 }
                 that.targetChartOption = option;
-                console.log(that.target)
             })
         },
         loginAction: function () {
@@ -209,7 +208,7 @@ var parent = new Vue({
                 that.realTotalParentAccountFund = {addCash: 0, addInterest: 0, currentAmount: 0, currentInterest:0,currentCash:0};
                 var now = new Date();
                 var createDate = new Date(realInfos[0].createDate);
-                that.realTotalParentAccountFund.month = (createDate.getFullYear() - now.getFullYear() ) * 12 + now.getMonth() - createDate.getMonth() + 1;
+                that.realTotalParentAccountFund.month = (now.getFullYear()  - createDate.getFullYear() ) * 12 + now.getMonth() - createDate.getMonth() + 1;
 
 
                 for (var data of realInfos) {
