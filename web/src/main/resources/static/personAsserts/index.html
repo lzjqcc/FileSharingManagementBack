@@ -214,8 +214,33 @@
                                             </v-tooltip>
                                         </v-col>
                                     </v-row>
+                                    <!--确定删除-->
+                                    <v-row justify="center">
+                                        <v-dialog
+                                                v-model="sureDelete"
+                                                max-width="290"
+                                        >
+                                            <v-card>
+                                                <v-card-title class="headline">提示</v-card-title>
 
+                                                <v-card-text>
+                                                    确定删除？
+                                                </v-card-text>
 
+                                                <v-card-actions>
+                                                    <v-spacer></v-spacer>
+
+                                                    <v-btn
+                                                            color="green darken-1"
+                                                            text
+                                                            @click="deleteAccountFund(parentAccountFund,true)"
+                                                    >
+                                                        确定
+                                                    </v-btn>
+                                                </v-card-actions>
+                                            </v-card>
+                                        </v-dialog>
+                                    </v-row>
                                 </v-card-subtitle>
 
                                 <v-simple-table>
@@ -560,6 +585,7 @@
                 </v-card>
             </v-dialog>
         </v-row>
+
     </v-app>
 </div>
 

@@ -51,7 +51,8 @@ var parent = new Vue({
         targetDialog: false,
         loginPage: true,
         loginInfo: {},
-        codeUrl: url + "/asserts/code"
+        codeUrl: url + "/asserts/code",
+        sureDelete:false
     },
     mounted: function () {
         this.resizeChart();
@@ -142,6 +143,7 @@ var parent = new Vue({
                 this.currentEditChildAccountFundId = -1;
                 getJSON('/asserts/addFundInfo/' + childAccountFund.id, childAccountFund, function (data) {
                     self.getAccountInfo();
+                    self.initRealCharts();
                 })
             }
         },
@@ -281,13 +283,16 @@ var parent = new Vue({
             this.childAccountFundDialog = true;
             this.currentParentAccountFundId = parentAccountFund.id;
         },
-        deleteAccountFund: function (accountFund) {
+        deleteAccountFund: function (accountFund, deleteAccountFund=false) {
             var that = this;
-            getJSON('/asserts/deleteAccountFund', {accountFundId: accountFund.id}, function (successDate) {
-                that.getAccountInfo();
-                that.getAllParentAccountFundAndDetails();
-                that.initRealCharts();
-            })
+            this.sureDelete = !deleteAccountFund;
+            if (deleteAccountFund) {
+                getJSON('/asserts/deleteAccountFund', {accountFundId: accountFund.id}, function (successDate) {
+                    that.getAccountInfo();
+                    that.getAllParentAccountFundAndDetails();
+                    that.initRealCharts();
+                })
+            }
         },
         getAllParentAccountFundAndDetails: function () {
             var that = this;
