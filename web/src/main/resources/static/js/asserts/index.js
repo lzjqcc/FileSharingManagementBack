@@ -216,7 +216,6 @@ var parent = new Vue({
                     if (date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth()) {
                         that.realTotalParentAccountFund.addCash = that.realTotalParentAccountFund.addCash + data.addCash;
                         that.realTotalParentAccountFund.addInterest = that.realTotalParentAccountFund.addInterest + data.addInterest;
-                        that.realTotalParentAccountFund.currentAmount = data.currentAmount;
                     }
                     option.xAxis.data.push(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate())
                     option.series[2].data.push(data.currentInterest);
