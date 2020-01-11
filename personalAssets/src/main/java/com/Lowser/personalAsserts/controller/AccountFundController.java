@@ -420,7 +420,7 @@ public class AccountFundController {
         AccountFundDetails topFundDetails = new AccountFundDetails();
         topFundDetails.setCurrentInterest(topAccountFund.getTotalInterest());
         topFundDetails.setCurrentCash(topAccountFund.getTotalCash());
-        topFundDetails.setAddInterest(-accountFund.getTotalCash());
+        topFundDetails.setAddInterest(-accountFund.getTotalInterest());
         topFundDetails.setAddCash(-accountFund.getTotalCash());
         topFundDetails.setAccountFundId(topAccountFund.getId());
         topFundDetails.setAccountId(account.getId());
@@ -449,6 +449,8 @@ public class AccountFundController {
         parentDetails.setAccountFundId(parentAccountFund.getId());
         parentDetails.setAccountId(account.getId());
         accountFundDetailsRepository.save(parentDetails);
+
+
     }
     @GetMapping(value = "/getAllParentAcountFundAndDetails")
     public Map<String, List<AccountFundDetailsVO>> getParentAccountFundAndDetails(Account account) {
