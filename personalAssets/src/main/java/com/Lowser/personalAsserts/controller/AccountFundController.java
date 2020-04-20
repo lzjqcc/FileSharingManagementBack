@@ -66,11 +66,8 @@ public class AccountFundController {
     }
     @GetMapping("/ip")
     public void ip(HttpServletRequest request, String address) {
-        String ip = request.getRemoteAddr();
-        System.out.println(request.getHeader("x-forwarded-for"));
-        System.out.println(request.getHeader("X-Forwarded-For"));
         IpLog ipLog = new IpLog();
-        ipLog.setIp(ip);
+        ipLog.setIp(request.getHeader("x-forwarded-for"));
         ipLog.setAddress(address);
         ipLogRepository.save(ipLog);
     }
