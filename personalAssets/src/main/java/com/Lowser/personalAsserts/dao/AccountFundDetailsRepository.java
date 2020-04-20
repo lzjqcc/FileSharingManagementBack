@@ -19,4 +19,5 @@ public interface AccountFundDetailsRepository extends JpaRepository<AccountFundD
 
     List<AccountFundDetails> findByAccountFundId(Integer accountFundId);
 
+
 }

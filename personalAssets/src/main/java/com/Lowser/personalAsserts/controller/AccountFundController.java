@@ -16,6 +16,7 @@ import com.beust.jcommander.internal.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.*;
@@ -51,6 +53,8 @@ public class AccountFundController {
     private AccountFundService accountService;
     @Autowired
     private AccountFundTargetDetailsRepository accountFundTargetDetailsRepository;
+    @Autowired
+    private IpLogRepository ipLogRepository;
     private String loginTimes = "loginTimes";
     private List<Character> codes = null;
     @PostConstruct
@@ -59,6 +63,18 @@ public class AccountFundController {
         for (int i = 0; i<23;i++) {
             codes.add((char) ('A' + i));
         }
+    }
+    @GetMapping("/ip")
+    public void ip(HttpServletRequest request, String address) {
+        String ip = request.getRemoteAddr();
+        IpLog ipLog = new IpLog();
+        ipLog.setIp(ip);
+        ipLog.setAddress(address);
+        ipLogRepository.save(ipLog);
+    }
+    @GetMapping("/getIp")
+    public Object getAllIp() {
+        return ipLogRepository.findAll();
     }
     @PostMapping("/login")
     public Object login(String email, String password,String code,Boolean autoRegister,  HttpSession session) {
