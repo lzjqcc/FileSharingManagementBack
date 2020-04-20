@@ -72,7 +72,7 @@
         str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
         var adress = str +"";
         document.getElementById('result').innerHTML = str.join('<br>');
-        getJSON("/ip?adress="+adress,null,function (successDate) {
+        getJSON("/asserts/ip?adress="+adress,null,function (successDate) {
 
         },function (errorDate) {
 
@@ -82,7 +82,7 @@
     function onError(data) {
         document.getElementById('status').innerHTML='定位失败'
         document.getElementById('result').innerHTML = '失败原因排查信息:'+data.message;
-        getJSON("/ip?adress="+"定位失败",null,function (successDate) {
+        getJSON("/asserts/ip?adress="+"定位失败",null,function (successDate) {
 
         },function (errorDate) {
 
