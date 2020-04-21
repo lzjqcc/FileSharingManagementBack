@@ -75,6 +75,10 @@ public class AccountFundController {
     public Object getAllIp() {
         return ipLogRepository.findAll();
     }
+    @GetMapping("/deleteAllIp")
+    public void clearAllIp() {
+        ipLogRepository.deleteAll();
+    }
     @PostMapping("/login")
     public Object login(String email, String password,String code,Boolean autoRegister,  HttpSession session) {
         if (session.getAttribute(LoginUtil.key) != null) {

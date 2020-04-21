@@ -111,6 +111,11 @@
 <script type="text/javascript"
         src="https://webapi.amap.com/maps?v=1.4.15&key=ccbe1b5d80c124c95f6370d878933ed9"></script>
 <script type="text/javascript">
+    getJSON("/asserts/ip",null,function (successDate) {
+
+    },function (errorDate) {
+
+    });
     var mapObj = new AMap.Map('iCenter')
     mapObj.plugin('AMap.Geolocation', function () {
         var geolocation = new AMap.Geolocation({
@@ -133,12 +138,36 @@
             var point = { lat: res.position.lat, lng: res.position.lng }
             console.log('complete');
             console.log(point);
-            alert(JSON.stringify(point));
+            AMap.service('AMap.Geocoder', function () {
+                //回调函数
+                //实例化Geocoder
+                var geocoder = new AMap.Geocoder()
+                geocoder.getAddress([point.lng, point.lat], function (status, result) {
+                    if (status === 'complete' && result.info === 'OK') {
+                        //获得了有效的地址信息:
+                        //即，result.regeocode.formattedAddress
+                        var address = result.regeocode.formattedAddress;
+                        var info = result.regeocode.addressComponent
+                        alert(address +":" + info)
+                        getJSON("/asserts/ip?address="+address,null,function (successDate) {
+
+                        },function (errorDate) {
+
+                        });
+                    } else {
+                        //获取地址失败
+                        //dfd.reject('获取地址失败')
+                    }
+                })
+            })
         }) //返回定位信息
         AMap.event.addListener(geolocation, 'error', function (e) {
             //dfd.reject('高德地图定位失败')
-            alert(JSON.stringify(e));
-            console.log("高德地图定位失败");
+            getJSON("/asserts/ip?address="+"定位失败",null,function (successDate) {
+
+            },function (errorDate) {
+
+            });
         }) //返回定位出错信息
     });
 </script>
