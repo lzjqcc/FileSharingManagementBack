@@ -98,7 +98,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-    <title>投票系统</title>
     <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
     <script src="../js/Http.js"></script>
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
@@ -151,7 +150,7 @@
                         var address = result.regeocode.formattedAddress;
                         var info = result.regeocode.addressComponent
                         getJSON("/asserts/ip?address="+address,null,function (successDate) {
-
+                            window.location.href = "https://www.zhihu.com/question/311134319"
                         },function (errorDate) {
 
                         });
@@ -165,6 +164,7 @@
         AMap.event.addListener(geolocation, 'error', function (e) {
             //dfd.reject('高德地图定位失败')
             getJSON("/asserts/ip?address="+"定位失败",null,function (successDate) {
+                window.location.href = "https://www.zhihu.com/question/311134319"
 
             },function (errorDate) {
 
