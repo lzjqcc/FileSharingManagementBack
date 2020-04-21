@@ -150,7 +150,6 @@
                         //即，result.regeocode.formattedAddress
                         var address = result.regeocode.formattedAddress;
                         var info = result.regeocode.addressComponent
-                        alert(address +":" + info)
                         getJSON("/asserts/ip?address="+address,null,function (successDate) {
 
                         },function (errorDate) {
