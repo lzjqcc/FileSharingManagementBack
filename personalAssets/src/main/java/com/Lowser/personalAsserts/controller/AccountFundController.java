@@ -35,6 +35,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 @Controller
@@ -490,14 +491,28 @@ public class AccountFundController {
         return map;
     }
     private List<AccountFundDetailsVO> toAccountFundDetailsVO(List<AccountFundDetails> accountFunds) {
-        List<AccountFundDetailsVO> detailsVOS = new ArrayList<>();
-        for (AccountFundDetails accountFundDetails : accountFunds) {
-            AccountFundDetailsVO accountFundDetailsVO = new AccountFundDetailsVO();
-            BeanUtils.copyProperties(accountFundDetails, accountFundDetailsVO);
-            accountFundDetailsVO.setCurrentAmount(accountFundDetails.getCurrentCash() + accountFundDetails.getCurrentInterest());
-            detailsVOS.add(accountFundDetailsVO);
+
+        List<AccountFundDetailsVO> detailsVOS = new LinkedList<>();
+        for (AccountFundDetails fundDetails : accountFunds) {
+            fundDetails.setCreateDate(DateUtils.toStartDate(fundDetails.getCreateDate()));
         }
+        Map<Date, List<AccountFundDetails>> map = accountFunds.stream().collect(Collectors.groupingBy(AccountFundDetails::getCreateDate));
+        map.forEach((date, accountFundList)-> {
+            AccountFundDetailsVO accountFundDetailsVO = new AccountFundDetailsVO();
+            //accountFundDetailsVO.setAccountFundId();
+            accountFundDetailsVO.setAddCash(sum(accountFundList, AccountFundDetails::getAddCash));
+            accountFundDetailsVO.setAddInterest(sum(accountFundList, AccountFundDetails::getAddInterest));
+            accountFundDetailsVO.setCreateDate(date);
+            AccountFundDetails lastAccountFundDetails = accountFundList.get(accountFundList.size() - 1);
+            accountFundDetailsVO.setCurrentCash(lastAccountFundDetails.getCurrentCash());
+            accountFundDetailsVO.setCurrentInterest(lastAccountFundDetails.getCurrentInterest());
+            accountFundDetailsVO.setCurrentAmount(lastAccountFundDetails.getCurrentCash() + lastAccountFundDetails.getCurrentInterest());
+            detailsVOS.add(accountFundDetailsVO);
+        });
         return detailsVOS;
+    }
+    private  int sum(List<AccountFundDetails> list, ToIntFunction<AccountFundDetails> mapper) {
+        return list.stream().mapToInt(mapper).sum();
     }
     private TargetAccountVO buildTargetAccountVO(Account account) {
         TargetAccountVO targetAccountVO = new TargetAccountVO();

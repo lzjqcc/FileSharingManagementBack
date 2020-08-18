@@ -1,5 +1,6 @@
 package com.Lowser.common.utils;
 
+import java.time.*;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -12,4 +13,10 @@ public class DateUtils {
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
+    public static Date toStartDate(Date date) {
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+        Instant instant = localDateTime.toLocalDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
+    }
+
 }
