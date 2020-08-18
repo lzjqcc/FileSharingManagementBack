@@ -482,12 +482,13 @@ public class AccountFundController {
         return toParentAccountFundAndDetailsMap(parentAccountFunds, accountFundDetails);
     }
     private Map<String, List<AccountFundDetailsVO>> toParentAccountFundAndDetailsMap(List<AccountFund> parentAccountFunds, List<AccountFundDetails> details) {
-        List<AccountFundDetailsVO> detailsVOS = toAccountFundDetailsVO(details);
+        //List<AccountFundDetailsVO> detailsVOS = toAccountFundDetailsVO(details);
         Map<String, List<AccountFundDetailsVO>> map = new HashMap<>();
-        Map<Integer, List<AccountFundDetailsVO>> parentFundAccountIdAndDetails = detailsVOS.stream().collect(Collectors.groupingBy(AccountFundDetailsVO::getAccountFundId, Collectors.toList()));
+        Map<Integer, List<AccountFundDetails>> parentFundAccountIdAndDetails = details.stream().collect(Collectors.groupingBy(AccountFundDetails::getAccountFundId, Collectors.toList()));
         for (AccountFund accountFund : parentAccountFunds) {
-            map.put(accountFund.getName(), parentFundAccountIdAndDetails.get(accountFund.getId()));
+            map.put(accountFund.getName(), toAccountFundDetailsVO(parentFundAccountIdAndDetails.get(accountFund.getId())));
         }
+
         return map;
     }
     private List<AccountFundDetailsVO> toAccountFundDetailsVO(List<AccountFundDetails> accountFunds) {
@@ -509,7 +510,7 @@ public class AccountFundController {
             accountFundDetailsVO.setCurrentAmount(lastAccountFundDetails.getCurrentCash() + lastAccountFundDetails.getCurrentInterest());
             detailsVOS.add(accountFundDetailsVO);
         });
-        return detailsVOS;
+        return detailsVOS.stream().sorted(Comparator.comparing(AccountFundDetailsVO::getCreateDate)).collect(Collectors.toList());
     }
     private  int sum(List<AccountFundDetails> list, ToIntFunction<AccountFundDetails> mapper) {
         return list.stream().mapToInt(mapper).sum();
